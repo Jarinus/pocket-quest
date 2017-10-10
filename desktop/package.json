@@ -1,0 +1,32 @@
+{
+  "name": "pocket-quest",
+  "version": "0.1.0-SNAPSHOT",
+  "main": "dist/js/electron.js",
+  "description": "The cross-platform client for Pocket Quest",
+  "private": true,
+  "license": "UNLICENSED",
+  "bin": {
+    "electron": "./node_modules/.bin/electron",
+    "webpack": "./node_modules/.bin/webpack"
+  },
+  "scripts": {
+    "start": "electron .",
+    "install": "webpack",
+    "build": "webpack --display-error-details",
+    "build:watch": "webpack --display-error-details --watch"
+  },
+  "dependencies": {
+    "bootstrap-sass": "^3.3.7",
+    "copy-webpack-plugin": "^4.1.1",
+    "css-loader": "^0.28.7",
+    "electron": "^1.7.8",
+    "elm-webpack-loader": "^4.3.1",
+    "extract-text-webpack-plugin": "^3.0.1",
+    "file-loader": "^1.1.5",
+    "node-sass": "^4.5.3",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.19.0",
+    "url-loader": "^0.6.2",
+    "webpack": "^3.6.0"
+  }
+}

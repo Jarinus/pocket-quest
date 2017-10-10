@@ -1,0 +1,7 @@
+# Directories
+node_modules/
+elm-stuff/
+dist/
+
+# Files
+npm-debug.log
