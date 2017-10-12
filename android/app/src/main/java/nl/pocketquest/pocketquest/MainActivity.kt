@@ -34,10 +34,18 @@ class MainActivity : AppCompatActivity(), LocationEngineListener, PermissionsLis
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync {
             map = it
+            it.cameraZoom = 18.0..22.0
+
             enableLocationPlugin()
         }
     }
 
+    var MapboxMap.cameraZoom : ClosedFloatingPointRange<Double>
+        get() = minZoomLevel .. maxZoomLevel
+        set(value) {
+            setMaxZoomPreference(value.endInclusive)
+            setMinZoomPreference(value.start)
+        }
     @SuppressWarnings("MissingPermission")
     private fun enableLocationPlugin() {
         // Check if permissions are enabled and if not request
