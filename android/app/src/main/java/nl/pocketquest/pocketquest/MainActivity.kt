@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), LocationEngineListener, PermissionsLis
             initializeLocationEngine()
 
             locationPlugin = LocationLayerPlugin(mapView, map!!, locationEngine).apply {
-                setLocationLayerEnabled(LocationLayerMode.TRACKING)
+                setLocationLayerEnabled(LocationLayerMode.COMPASS)
 
             }
         } else {
