@@ -1,6 +1,7 @@
 package nl.pocketquest.pocketquest
 
 import android.annotation.SuppressLint
+import android.arch.lifecycle.LifecycleOwner
 import android.location.Location
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -12,7 +13,6 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
 import com.mapbox.services.android.location.LostLocationEngine
-import com.mapbox.services.android.telemetry.location.AndroidLocationEngine
 import com.mapbox.services.android.telemetry.location.LocationEngine
 import com.mapbox.services.android.telemetry.location.LocationEngineListener
 import com.mapbox.services.android.telemetry.location.LocationEnginePriority
@@ -24,16 +24,18 @@ import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
 
 
-class MainActivityTemp : AppCompatActivity(), LocationEngineListener, PermissionsListener, AnkoLogger {
+class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
 
     private var map: MapboxMap? = null
     private var permissionsManager: PermissionsManager? = null
     private var locationPlugin: LocationLayerPlugin? = null
     private var locationEngine: LocationEngine? = null
+    private val locationEngineWrapper = LocationEngineWrapper(this, this::onLocationChanged)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        info { "Starting oncreate" }
+        lifecycle.addObserver(locationEngineWrapper)
         Mapbox.getInstance(this, getString(R.string.mapbox_key))
         setContentView(R.layout.activity_main)
         mapView.onCreate(savedInstanceState)
@@ -71,20 +73,12 @@ class MainActivityTemp : AppCompatActivity(), LocationEngineListener, Permission
         }
     }
 
+
     @SuppressWarnings("MissingPermission")
     private fun initializeLocationEngine() {
-        locationEngine = LostLocationEngine.getLocationEngine(this).also { locEngine ->
-            info { "Location engine is about to be initialized" }
-            locEngine.priority = LocationEnginePriority.HIGH_ACCURACY
-            locEngine.smallestDisplacement = 0.5f
-            locEngine.fastestInterval = 500
-            locEngine.interval = 500
-            info { "Location engine is about to be activated" }
-            locEngine.activate()
-            info { "Added ourselves as location engine listener" }
-            locEngine.addLocationEngineListener(this)
-        }
+        locationEngine = locationEngineWrapper.locationEngine
     }
+
 
     var cameraPosition: Location
         @Deprecated("only setter", level = DeprecationLevel.HIDDEN) get() = throw UnsupportedOperationException()
@@ -101,13 +95,7 @@ class MainActivityTemp : AppCompatActivity(), LocationEngineListener, Permission
         if (granted) enableLocationPlugin() else finish()
     }
 
-    @SuppressLint("MissingPermission")
-    override fun onConnected() {
-        info { "requesting updates from onConnected" }
-        locationEngine!!.requestLocationUpdates()
-    }
-
-    override fun onLocationChanged(location: Location?) {
+    fun onLocationChanged(location: Location?) {
         location?.also {
             toast("Lat: ${it.latitude}. Long: ${it.longitude}")
             cameraPosition = location
@@ -144,15 +132,11 @@ class MainActivityTemp : AppCompatActivity(), LocationEngineListener, Permission
     @SuppressLint("MissingPermission")
     override fun onResume() {
         super.onResume()
-        locationEngine?.requestLocationUpdates()
-        locationEngine?.addLocationEngineListener(this)
         mapView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        locationEngine?.removeLocationUpdates()
-        locationEngine?.removeLocationEngineListener(this)
         mapView.onPause()
     }
 
