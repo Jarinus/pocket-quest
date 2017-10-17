@@ -1,3 +1,4 @@
-<resources>
-    <string name="app_name">PocketQuest</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:override="true">PocketQuest</string>
+    <string name="mapbox_key">pk.eyJ1IjoidGllc2tlZGgiLCJhIjoiY2o4bjJ4a2M4MTBldTMzcXRiaXNqdG5wMyJ9.rGorlVQ5eWsSoMQnjyLxmQ</string>
 </resources>
