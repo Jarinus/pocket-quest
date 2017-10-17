@@ -1,7 +1,6 @@
 package nl.pocketquest.pocketquest
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.LifecycleOwner
 import android.location.Location
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -12,10 +11,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
-import com.mapbox.services.android.location.LostLocationEngine
 import com.mapbox.services.android.telemetry.location.LocationEngine
-import com.mapbox.services.android.telemetry.location.LocationEngineListener
-import com.mapbox.services.android.telemetry.location.LocationEnginePriority
 import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
 import kotlinx.android.synthetic.main.activity_main.*
@@ -32,16 +28,21 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
     private var locationEngine: LocationEngine? = null
     private val locationEngineWrapper = LocationEngineWrapper(this, this::onLocationChanged)
 
+    companion object {
+        const val MIN_CAMERA_ZOOM = 18.0
+        const val MAX_CAMERA_ZOOM = MIN_CAMERA_ZOOM
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         info { "Starting oncreate" }
-        lifecycle.addObserver(locationEngineWrapper)
         Mapbox.getInstance(this, getString(R.string.mapbox_key))
         setContentView(R.layout.activity_main)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync {
             map = it
-            it.cameraZoom = 18.0..22.0
+            it.cameraZoom = MIN_CAMERA_ZOOM..MAX_CAMERA_ZOOM
 
             enableLocationPlugin()
         }
@@ -57,10 +58,8 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
     @SuppressWarnings("MissingPermission")
     private fun enableLocationPlugin() {
         // Check if permissions are enabled and if not request
-        info { "Enabling location plugin" }
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
             initializeLocationEngine()
-            info { "Getting the last location" }
             onLocationChanged(locationEngine!!.lastLocation)
             info { "Got the last location" }
             locationPlugin = LocationLayerPlugin(mapView, map!!, locationEngine).apply {
@@ -73,12 +72,10 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         }
     }
 
-
     @SuppressWarnings("MissingPermission")
     private fun initializeLocationEngine() {
         locationEngine = locationEngineWrapper.locationEngine
     }
-
 
     var cameraPosition: Location
         @Deprecated("only setter", level = DeprecationLevel.HIDDEN) get() = throw UnsupportedOperationException()

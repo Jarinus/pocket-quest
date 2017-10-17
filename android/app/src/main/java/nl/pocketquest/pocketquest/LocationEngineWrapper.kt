@@ -18,6 +18,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
 class LocationEngineWrapper(private val context: Context, var locationListener: (Location) -> Unit) : LocationEngineListener, AnkoLogger, LifecycleObserver {
+
     companion object {
         const val DEFAULT_FASTEST_INTERVAL = 500
         const val DEFAULT_INTERVAL = 1000
@@ -26,7 +27,6 @@ class LocationEngineWrapper(private val context: Context, var locationListener: 
     }
 
     lateinit var locationEngine: LocationEngine
-
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate(savedInstanceState: Bundle?) {

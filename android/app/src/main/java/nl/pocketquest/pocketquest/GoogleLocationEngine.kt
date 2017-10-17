@@ -26,6 +26,7 @@ class GoogleLocationEngine(var context: Context) : LocationEngine(), AnkoLogger 
     }
 
     override fun deactivate() {
+        info { "Deactivated" }
     }
 
     @SuppressLint("MissingPermission")
@@ -59,11 +60,8 @@ class GoogleLocationEngine(var context: Context) : LocationEngine(), AnkoLogger 
         locationClient.removeLocationUpdates(locationCallBack)
     }
 
-    fun onLocationChanged(location: Location) {
-        for (listener in locationListeners) {
-            listener.onLocationChanged(location)
-        }
-    }
+    fun onLocationChanged(location: Location) =
+            locationListeners.forEach { it.onLocationChanged(location) }
 
     private class Callback(var callBack: (Location) -> Unit) : LocationCallback() {
 
@@ -77,5 +75,6 @@ class GoogleLocationEngine(var context: Context) : LocationEngine(), AnkoLogger 
     companion object {
         @Synchronized
         fun getLocationEngine(context: Context) = GoogleLocationEngine(context)
+
     }
 }
