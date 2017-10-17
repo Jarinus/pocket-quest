@@ -21,7 +21,6 @@ import org.jetbrains.anko.toast
 
 
 class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
-
     private var map: MapboxMap? = null
     private var permissionsManager: PermissionsManager? = null
     private var locationPlugin: LocationLayerPlugin? = null
@@ -31,24 +30,25 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
     companion object {
         const val MIN_CAMERA_ZOOM = 18.0
         const val MAX_CAMERA_ZOOM = MIN_CAMERA_ZOOM
-
+        const val DEFAULT_CAMERA_ZOOM = MIN_CAMERA_ZOOM
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        info { "Starting oncreate" }
+        info { "Starting onCreate" }
         Mapbox.getInstance(this, getString(R.string.mapbox_key))
         setContentView(R.layout.activity_main)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync {
-            map = it
-            it.cameraZoom = MIN_CAMERA_ZOOM..MAX_CAMERA_ZOOM
-
+            map = it.apply {
+                cameraZoom = MIN_CAMERA_ZOOM..MAX_CAMERA_ZOOM
+            }
             enableLocationPlugin()
         }
+        lifecycle.addObserver(locationEngineWrapper)
     }
 
-    var MapboxMap.cameraZoom: ClosedFloatingPointRange<Double>
+    private var MapboxMap.cameraZoom: ClosedFloatingPointRange<Double>
         get() = minZoomLevel..maxZoomLevel
         set(value) {
             setMaxZoomPreference(value.endInclusive)
@@ -57,9 +57,7 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
 
     @SuppressWarnings("MissingPermission")
     private fun enableLocationPlugin() {
-        // Check if permissions are enabled and if not request
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
-            initializeLocationEngine()
             onLocationChanged(locationEngine!!.lastLocation)
             info { "Got the last location" }
             locationPlugin = LocationLayerPlugin(mapView, map!!, locationEngine).apply {
@@ -72,15 +70,11 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         }
     }
 
-    @SuppressWarnings("MissingPermission")
-    private fun initializeLocationEngine() {
-        locationEngine = locationEngineWrapper.locationEngine
-    }
-
-    var cameraPosition: Location
-        @Deprecated("only setter", level = DeprecationLevel.HIDDEN) get() = throw UnsupportedOperationException()
+    private var cameraPosition: Location
+        @Deprecated("only setter", level = DeprecationLevel.HIDDEN)
+        get() = throw UnsupportedOperationException()
         set(location) = map!!.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(LatLng(location), 13.0)
+                CameraUpdateFactory.newLatLngZoom(LatLng(location), DEFAULT_CAMERA_ZOOM)
         )
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -88,11 +82,12 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
     }
 
     override fun onExplanationNeeded(permissionsToExplain: MutableList<String>?) = Unit
+
     override fun onPermissionResult(granted: Boolean) {
         if (granted) enableLocationPlugin() else finish()
     }
 
-    fun onLocationChanged(location: Location?) {
+    private fun onLocationChanged(location: Location?) {
         location?.also {
             toast("Lat: ${it.latitude}. Long: ${it.longitude}")
             cameraPosition = location
@@ -102,7 +97,7 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
     @SuppressLint("MissingPermission")
     override fun onStart() {
         super.onStart()
-        info { "requesting updates from onStart" }
+        info { "Requesting updates from onStart" }
         locationEngine?.requestLocationUpdates()
         locationPlugin?.onStart()
         mapView.onStart()
