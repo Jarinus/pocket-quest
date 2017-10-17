@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import com.mapbox.mapboxsdk.Mapbox
-import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
@@ -18,7 +17,6 @@ import com.mapbox.services.android.telemetry.permissions.PermissionsManager
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
-import org.jetbrains.anko.toast
 
 
 class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
@@ -93,7 +91,6 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         info { "new Currentlocation = $location" }
         currentLocation = location
         location.also {
-            toast("Lat: ${it.latitude}. Long: ${it.longitude}")
             cameraPosition = location
             locationPlugin?.forceLocationUpdate(currentLocation)
         }
