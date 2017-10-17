@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
@@ -26,6 +27,8 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
     private var locationPlugin: LocationLayerPlugin? = null
     private var locationEngine: LocationEngine? = null
     private val locationEngineWrapper = LocationEngineWrapper(this, this::onLocationChanged)
+    private var currentLocation: Location? = null
+
 
     companion object {
         const val MIN_CAMERA_ZOOM = 18.0
@@ -33,6 +36,7 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         const val DEFAULT_CAMERA_ZOOM = MIN_CAMERA_ZOOM
     }
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         info { "Starting onCreate" }
@@ -40,26 +44,18 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         setContentView(R.layout.activity_main)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync {
-            map = it.apply {
-                cameraZoom = MIN_CAMERA_ZOOM..MAX_CAMERA_ZOOM
-            }
+            map = it
             enableLocationPlugin()
+            info { "Map is loaded" }
+            (currentLocation ?: locationEngine?.lastLocation)?.apply(this::onLocationChanged) ?: info { "No last location found!" }
+            info { "Set the last location from the map" }
         }
         lifecycle.addObserver(locationEngineWrapper)
     }
 
-    private var MapboxMap.cameraZoom: ClosedFloatingPointRange<Double>
-        get() = minZoomLevel..maxZoomLevel
-        set(value) {
-            setMaxZoomPreference(value.endInclusive)
-            setMinZoomPreference(value.start)
-        }
-
     @SuppressWarnings("MissingPermission")
     private fun enableLocationPlugin() {
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
-            onLocationChanged(locationEngine!!.lastLocation)
-            info { "Got the last location" }
             locationPlugin = LocationLayerPlugin(mapView, map!!, locationEngine).apply {
                 setLocationLayerEnabled(LocationLayerMode.COMPASS)
             }
@@ -73,9 +69,13 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
     private var cameraPosition: Location
         @Deprecated("only setter", level = DeprecationLevel.HIDDEN)
         get() = throw UnsupportedOperationException()
-        set(location) = map!!.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(LatLng(location), DEFAULT_CAMERA_ZOOM)
-        )
+        set(location) {
+            map?.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(LatLng(location), DEFAULT_CAMERA_ZOOM)
+            )
+            info { "Setting $location as new camera position " }
+        }
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         permissionsManager!!.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -87,10 +87,15 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         if (granted) enableLocationPlugin() else finish()
     }
 
-    private fun onLocationChanged(location: Location?) {
-        location?.also {
+    fun Location.toLatLng() = LatLng(this.latitude, this.longitude)
+
+    private fun onLocationChanged(location: Location) {
+        info { "new Currentlocation = $location" }
+        currentLocation = location
+        location.also {
             toast("Lat: ${it.latitude}. Long: ${it.longitude}")
             cameraPosition = location
+            locationPlugin?.forceLocationUpdate(currentLocation)
         }
     }
 
