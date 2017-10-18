@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import com.mapbox.mapboxsdk.Mapbox
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
-import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
@@ -26,7 +24,6 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
     private var locationEngine: LocationEngine? = null
     private val locationEngineWrapper = LocationEngineWrapper(this, this::onLocationChanged)
     private var currentLocation: Location? = null
-
 
     companion object {
         const val MIN_CAMERA_ZOOM = 18.0
@@ -64,17 +61,6 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         }
     }
 
-    private var cameraPosition: Location
-        @Deprecated("only setter", level = DeprecationLevel.HIDDEN)
-        get() = throw UnsupportedOperationException()
-        set(location) {
-            map?.animateCamera(
-                    CameraUpdateFactory.newLatLngZoom(LatLng(location), DEFAULT_CAMERA_ZOOM)
-            )
-            info { "Setting $location as new camera position " }
-        }
-
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         permissionsManager!!.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
@@ -85,15 +71,11 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         if (granted) enableLocationPlugin() else finish()
     }
 
-    fun Location.toLatLng() = LatLng(this.latitude, this.longitude)
-
     private fun onLocationChanged(location: Location) {
         info { "new Currentlocation = $location" }
+        map?.setCameraPosition(location)
         currentLocation = location
-        location.also {
-            cameraPosition = location
-            locationPlugin?.forceLocationUpdate(currentLocation)
-        }
+        locationPlugin?.forceLocationUpdate(currentLocation)
     }
 
     @SuppressLint("MissingPermission")
