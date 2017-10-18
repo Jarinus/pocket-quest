@@ -2,6 +2,7 @@ module PocketQuest exposing (main)
 
 import Html exposing (Html)
 import Html.Attributes as Attributes
+import Inventory
 import Material
 import Material.Layout as Layout
 import Material.Options as Options
@@ -10,7 +11,9 @@ import Material.Typography as Typo
 
 
 type alias Model =
-    { mdl : Material.Model }
+    { inventory : Inventory.Model
+    , mdl : Material.Model
+    }
 
 
 type alias OverlayOptions =
@@ -21,7 +24,8 @@ type alias OverlayOptions =
 
 
 type Msg
-    = Mdl (Material.Msg Msg)
+    = InventoryMsg Inventory.Msg
+    | Mdl (Material.Msg Msg)
 
 
 main : Program Never Model Msg
@@ -36,33 +40,45 @@ main =
 
 init : ( Model, Cmd Msg )
 init =
-    { mdl = Material.model } ! []
+    { inventory = Inventory.init
+    , mdl = Material.model
+    }
+        ! []
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        InventoryMsg msg_ ->
+            { model
+                | inventory =
+                    Inventory.update msg_ model.inventory
+            }
+                ! []
+
         Mdl msg_ ->
             Material.update Mdl msg_ model
 
 
 view : Model -> Html Msg
 view model =
-    viewInventoryOverlay model
+    Options.div
+        []
+        [ Inventory.view model.inventory
+            |> viewInventoryOverlay model
+        ]
 
 
-viewInventoryOverlay : Model -> Html Msg
-viewInventoryOverlay model =
+viewInventoryOverlay : Model -> Html Inventory.Msg -> Html Msg
+viewInventoryOverlay model inventoryContent =
     viewOverlay model
         { id = "inventory-overlay"
         , header = "Inventory"
-        , content = (viewInventoryOverlayContent model)
+        , content =
+            inventoryContent
+                |> Html.map (\msg -> InventoryMsg msg)
+                |> List.singleton
         }
-
-
-viewInventoryOverlayContent : Model -> List (Html Msg)
-viewInventoryOverlayContent model =
-    []
 
 
 viewOverlay : Model -> OverlayOptions -> Html Msg
