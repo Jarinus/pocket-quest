@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.annotations.IconFactory
+import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
@@ -24,6 +26,7 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
     private var locationEngine: LocationEngine? = null
     private val locationEngineWrapper = LocationEngineWrapper(this, this::onLocationChanged)
     private var currentLocation: Location? = null
+    private lateinit var playerMarker: MarkerOptions
 
     companion object {
         const val MIN_CAMERA_ZOOM = 18.0
@@ -44,6 +47,8 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
             info { "Map is loaded" }
             (currentLocation ?: locationEngine?.lastLocation)?.apply(this::onLocationChanged) ?: info { "No last location found!" }
             info { "Set the last location from the map" }
+            playerMarker = MarkerOptions()
+                    .icon(IconFactory.getInstance(this).fromResource(R.drawable.knight))
         }
         lifecycle.addObserver(locationEngineWrapper)
     }
@@ -76,6 +81,9 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         map?.setCameraPosition(location)
         currentLocation = location
         locationPlugin?.forceLocationUpdate(currentLocation)
+        playerMarker.position = location.toLatLng()
+        map?.addMarker(playerMarker)
+
     }
 
     @SuppressLint("MissingPermission")
