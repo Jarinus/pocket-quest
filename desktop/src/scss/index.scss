@@ -1,8 +1,7 @@
 $icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
 @import '~bootstrap-sass/assets/stylesheets/_bootstrap.scss';
-
-$font-family: 'Courier New', Courier, monospace;
+@import "inventory.scss";
 
 body {
-  font-family: $font-family;
+  font-family: 'Roboto', serif;
 }

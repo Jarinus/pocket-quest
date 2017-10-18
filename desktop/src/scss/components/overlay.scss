@@ -1,0 +1,22 @@
+@mixin overlay-wrapper($width) {
+  min-width: $width;
+  max-width: $width;
+
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.overlay {
+  .mdl-layout__container {
+    position: relative;
+  }
+
+  header {
+    min-height: 28px;
+
+    h1, h2, h3, h4, h5, h6 {
+      margin: auto;
+    }
+  }
+}

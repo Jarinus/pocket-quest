@@ -4,4 +4,4 @@ elm-stuff/
 dist/
 
 # Files
-npm-debug.log
+npm-debug.log*

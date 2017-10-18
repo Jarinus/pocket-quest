@@ -1,0 +1,6 @@
+@import "components/overlay";
+
+#inventory-overlay {
+  @include overlay-wrapper(360px)
+
+}
