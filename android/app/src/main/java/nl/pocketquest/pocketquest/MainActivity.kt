@@ -8,8 +8,6 @@ import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.IconFactory
-import com.mapbox.mapboxsdk.annotations.Marker
-import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
@@ -17,9 +15,11 @@ import com.mapbox.services.android.telemetry.location.LocationEngine
 import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
 import kotlinx.android.synthetic.main.activity_main.*
+import nl.pocketquest.pocketquest.game.Game
+import nl.pocketquest.pocketquest.game.GameObject
 import nl.pocketquest.pocketquest.location.LocationEngineWrapper
 import nl.pocketquest.pocketquest.sprites.Point
-import nl.pocketquest.pocketquest.sprites.SpriteSheet
+import nl.pocketquest.pocketquest.sprites.GameObjectAnimator
 import nl.pocketquest.pocketquest.sprites.SpriteSheetCreator
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
     private var locationEngine: LocationEngine? = null
     private val locationEngineWrapper = LocationEngineWrapper(this, this::onLocationChanged)
     private var currentLocation: Location? = null
-    private var playerMarker: Marker? = null
+    private var player: GameObject? = null
 
 
     companion object {
@@ -51,13 +51,10 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         mapView.getMapAsync {
             map = it
             info { "About to add the player marker" }
-
-            playerMarker = map?.addMarker(MarkerOptions()
-                    .icon(IconFactory.getInstance(this).fromResource(R.drawable.knight))
-                    .position(LatLng(2.0, 2.0))
-            )
             val frames = SpriteSheetCreator(BitmapFactory.decodeResource(resources, R.drawable.santasprite), Point(4, 4)).frames
-            SpriteSheet(this, playerMarker!!, frames, 42).start()
+            player = GameObject(LatLng(0.0, 0.0), IconFactory.getInstance(this).fromResource(R.drawable.knight))
+            GameObjectAnimator(this, player!!, frames, 42).start()
+            Game(this, map!!).addGameObject(player!!)
             info { "Added the player marker" }
             enableLocationPlugin()
             info { "Map is loaded" }
@@ -88,11 +85,12 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
 
     private fun onLocationChanged(location: Location) {
         info { "new Currentlocation = $location" }
-        map?.setCameraPosition(location)
+        runOnUiThread {
+            map?.setCameraPosition(location)
+            locationPlugin?.forceLocationUpdate(currentLocation)
+            player?.location = location.toLatLng()
+        }
         currentLocation = location
-        locationPlugin?.forceLocationUpdate(currentLocation)
-        info { playerMarker }
-        playerMarker?.position = location.toLatLng()
     }
 
     @SuppressLint("MissingPermission")

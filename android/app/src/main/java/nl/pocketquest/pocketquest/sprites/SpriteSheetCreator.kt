@@ -2,7 +2,6 @@ package nl.pocketquest.pocketquest.sprites
 
 import android.graphics.Bitmap
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
 
 
 /**
@@ -32,6 +31,7 @@ class SpriteSheetCreator(private val spriteSheet: Bitmap,
         spriteSheetDimensions = spriteSheet.dimensions()
         frames = numberOfFrames.allSmallerPoints()
                 .map(this::subBitMap)
+                .map { it.padded(DoublePoint(1.05, 1.8)) }
                 .toList()
     }
 

@@ -10,6 +10,9 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
  */
 fun Location.toLatLng() = LatLng(this)
 
+operator fun LatLng.plus(other: LatLng) = LatLng(latitude + other.latitude, longitude + other.longitude)
+
+
 fun MapboxMap.setCameraPosition(location: Location) {
     animateCamera(CameraUpdateFactory.newLatLngZoom(location.toLatLng(), MainActivity.DEFAULT_CAMERA_ZOOM))
 }
