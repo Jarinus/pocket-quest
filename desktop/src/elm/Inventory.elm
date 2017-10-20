@@ -23,8 +23,6 @@ update msg model =
             init
 
 
-view : Model -> Html Msg
+view : Model -> List (Html Msg)
 view model =
-    Html.div
-        []
-        []
+    []

@@ -1,5 +1,6 @@
 module PocketQuest exposing (main)
 
+import Dict exposing (Dict)
 import Html exposing (Html)
 import Html.Attributes as Attributes
 import Inventory
@@ -8,23 +9,17 @@ import Material.Layout as Layout
 import Material.Options as Options
 import Material.Elevation as Elevation
 import Material.Typography as Typo
+import Overlay
 
 
 type alias Model =
-    { inventory : Inventory.Model
+    { overlay : Overlay.Model
     , mdl : Material.Model
     }
 
 
-type alias OverlayOptions =
-    { id : String
-    , header : String
-    , content : List (Html Msg)
-    }
-
-
 type Msg
-    = InventoryMsg Inventory.Msg
+    = OverlayMsg Overlay.Msg
     | Mdl (Material.Msg Msg)
 
 
@@ -40,21 +35,30 @@ main =
 
 init : ( Model, Cmd Msg )
 init =
-    { inventory = Inventory.init
-    , mdl = Material.model
-    }
-        ! []
+    let
+        ( overlay, overlayCmd ) =
+            Overlay.init
+                [ { header = "Test"
+                  , content = Html.text "Test"
+                  }
+                ]
+    in
+        { overlay = overlay
+        , mdl = Material.model
+        }
+            ! [ Cmd.map (\msg -> OverlayMsg msg) overlayCmd ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        InventoryMsg msg_ ->
-            { model
-                | inventory =
-                    Inventory.update msg_ model.inventory
-            }
-                ! []
+        OverlayMsg msg_ ->
+            let
+                ( overlay, overlayCmd ) =
+                    Overlay.update msg_ model.overlay
+            in
+                { model | overlay = overlay }
+                    ! [ Cmd.map (\msg -> OverlayMsg msg) overlayCmd ]
 
         Mdl msg_ ->
             Material.update Mdl msg_ model
@@ -62,49 +66,8 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    Options.div
-        []
-        [ Inventory.view model.inventory
-            |> viewInventoryOverlay model
-        ]
-
-
-viewInventoryOverlay : Model -> Html Inventory.Msg -> Html Msg
-viewInventoryOverlay model inventoryContent =
-    viewOverlay model
-        { id = "inventory-overlay"
-        , header = "Inventory"
-        , content =
-            inventoryContent
-                |> Html.map (\msg -> InventoryMsg msg)
-                |> List.singleton
-        }
-
-
-viewOverlay : Model -> OverlayOptions -> Html Msg
-viewOverlay model { id, header, content } =
-    Options.div
-        [ Options.id id
-        , Elevation.e4
-        ]
-        [ Options.div
-            [ Options.cs "overlay" ]
-            [ Layout.render Mdl
-                model.mdl
-                [ Layout.fixedHeader
-                , Layout.waterfall False
-                ]
-                { header =
-                    [ Options.styled Html.h5
-                        [ Typo.uppercase ]
-                        [ Html.text header ]
-                    ]
-                , drawer = []
-                , tabs = ( [], [] )
-                , main = content
-                }
-            ]
-        ]
+    Overlay.view model.overlay
+        |> Html.map (\msg -> OverlayMsg msg)
 
 
 subscriptions : Model -> Sub Msg

@@ -1,22 +1,53 @@
-@mixin overlay-wrapper($width) {
-  min-width: $width;
-  max-width: $width;
-
-  position: absolute;
-  top: 0;
-  bottom: 0;
-}
+$overlay-tab-height: 36px;
 
 .overlay {
-  .mdl-layout__container {
-    position: relative;
+  div.mdl-tabs__tab-bar {
+    display: flex;
+    height: $overlay-tab-height;
   }
 
-  header {
-    min-height: 28px;
+  a.mdl-tabs__tab {
+    flex: 1;
 
-    h1, h2, h3, h4, h5, h6 {
-      margin: auto;
+    padding-bottom: 4px;
+
+    height: $overlay-tab-height;
+    line-height: calc(#{$overlay-tab-height} - 4px);
+
+    &:hover {
+      text-decoration: none;
     }
+
+    &.is-active.overlay-tab {
+      position: relative;
+
+      &:after {
+        display: block;
+        height: 4px;
+        width: 100%;
+
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        background: white;
+
+        animation: grow-horizontally 60ms;
+      }
+    }
+  }
+
+  .mdl-tab__panel {
+    padding: 16px;
+  }
+}
+
+@keyframes grow-horizontally {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
   }
 }
