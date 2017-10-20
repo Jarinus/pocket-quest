@@ -7,9 +7,10 @@ import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.IconFactory
+import com.mapbox.mapboxsdk.annotations.Marker
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
+import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
 import com.mapbox.services.android.telemetry.location.LocationEngine
 import com.mapbox.services.android.telemetry.permissions.PermissionsListener
@@ -26,7 +27,8 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
     private var locationEngine: LocationEngine? = null
     private val locationEngineWrapper = LocationEngineWrapper(this, this::onLocationChanged)
     private var currentLocation: Location? = null
-    private lateinit var playerMarker: MarkerOptions
+    private var playerMarker: Marker? = null
+
 
     companion object {
         const val MIN_CAMERA_ZOOM = 18.0
@@ -43,23 +45,24 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync {
             map = it
+            info { "About to add the player marker" }
+
+            playerMarker = map?.addMarker(MarkerOptions()
+                    .icon(IconFactory.getInstance(this).fromResource(R.drawable.knight))
+                    .position(LatLng(2.0, 2.0))
+            )
+            info { "Added the player marker" }
             enableLocationPlugin()
             info { "Map is loaded" }
             (currentLocation ?: locationEngine?.lastLocation)?.apply(this::onLocationChanged) ?: info { "No last location found!" }
             info { "Set the last location from the map" }
-            playerMarker = MarkerOptions()
-                    .icon(IconFactory.getInstance(this).fromResource(R.drawable.knight))
         }
         lifecycle.addObserver(locationEngineWrapper)
     }
 
     @SuppressWarnings("MissingPermission")
     private fun enableLocationPlugin() {
-        if (PermissionsManager.areLocationPermissionsGranted(this)) {
-            locationPlugin = LocationLayerPlugin(mapView, map!!, locationEngine).apply {
-                setLocationLayerEnabled(LocationLayerMode.COMPASS)
-            }
-        } else {
+        if (!PermissionsManager.areLocationPermissionsGranted(this)) {
             permissionsManager = PermissionsManager(this).also {
                 it.requestLocationPermissions(this)
             }
@@ -81,9 +84,8 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         map?.setCameraPosition(location)
         currentLocation = location
         locationPlugin?.forceLocationUpdate(currentLocation)
-        playerMarker.position = location.toLatLng()
-        map?.addMarker(playerMarker)
-
+        info { playerMarker }
+        playerMarker?.position = location.toLatLng()
     }
 
     @SuppressLint("MissingPermission")
