@@ -1,6 +1,7 @@
 package nl.pocketquest.pocketquest
 
 import android.annotation.SuppressLint
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -16,6 +17,9 @@ import com.mapbox.services.android.telemetry.location.LocationEngine
 import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
 import kotlinx.android.synthetic.main.activity_main.*
+import nl.pocketquest.pocketquest.sprites.Point
+import nl.pocketquest.pocketquest.sprites.SpriteSheet
+import nl.pocketquest.pocketquest.sprites.SpriteSheetCreator
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
@@ -51,6 +55,8 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
                     .icon(IconFactory.getInstance(this).fromResource(R.drawable.knight))
                     .position(LatLng(2.0, 2.0))
             )
+            val frames = SpriteSheetCreator(BitmapFactory.decodeResource(resources, R.drawable.santasprite), Point(4, 4)).frames
+            SpriteSheet(this, playerMarker!!, frames, 42).start()
             info { "Added the player marker" }
             enableLocationPlugin()
             info { "Map is loaded" }
