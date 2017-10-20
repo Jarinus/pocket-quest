@@ -17,6 +17,7 @@ import com.mapbox.services.android.telemetry.location.LocationEngine
 import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
 import kotlinx.android.synthetic.main.activity_main.*
+import nl.pocketquest.pocketquest.location.LocationEngineWrapper
 import nl.pocketquest.pocketquest.sprites.Point
 import nl.pocketquest.pocketquest.sprites.SpriteSheet
 import nl.pocketquest.pocketquest.sprites.SpriteSheetCreator

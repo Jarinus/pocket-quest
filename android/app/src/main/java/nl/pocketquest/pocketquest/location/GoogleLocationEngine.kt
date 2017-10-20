@@ -1,4 +1,4 @@
-package nl.pocketquest.pocketquest
+package nl.pocketquest.pocketquest.location
 
 import android.annotation.SuppressLint
 import android.content.Context
