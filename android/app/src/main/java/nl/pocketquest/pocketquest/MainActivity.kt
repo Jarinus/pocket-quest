@@ -1,26 +1,22 @@
 package nl.pocketquest.pocketquest
 
 import android.annotation.SuppressLint
-import android.graphics.BitmapFactory
+import android.graphics.Bitmap
 import android.location.Location
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import com.mapbox.mapboxsdk.Mapbox
-import com.mapbox.mapboxsdk.annotations.IconFactory
-import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
-import com.mapbox.services.android.telemetry.location.LocationEngine
+import com.mapbox.mapboxsdk.maps.MapboxMapOptions
+import com.mapbox.mapboxsdk.maps.SupportMapFragment
 import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
-import kotlinx.android.synthetic.main.activity_main.*
 import nl.pocketquest.pocketquest.game.Game
 import nl.pocketquest.pocketquest.game.GameObject
 import nl.pocketquest.pocketquest.location.LocationEngineWrapper
-import nl.pocketquest.pocketquest.sprites.Point
 import nl.pocketquest.pocketquest.sprites.GameObjectAnimator
 import nl.pocketquest.pocketquest.sprites.SpriteSheetCreator
+import nl.pocketquest.pocketquest.utils.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
@@ -28,40 +24,65 @@ import org.jetbrains.anko.info
 class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
     private var map: MapboxMap? = null
     private var permissionsManager: PermissionsManager? = null
-    private var locationPlugin: LocationLayerPlugin? = null
-    private var locationEngine: LocationEngine? = null
     private val locationEngineWrapper = LocationEngineWrapper(this, this::onLocationChanged)
     private var currentLocation: Location? = null
     private var player: GameObject? = null
-
-
-    companion object {
-        const val MIN_CAMERA_ZOOM = 18.0
-        const val MAX_CAMERA_ZOOM = MIN_CAMERA_ZOOM
-        const val DEFAULT_CAMERA_ZOOM = MIN_CAMERA_ZOOM
-    }
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         info { "Starting onCreate" }
-        Mapbox.getInstance(this, getString(R.string.mapbox_key))
         setContentView(R.layout.activity_main)
-        mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync {
+        Mapbox.getInstance(this, getString(R.string.mapbox_key))
+
+        enableLocationPlugin()
+
+        val mapFragment : SupportMapFragment
+        if (savedInstanceState == null){
+            val transaction = supportFragmentManager.beginTransaction()
+            val options = MapboxMapOptions().apply {
+                styleUrl(getString(R.string.mapbox_custom_style))
+                attributionEnabled(false)
+                logoEnabled(false)
+                camera {
+                    maxZoomPreference(18.1)
+                    minZoomPreference(18.1)
+                    scrollGesturesEnabled(false)
+                    locationEngineWrapper.location?.also { target(it.toLatLng()) }
+                    zoom(18.1)
+                    tilt(50.25)
+                }
+            }
+            mapFragment = SupportMapFragment.newInstance(options)
+            transaction.replace(R.id.mapFragment, mapFragment, "com.mapbox.map").commit()
+        } else {
+            mapFragment = supportFragmentManager.findFragmentByTag("com.mapbox.map") as SupportMapFragment
+        }
+
+        mapFragment.getMapAsync {
             map = it
+
             info { "About to add the player marker" }
-            val frames = SpriteSheetCreator(BitmapFactory.decodeResource(resources, R.drawable.santasprite), Point(4, 4)).frames
-            player = GameObject(LatLng(0.0, 0.0), IconFactory.getInstance(this).fromResource(R.drawable.knight))
-            GameObjectAnimator(this, player!!, frames, 42).start()
-            Game(this, map!!).addGameObject(player!!)
+            addPlayerMarker()
             info { "Added the player marker" }
-            enableLocationPlugin()
+
+            locationEngineWrapper.location?.also { map?.setCameraPosition(it) }
             info { "Map is loaded" }
-            (currentLocation ?: locationEngine?.lastLocation)?.apply(this::onLocationChanged) ?: info { "No last location found!" }
+            locationEngineWrapper.location?.apply(this::onLocationChanged) ?: info { "No last location found!" }
             info { "Set the last location from the map" }
         }
         lifecycle.addObserver(locationEngineWrapper)
+    }
+
+    private fun GameObject.animate(frames: Sequence<Bitmap>, duration: Int)
+            = GameObjectAnimator(this@MainActivity, this, frames, duration).apply { start() }
+
+    private fun addPlayerMarker() {
+        val frames = SpriteSheetCreator(decodeRss(R.drawable.santasprite), 4 xy 4).frames
+        player = GameObject(0 latLong 0, loadImage(R.drawable.knight)).also {
+            it.animate(frames, 42)
+        }
+        Game(map!!) += player!!
     }
 
     @SuppressWarnings("MissingPermission")
@@ -87,52 +108,8 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         info { "new Currentlocation = $location" }
         runOnUiThread {
             map?.setCameraPosition(location)
-            locationPlugin?.forceLocationUpdate(currentLocation)
             player?.location = location.toLatLng()
         }
         currentLocation = location
-    }
-
-    @SuppressLint("MissingPermission")
-    override fun onStart() {
-        super.onStart()
-        info { "Requesting updates from onStart" }
-        locationEngine?.requestLocationUpdates()
-        locationPlugin?.onStart()
-        mapView.onStart()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        locationEngine?.removeLocationUpdates()
-        locationPlugin?.onStop()
-        mapView.onStop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mapView.onDestroy()
-        locationEngine?.deactivate()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        mapView.onLowMemory()
-    }
-
-    @SuppressLint("MissingPermission")
-    override fun onResume() {
-        super.onResume()
-        mapView.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mapView.onPause()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-        super.onSaveInstanceState(outState, outPersistentState)
-        mapView.onSaveInstanceState(outState)
     }
 }

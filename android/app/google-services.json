@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "780347885793",
+    "firebase_url": "https://pocketquest-25aab.firebaseio.com",
+    "project_id": "pocketquest-25aab",
+    "storage_bucket": "pocketquest-25aab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:780347885793:android:21ab6af30460b98e",
+        "android_client_info": {
+          "package_name": "nl.pocketquest.pocketquest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "780347885793-cducn34g9pknmsgp5iv1o9v1h8kapcqq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "nl.pocketquest.pocketquest",
+            "certificate_hash": "5d7925a3f38def673a634e9941c692e8d6d2da81"
+          }
+        },
+        {
+          "client_id": "780347885793-e5ci6jkqn6h6tvnrg11513sn0vsjt7ic.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBM_uGreo1U2EFcJCK7sRv9K10H2bAuO8U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "780347885793-e5ci6jkqn6h6tvnrg11513sn0vsjt7ic.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

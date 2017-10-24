@@ -1,30 +1,22 @@
 package nl.pocketquest.pocketquest.game
 
-import android.content.Context
 import com.mapbox.mapboxsdk.annotations.Marker
-import com.mapbox.mapboxsdk.annotations.MarkerOptions
-import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
+import nl.pocketquest.pocketquest.utils.addMarker
 
-/**
- * Created by Laurens on 20-10-2017.
- */
 
-class Game(val context: Context, val map: MapboxMap) {
+class Game(private val map: MapboxMap) {
     private val gameObjects = mutableMapOf<GameObject, Marker>()
 
+    operator fun plusAssign(gameObject: GameObject) = addGameObject(gameObject)
     fun addGameObject(gameObject: GameObject) {
-        val marker = map.addMarker(MarkerOptions()
-                .icon(gameObject.image)
-                .position(gameObject.location)
-        )
+        val marker = map.addMarker {
+            icon = gameObject.image
+            position = gameObject.location
+        }
         gameObject.onChange {
-            async(UI) {
-                marker.icon = it.image
-                marker.position = it.location
-            }
+            marker.icon = it.image
+            marker.position = it.location
         }
         gameObjects[gameObject] = marker
     }

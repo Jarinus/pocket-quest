@@ -2,6 +2,9 @@ package nl.pocketquest.pocketquest.game
 
 import com.mapbox.mapboxsdk.annotations.Icon
 import com.mapbox.mapboxsdk.geometry.LatLng
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 import kotlin.properties.Delegates.observable
 
 /**
@@ -12,17 +15,18 @@ import kotlin.properties.Delegates.observable
  * Created by Laurens on 20-10-2017.
  */
 
-typealias Consumer<T> = (T) -> Unit
+typealias Consumer<T> = suspend CoroutineScope.(T) -> Unit
 class GameObject(location: LatLng, image: Icon) {
 
     private val listeners = mutableListOf<Consumer<GameObject>>()
     fun onChange(consumer: Consumer<GameObject>) = listeners.add(consumer)
 
-    var location by observable(location) { property, oldValue, newValue ->
-        listeners.forEach { it(this) }
-    }
-    var image by observable(image) { property, oldValue, newValue ->
-        listeners.forEach { it(this) }
-    }
+    var location by observable(location) { _, _, _ -> notifyListeners() }
+    var image by observable(image) { _, _, _ -> notifyListeners() }
 
+    private fun notifyListeners() = listeners.forEach {
+        launch(UI) {
+            it(this@GameObject)
+        }
+    }
 }

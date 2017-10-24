@@ -7,20 +7,23 @@ import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.OnLifecycleEvent
 import android.content.Context
 import android.location.Location
-import com.mapbox.services.android.location.LostLocationEngine
 import com.mapbox.services.android.telemetry.location.LocationEngine
 import com.mapbox.services.android.telemetry.location.LocationEngineListener
-import com.mapbox.services.android.telemetry.location.LocationEnginePriority
+import nl.pocketquest.pocketquest.SETTINGS.LOCATION_ENGINE.ACCURACY_MODE
+import nl.pocketquest.pocketquest.SETTINGS.LOCATION_ENGINE.DEFAULT_FASTEST_INTERVAL
+import nl.pocketquest.pocketquest.SETTINGS.LOCATION_ENGINE.DEFAULT_INTERVAL
+import nl.pocketquest.pocketquest.SETTINGS.LOCATION_ENGINE.LOCATION_PROVIDER
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
-class LocationEngineWrapper(private val context: Context, private var locationListener: (Location) -> Unit) : LocationEngineListener, AnkoLogger, LifecycleObserver {
-    companion object {
-        const val DEFAULT_FASTEST_INTERVAL = 500
-        const val DEFAULT_INTERVAL = 1000
-        const val ACCURACY_MODE = LocationEnginePriority.HIGH_ACCURACY
-        val LOCATION_PROVIDER = LostLocationEngine::getLocationEngine
-    }
+@SuppressLint("MissingPermission")
+class LocationEngineWrapper(
+        private val context: Context,
+        private var locationListener: (Location) -> Unit
+) : LocationEngineListener, AnkoLogger, LifecycleObserver {
+
+    private var currentLocation : Location? = null
+    val location : Location? get() = currentLocation
 
     lateinit var locationEngine: LocationEngine
         private set
@@ -28,19 +31,22 @@ class LocationEngineWrapper(private val context: Context, private var locationLi
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate(owner: LifecycleOwner) {
         info { "OnCreate was called." }
-        createLocationEngine()
-    }
-
-    private fun createLocationEngine() {
         locationEngine = LOCATION_PROVIDER(context).also {
             it.fastestInterval = DEFAULT_FASTEST_INTERVAL
             it.interval = DEFAULT_INTERVAL
             it.priority = ACCURACY_MODE
             it.addLocationEngineListener(this)
+            currentLocation = it.lastLocation
         }
     }
 
-    @SuppressLint("MissingPermission")
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onstart(owner: LifecycleOwner){
+        info { "Requesting updates from onStart" }
+        locationEngine.requestLocationUpdates()
+    }
+
+
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume(owner: LifecycleOwner) {
         locationEngine.activate()
@@ -51,7 +57,17 @@ class LocationEngineWrapper(private val context: Context, private var locationLi
         locationEngine.removeLocationUpdates()
     }
 
-    @SuppressLint("MissingPermission")
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onStop(owner: LifecycleOwner){
+        locationEngine.removeLocationUpdates()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun onDestroy(owner: LifecycleOwner){
+        locationEngine.deactivate()
+    }
+
+
     override fun onConnected() {
         info { "Connected to engine." }
         locationEngine.requestLocationUpdates()
@@ -60,6 +76,7 @@ class LocationEngineWrapper(private val context: Context, private var locationLi
     override fun onLocationChanged(location: Location?) {
         location?.also {
             info { "New location received: $location." }
+            currentLocation = it
             locationListener(it)
         }
     }
