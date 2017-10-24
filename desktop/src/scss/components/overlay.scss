@@ -1,45 +1,63 @@
 $overlay-tab-height: 36px;
 
-.overlay {
-  div.mdl-tabs__tab-bar {
-    display: flex;
-    height: $overlay-tab-height;
-  }
+.overlay-wrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
 
-  a.mdl-tabs__tab {
-    flex: 1;
+  .overlay {
+    @include user-select(none);
 
-    padding-bottom: 4px;
-
-    height: $overlay-tab-height;
-    line-height: calc(#{$overlay-tab-height} - 4px);
-
-    &:hover {
-      text-decoration: none;
+    &.overlay-left {
+      left: 0;
+      padding-right: 4px;
     }
 
-    &.is-active.overlay-tab {
-      position: relative;
+    &.overlay-right {
+      right: 0;
+      padding-left: 4px;
+    }
 
-      &:after {
-        display: block;
-        height: 4px;
-        width: 100%;
+    div.mdl-tabs__tab-bar {
+      display: flex;
+      height: $overlay-tab-height;
+    }
 
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
+    a.mdl-tabs__tab {
+      flex: 1;
 
-        background: white;
+      padding-bottom: 4px;
 
-        animation: grow-horizontally 60ms;
+      height: $overlay-tab-height;
+      line-height: calc(#{$overlay-tab-height} - 4px);
+
+      &:hover {
+        text-decoration: none;
+      }
+
+      &.is-active.overlay-tab {
+        position: relative;
+
+        &:after {
+          display: block;
+          height: 4px;
+          width: 100%;
+
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+
+          background: white;
+
+          animation: grow-horizontally 60ms;
+        }
       }
     }
-  }
 
-  .mdl-tab__panel {
-    padding: 16px;
+    .mdl-tab__panel {
+      padding: 16px;
+    }
   }
 }
 
