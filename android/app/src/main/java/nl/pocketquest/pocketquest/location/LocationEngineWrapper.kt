@@ -41,7 +41,7 @@ class LocationEngineWrapper(
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun onstart(owner: LifecycleOwner){
+    fun onStart(owner: LifecycleOwner){
         info { "Requesting updates from onStart" }
         locationEngine.requestLocationUpdates()
     }
@@ -52,10 +52,6 @@ class LocationEngineWrapper(
         locationEngine.activate()
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun onPause(owner: LifecycleOwner) {
-        locationEngine.removeLocationUpdates()
-    }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onStop(owner: LifecycleOwner){

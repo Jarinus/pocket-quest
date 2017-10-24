@@ -36,18 +36,18 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         Mapbox.getInstance(this, getString(R.string.mapbox_key))
 
         enableLocationPlugin()
+        lifecycle.addObserver(locationEngineWrapper)
 
         val mapFragment : SupportMapFragment
         if (savedInstanceState == null){
             val transaction = supportFragmentManager.beginTransaction()
-            val options = MapboxMapOptions().apply {
-                styleUrl(getString(R.string.mapbox_custom_style))
-                attributionEnabled(false)
-                logoEnabled(false)
-                camera {
-                    maxZoomPreference(18.1)
-                    minZoomPreference(18.1)
-                    scrollGesturesEnabled(false)
+            val options = buildMapboxOptions {
+                styleUrl = getString(R.string.mapbox_custom_style)
+                zoomPreference = 18.1
+                enabledgestures{
+                    all = false
+                }
+                cameraPosition {
                     locationEngineWrapper.location?.also { target(it.toLatLng()) }
                     zoom(18.1)
                     tilt(50.25)
@@ -61,7 +61,6 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
 
         mapFragment.getMapAsync {
             map = it
-
             info { "About to add the player marker" }
             addPlayerMarker()
             info { "Added the player marker" }
@@ -71,7 +70,6 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
             locationEngineWrapper.location?.apply(this::onLocationChanged) ?: info { "No last location found!" }
             info { "Set the last location from the map" }
         }
-        lifecycle.addObserver(locationEngineWrapper)
     }
 
     private fun GameObject.animate(frames: Sequence<Bitmap>, duration: Int)
@@ -81,8 +79,8 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         val frames = SpriteSheetCreator(decodeRss(R.drawable.santasprite), 4 xy 4).frames
         player = GameObject(0 latLong 0, loadImage(R.drawable.knight)).also {
             it.animate(frames, 42)
+            Game(map!!) += it
         }
-        Game(map!!) += player!!
     }
 
     @SuppressWarnings("MissingPermission")
