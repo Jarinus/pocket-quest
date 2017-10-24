@@ -149,9 +149,6 @@ update msg model =
                         inventoryPanel =
                             model.inventoryPanel
 
-                        inventory =
-                            Inventory.update (Inventory.NewRowWidth newWidth) model.inventory
-
                         xDifference =
                             position.x - drag.current.x
 
@@ -161,29 +158,33 @@ update msg model =
                         if (newWidth < inventoryPanel.minWidth) || (newWidth > inventoryPanel.maxWidth) then
                             model ! []
                         else
-                            { model
-                                | inventoryPanel =
-                                    { inventoryPanel
-                                        | drag =
-                                            Drag drag.start position
-                                                |> Just
-                                        , width = newWidth
-                                        , tabs =
-                                            Dict.update 0
-                                                (\tab ->
-                                                    case tab of
-                                                        Just tab_ ->
-                                                            Just { tab_ | content = viewInventory inventory }
+                            let
+                                inventory =
+                                    Inventory.update (Inventory.NewRowWidth newWidth) model.inventory
+                            in
+                                { model
+                                    | inventoryPanel =
+                                        { inventoryPanel
+                                            | drag =
+                                                Drag drag.start position
+                                                    |> Just
+                                            , width = newWidth
+                                            , tabs =
+                                                Dict.update 0
+                                                    (\tab ->
+                                                        case tab of
+                                                            Just tab_ ->
+                                                                Just { tab_ | content = viewInventory inventory }
 
-                                                        Nothing ->
-                                                            tab
-                                                )
-                                                inventoryPanel.tabs
-                                    }
-                                , inventory =
-                                    inventory
-                            }
-                                ! []
+                                                            Nothing ->
+                                                                tab
+                                                    )
+                                                    inventoryPanel.tabs
+                                        }
+                                    , inventory =
+                                        inventory
+                                }
+                                    ! []
 
                 Nothing ->
                     model ! []
