@@ -5,7 +5,7 @@ const itemSize = 48;
 const padding = 12;
 
 export default class InventoryItem extends React.Component {
-    static getItemsPerRow(width) {
+    static getNumberOfItemsPerRow(width) {
         if (!Number.isInteger(width)) {
             throw "Non-integer value: " + width;
         }

@@ -32,7 +32,7 @@ export default class InventoryOverlay extends React.Component {
     }
 
     renderInventoryItems() {
-        const itemsPerRow = InventoryItem.getItemsPerRow(this.state.width);
+        const itemsPerRow = InventoryItem.getNumberOfItemsPerRow(this.state.width);
         const splitItemsArray = ArrayUtils.chunk(this.props.items, itemsPerRow);
 
         return splitItemsArray.map(function (items, index) {
