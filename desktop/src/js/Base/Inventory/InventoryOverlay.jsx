@@ -4,6 +4,7 @@ import InventoryItem from "./InventoryItem.jsx";
 import ArrayUtils from '../../Util/ArrayUtils.jsx';
 import InventoryRow from "./InventoryRow.jsx";
 import ResizeHandle from "../../ResizeHandle/ResizeHandle.jsx";
+import {Content, Toolbar, ToolbarRow, ToolbarSection, ToolbarTitle} from 'react-mdc-web';
 
 export const itemSize = 48;
 export const padding = 12;
@@ -69,11 +70,19 @@ export default class InventoryOverlay extends React.Component {
 
         return <div id="inventory-overlay"
                     style={styleProperty}>
-            <h2>Inventory</h2>
-            <div id="inventory-container"
-                 style={style.container}>
-                {this.renderInventoryItems()}
-            </div>
+            <Toolbar>
+                <ToolbarRow>
+                    <ToolbarSection>
+                        <ToolbarTitle>Inventory</ToolbarTitle>
+                    </ToolbarSection>
+                </ToolbarRow>
+            </Toolbar>
+            <Content>
+                <div id="inventory-container"
+                     style={style.container}>
+                    {this.renderInventoryItems()}
+                </div>
+            </Content>
             <ResizeHandle id="inventory-overlay-resize-handle"
                           style={style.handle}
                           onResize={this.onResize.bind(this)}
