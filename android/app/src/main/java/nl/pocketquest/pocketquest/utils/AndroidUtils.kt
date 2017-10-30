@@ -15,4 +15,4 @@ import com.mapbox.mapboxsdk.annotations.IconFactory
 fun Bitmap.dimensions() = width xy height
 
 fun Activity.loadImage(@DrawableRes image: Int) = IconFactory.getInstance(this).fromResource(image)
-fun Context.decodeRss(@DrawableRes rss: Int) = BitmapFactory.decodeResource(resources, rss)
+fun Context.decodeResource(@DrawableRes rss: Int) = BitmapFactory.decodeResource(resources, rss)

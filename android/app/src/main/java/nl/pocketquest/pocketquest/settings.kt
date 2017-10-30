@@ -7,8 +7,8 @@ import com.mapbox.services.android.telemetry.location.LocationEnginePriority
 
 object SETTINGS{
     object LOCATION_ENGINE{
-        const val DEFAULT_FASTEST_INTERVAL = 500
-        const val DEFAULT_INTERVAL = 1000
+        const val DEFAULT_FASTEST_INTERVAL = 1000
+        const val DEFAULT_INTERVAL = 2000
         const val ACCURACY_MODE = LocationEnginePriority.HIGH_ACCURACY
         val LOCATION_PROVIDER : (Context)-> LocationEngine = LostLocationEngine::getLocationEngine
     }

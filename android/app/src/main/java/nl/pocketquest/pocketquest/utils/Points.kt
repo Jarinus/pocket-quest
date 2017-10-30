@@ -4,6 +4,7 @@ package nl.pocketquest.pocketquest.utils
 infix fun Number.xy(y: Number) = Point(this, y)
 infix fun Double.xy(y: Double) = DoublePoint(this, y)
 infix fun Int.xy(y: Int) = IntPoint(this, y)
+
 open class Point(open val x: Number, open val y: Number) {
     operator fun div(other: Point) : Point = (x / other.x) xy (y / other.y)
     operator fun times(other: Point) : Point = (x * other.x) xy (y * other.y)

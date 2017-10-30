@@ -1,27 +1,22 @@
 package nl.pocketquest.pocketquest
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.location.Location
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.maps.MapboxMap
-import com.mapbox.mapboxsdk.maps.MapboxMapOptions
 import com.mapbox.mapboxsdk.maps.SupportMapFragment
 import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
 import nl.pocketquest.pocketquest.game.Game
 import nl.pocketquest.pocketquest.game.GameObject
 import nl.pocketquest.pocketquest.location.LocationEngineWrapper
-import nl.pocketquest.pocketquest.sprites.GameObjectAnimator
 import nl.pocketquest.pocketquest.sprites.SpriteSheetCreator
 import nl.pocketquest.pocketquest.utils.*
-import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
 
-class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
+class MainActivity : BaseActivity(), PermissionsListener{
     private var map: MapboxMap? = null
     private var permissionsManager: PermissionsManager? = null
     private val locationEngineWrapper = LocationEngineWrapper(this, this::onLocationChanged)
@@ -35,7 +30,7 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         setContentView(R.layout.activity_main)
         Mapbox.getInstance(this, getString(R.string.mapbox_key))
 
-        enableLocationPlugin()
+        requestLocationPermission()
         lifecycle.addObserver(locationEngineWrapper)
 
         val mapFragment : SupportMapFragment
@@ -72,11 +67,8 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         }
     }
 
-    private fun GameObject.animate(frames: Sequence<Bitmap>, duration: Int)
-            = GameObjectAnimator(this@MainActivity, this, frames, duration).apply { start() }
-
     private fun addPlayerMarker() {
-        val frames = SpriteSheetCreator(decodeRss(R.drawable.santasprite), 4 xy 4).frames
+        val frames = SpriteSheetCreator(decodeResource(R.drawable.santasprite), 4 xy 4).frames
         player = GameObject(0 latLong 0, loadImage(R.drawable.knight)).also {
             it.animate(frames, 42)
             Game(map!!) += it
@@ -84,7 +76,7 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
     }
 
     @SuppressWarnings("MissingPermission")
-    private fun enableLocationPlugin() {
+    private fun requestLocationPermission() {
         if (!PermissionsManager.areLocationPermissionsGranted(this)) {
             permissionsManager = PermissionsManager(this).also {
                 it.requestLocationPermissions(this)
@@ -99,7 +91,7 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
     override fun onExplanationNeeded(permissionsToExplain: MutableList<String>?) = Unit
 
     override fun onPermissionResult(granted: Boolean) {
-        if (granted) enableLocationPlugin() else finish()
+        if (!granted) finish()
     }
 
     private fun onLocationChanged(location: Location) {

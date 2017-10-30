@@ -8,8 +8,7 @@ import nl.pocketquest.pocketquest.utils.addMarker
 class Game(private val map: MapboxMap) {
     private val gameObjects = mutableMapOf<GameObject, Marker>()
 
-    operator fun plusAssign(gameObject: GameObject) = addGameObject(gameObject)
-    fun addGameObject(gameObject: GameObject) {
+    operator fun plusAssign(gameObject: GameObject) {
         val marker = map.addMarker {
             icon = gameObject.image
             position = gameObject.location
@@ -21,7 +20,7 @@ class Game(private val map: MapboxMap) {
         gameObjects[gameObject] = marker
     }
 
-    fun removeGameObject(gameObject: GameObject) {
+    operator fun minusAssign(gameObject: GameObject) {
         gameObjects[gameObject]?.also(map::removeMarker)
         gameObjects -= gameObject
     }

@@ -16,7 +16,7 @@ import kotlin.properties.Delegates.observable
  */
 
 typealias Consumer<T> = suspend CoroutineScope.(T) -> Unit
-class GameObject(location: LatLng, image: Icon) {
+open class GameObject(location: LatLng, image: Icon) {
 
     private val listeners = mutableListOf<Consumer<GameObject>>()
     fun onChange(consumer: Consumer<GameObject>) = listeners.add(consumer)

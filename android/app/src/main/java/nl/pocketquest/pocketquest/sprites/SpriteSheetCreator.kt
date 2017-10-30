@@ -16,7 +16,7 @@ class SpriteSheetCreator(
     val frames: Sequence<Bitmap> = numberOfFrames.toIntPoint()
             .allSmallerPoints()
             .map(this::subBitMap)
-            .map { it.padded(1.05 xy 1.8) }
+            .map { it.padded(1 xy 1) }
 
     private fun subBitMap(frameNumber: IntPoint): Bitmap {
         val frameSize = spriteSheetDimensions / numberOfFrames
