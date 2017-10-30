@@ -10,6 +10,7 @@ import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
 import nl.pocketquest.pocketquest.game.Game
 import nl.pocketquest.pocketquest.game.GameObject
+import nl.pocketquest.pocketquest.game.entities.Entity
 import nl.pocketquest.pocketquest.location.LocationEngineWrapper
 import nl.pocketquest.pocketquest.sprites.SpriteSheetCreator
 import nl.pocketquest.pocketquest.utils.*
@@ -28,6 +29,7 @@ class MainActivity : BaseActivity(), PermissionsListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         whenLoggedIn { toast(it.uid) }
+        Entity("images/tree.png", this).resolveImage()
         info { "Starting onCreate" }
         setContentView(R.layout.activity_main)
         requestLocationPermission()
