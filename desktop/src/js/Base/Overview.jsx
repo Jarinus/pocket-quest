@@ -15,7 +15,9 @@ const items = [
 export default class Overview extends React.Component {
     render() {
         return <div id="base-overview">
-            <InventoryOverlay items={items}/>
+            <InventoryOverlay items={items}
+                              minItemsPerRow={4}
+                              maxItemsPerRow={8}/>
         </div>;
     }
 }

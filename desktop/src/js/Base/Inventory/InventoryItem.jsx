@@ -10,7 +10,11 @@ export default class InventoryItem extends React.Component {
             throw "Non-integer value: " + width;
         }
 
-        return Math.floor((width + padding) / (itemSize + padding));
+        return Math.floor((width - padding) / (itemSize + padding));
+    }
+
+    static getWidthForNumberOfItemsPerRow(numberOfItems) {
+        return padding + ((itemSize + padding) * numberOfItems);
     }
 
     render() {
@@ -33,8 +37,10 @@ InventoryItem.propTypes = {
 
 const style = {
     item: {
-        width: itemSize,
-        height: itemSize,
+        minWidth: itemSize,
+        maxWidth: itemSize,
+        minHeight: itemSize,
+        maxHeight: itemSize,
         overflow: 'hidden',
         backgroundColor: 'gray',
 
