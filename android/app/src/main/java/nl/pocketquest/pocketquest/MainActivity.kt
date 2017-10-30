@@ -14,9 +14,10 @@ import nl.pocketquest.pocketquest.location.LocationEngineWrapper
 import nl.pocketquest.pocketquest.sprites.SpriteSheetCreator
 import nl.pocketquest.pocketquest.utils.*
 import org.jetbrains.anko.info
+import org.jetbrains.anko.toast
 
 
-class MainActivity : BaseActivity(), PermissionsListener{
+class MainActivity : BaseActivity(), PermissionsListener {
     private var map: MapboxMap? = null
     private var permissionsManager: PermissionsManager? = null
     private val locationEngineWrapper = LocationEngineWrapper(this, this::onLocationChanged)
@@ -26,20 +27,21 @@ class MainActivity : BaseActivity(), PermissionsListener{
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        whenLoggedIn { toast(it.uid) }
         info { "Starting onCreate" }
         setContentView(R.layout.activity_main)
+        requestLocationPermission()
         Mapbox.getInstance(this, getString(R.string.mapbox_key))
 
-        requestLocationPermission()
         lifecycle.addObserver(locationEngineWrapper)
 
-        val mapFragment : SupportMapFragment
-        if (savedInstanceState == null){
+        val mapFragment: SupportMapFragment
+        if (savedInstanceState == null) {
             val transaction = supportFragmentManager.beginTransaction()
             val options = buildMapboxOptions {
                 styleUrl = getString(R.string.mapbox_custom_style)
                 zoomPreference = 18.1
-                enabledgestures{
+                enabledgestures {
                     all = false
                 }
                 cameraPosition {
