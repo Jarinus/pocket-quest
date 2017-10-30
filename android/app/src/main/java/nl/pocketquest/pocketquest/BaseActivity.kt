@@ -9,8 +9,7 @@ import org.jetbrains.anko.AnkoLogger
 
 @SuppressLint("Registered")
 open class BaseActivity : AppCompatActivity(), AnkoLogger{
-    private fun GameObject.animate(frames: Sequence<Bitmap>, duration: Int)
+    fun GameObject.animate(frames: Sequence<Bitmap>, duration: Int)
             = GameObjectAnimator(this@BaseActivity, this, frames, duration).apply { start() }
 
-    private fun GameObject.load
 }
