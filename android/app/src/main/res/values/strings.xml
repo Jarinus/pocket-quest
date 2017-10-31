@@ -1,4 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" tools:override="true">PocketQuest</string>
-    <string name="mapbox_key">pk.eyJ1IjoidGllc2tlZGgiLCJhIjoiY2o4bjJ4a2M4MTBldTMzcXRiaXNqdG5wMyJ9.rGorlVQ5eWsSoMQnjyLxmQ</string>
+    <string name="mapbox_key">pk.eyJ1IjoiamFyaW51cyIsImEiOiJjajh1MmV1b20wcDh5MndvYnhrbGs3ZmdrIn0.mk-KM9HSj21OzuLpdBGKqg</string>
+    <string name="mapbox_custom_style">mapbox://styles/jarinus/cj8u2fi7qdwu22rqrri1hl2bc</string>
+    <item name="text_line_spacing" format="float" type="dimen">1.0</item>
 </resources>

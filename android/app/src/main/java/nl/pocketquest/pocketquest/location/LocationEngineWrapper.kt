@@ -1,4 +1,4 @@
-package nl.pocketquest.pocketquest
+package nl.pocketquest.pocketquest.location
 
 import android.annotation.SuppressLint
 import android.arch.lifecycle.Lifecycle
@@ -7,7 +7,7 @@ import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.OnLifecycleEvent
 import android.content.Context
 import android.location.Location
-import com.mapbox.services.android.telemetry.location.AndroidLocationEngine
+import com.mapbox.services.android.location.LostLocationEngine
 import com.mapbox.services.android.telemetry.location.LocationEngine
 import com.mapbox.services.android.telemetry.location.LocationEngineListener
 import com.mapbox.services.android.telemetry.location.LocationEnginePriority
@@ -19,7 +19,7 @@ class LocationEngineWrapper(private val context: Context, private var locationLi
         const val DEFAULT_FASTEST_INTERVAL = 500
         const val DEFAULT_INTERVAL = 1000
         const val ACCURACY_MODE = LocationEnginePriority.HIGH_ACCURACY
-        val LOCATION_PROVIDER = AndroidLocationEngine::getLocationEngine
+        val LOCATION_PROVIDER = LostLocationEngine::getLocationEngine
     }
 
     lateinit var locationEngine: LocationEngine

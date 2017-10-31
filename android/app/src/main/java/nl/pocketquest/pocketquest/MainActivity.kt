@@ -1,23 +1,28 @@
 package nl.pocketquest.pocketquest
 
 import android.annotation.SuppressLint
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import com.mapbox.mapboxsdk.Mapbox
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
+import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
 import com.mapbox.services.android.telemetry.location.LocationEngine
 import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
 import kotlinx.android.synthetic.main.activity_main.*
+import nl.pocketquest.pocketquest.game.Game
+import nl.pocketquest.pocketquest.game.GameObject
+import nl.pocketquest.pocketquest.location.LocationEngineWrapper
+import nl.pocketquest.pocketquest.sprites.Point
+import nl.pocketquest.pocketquest.sprites.GameObjectAnimator
+import nl.pocketquest.pocketquest.sprites.SpriteSheetCreator
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
-import org.jetbrains.anko.toast
 
 
 class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
@@ -26,6 +31,9 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
     private var locationPlugin: LocationLayerPlugin? = null
     private var locationEngine: LocationEngine? = null
     private val locationEngineWrapper = LocationEngineWrapper(this, this::onLocationChanged)
+    private var currentLocation: Location? = null
+    private var player: GameObject? = null
+
 
     companion object {
         const val MIN_CAMERA_ZOOM = 18.0
@@ -33,6 +41,7 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         const val DEFAULT_CAMERA_ZOOM = MIN_CAMERA_ZOOM
     }
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         info { "Starting onCreate" }
@@ -40,42 +49,29 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         setContentView(R.layout.activity_main)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync {
-            map = it.apply {
-                cameraZoom = MIN_CAMERA_ZOOM..MAX_CAMERA_ZOOM
-            }
+            map = it
+            info { "About to add the player marker" }
+            val frames = SpriteSheetCreator(BitmapFactory.decodeResource(resources, R.drawable.santasprite), Point(4, 4)).frames
+            player = GameObject(LatLng(0.0, 0.0), IconFactory.getInstance(this).fromResource(R.drawable.knight))
+            GameObjectAnimator(this, player!!, frames, 42).start()
+            Game(this, map!!).addGameObject(player!!)
+            info { "Added the player marker" }
             enableLocationPlugin()
+            info { "Map is loaded" }
+            (currentLocation ?: locationEngine?.lastLocation)?.apply(this::onLocationChanged) ?: info { "No last location found!" }
+            info { "Set the last location from the map" }
         }
         lifecycle.addObserver(locationEngineWrapper)
     }
 
-    private var MapboxMap.cameraZoom: ClosedFloatingPointRange<Double>
-        get() = minZoomLevel..maxZoomLevel
-        set(value) {
-            setMaxZoomPreference(value.endInclusive)
-            setMinZoomPreference(value.start)
-        }
-
     @SuppressWarnings("MissingPermission")
     private fun enableLocationPlugin() {
-        if (PermissionsManager.areLocationPermissionsGranted(this)) {
-            onLocationChanged(locationEngine!!.lastLocation)
-            info { "Got the last location" }
-            locationPlugin = LocationLayerPlugin(mapView, map!!, locationEngine).apply {
-                setLocationLayerEnabled(LocationLayerMode.COMPASS)
-            }
-        } else {
+        if (!PermissionsManager.areLocationPermissionsGranted(this)) {
             permissionsManager = PermissionsManager(this).also {
                 it.requestLocationPermissions(this)
             }
         }
     }
-
-    private var cameraPosition: Location
-        @Deprecated("only setter", level = DeprecationLevel.HIDDEN)
-        get() = throw UnsupportedOperationException()
-        set(location) = map!!.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(LatLng(location), DEFAULT_CAMERA_ZOOM)
-        )
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         permissionsManager!!.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -87,11 +83,14 @@ class MainActivity : AppCompatActivity(), PermissionsListener, AnkoLogger {
         if (granted) enableLocationPlugin() else finish()
     }
 
-    private fun onLocationChanged(location: Location?) {
-        location?.also {
-            toast("Lat: ${it.latitude}. Long: ${it.longitude}")
-            cameraPosition = location
+    private fun onLocationChanged(location: Location) {
+        info { "new Currentlocation = $location" }
+        runOnUiThread {
+            map?.setCameraPosition(location)
+            locationPlugin?.forceLocationUpdate(currentLocation)
+            player?.location = location.toLatLng()
         }
+        currentLocation = location
     }
 
     @SuppressLint("MissingPermission")
