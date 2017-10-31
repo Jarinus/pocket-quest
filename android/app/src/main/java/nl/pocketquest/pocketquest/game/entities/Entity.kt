@@ -5,6 +5,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
+import nl.pocketquest.pocketquest.utils.STORAGE
 import nl.pocketquest.pocketquest.utils.toBitmap
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.coroutines.experimental.asReference
@@ -15,7 +16,7 @@ class Entity(private val iconName: String) : AnkoLogger {
         val ref = context.asReference()
         async(CommonPool) {
             GlideApp.with(ref.invoke())
-                    .load(FirebaseStorage.getInstance().getReference(iconName))
+                    .load(STORAGE.getReference(iconName))
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .submit()
                     .get()

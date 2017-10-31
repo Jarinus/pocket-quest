@@ -67,7 +67,6 @@ class MainActivity : BaseActivity(), PermissionsListener {
             info { "About to add the player marker" }
             addPlayerMarker()
             info { "Added the player marker" }
-
             locationEngineWrapper.location?.also { map?.setCameraPosition(it) }
             info { "Map is loaded" }
             locationEngineWrapper.location?.apply(this::onLocationChanged) ?: info { "No last location found!" }

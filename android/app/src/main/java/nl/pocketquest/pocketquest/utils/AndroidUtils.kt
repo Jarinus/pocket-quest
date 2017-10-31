@@ -13,9 +13,7 @@ import com.mapbox.mapboxsdk.annotations.IconFactory
 
 
 fun Bitmap.dimensions() = width xy height
-
 fun Drawable.toBitmap(): Bitmap = (this as? BitmapDrawable)?.bitmap ?: drawBitmap()
-
 private fun Drawable.drawBitmap(): Bitmap {
     val width = maxOf(intrinsicWidth, 1)
     val height = maxOf(intrinsicHeight, 1)
