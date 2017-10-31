@@ -26,6 +26,16 @@ export default class InventoryOverlay extends React.Component {
         }
     }
 
+    static renderToolbar() {
+        return <Toolbar>
+            <ToolbarRow>
+                <ToolbarSection>
+                    <ToolbarTitle>Inventory</ToolbarTitle>
+                </ToolbarSection>
+            </ToolbarRow>
+        </Toolbar>;
+    }
+
     snapToClosestNumberOfItems(actualWidth) {
         const numberOfItemsPerRow = InventoryItem.getNumberOfItemsPerRow(actualWidth);
         const calculatedLowerSnapWidth = InventoryItem.getWidthForNumberOfItemsPerRow(numberOfItemsPerRow);
@@ -70,13 +80,7 @@ export default class InventoryOverlay extends React.Component {
 
         return <div id="inventory-overlay"
                     style={styleProperty}>
-            <Toolbar>
-                <ToolbarRow>
-                    <ToolbarSection>
-                        <ToolbarTitle>Inventory</ToolbarTitle>
-                    </ToolbarSection>
-                </ToolbarRow>
-            </Toolbar>
+            {InventoryOverlay.renderToolbar()}
             <Content>
                 <div id="inventory-container"
                      style={style.container}>
