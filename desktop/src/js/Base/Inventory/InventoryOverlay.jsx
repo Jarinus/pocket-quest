@@ -4,7 +4,7 @@ import InventoryItem from "./InventoryItem.jsx";
 import ArrayUtils from '../../Util/ArrayUtils.jsx';
 import InventoryRow from "./InventoryRow.jsx";
 import ResizeHandle from "../../ResizeHandle/ResizeHandle.jsx";
-import {Content, Toolbar, ToolbarRow, ToolbarSection, Title} from 'react-mdc-web';
+import {Content, Title, Toolbar, ToolbarRow, ToolbarSection} from 'react-mdc-web';
 
 export const itemSize = 48;
 export const padding = 12;

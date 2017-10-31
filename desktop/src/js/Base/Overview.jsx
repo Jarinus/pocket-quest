@@ -1,5 +1,9 @@
 import React from 'react';
 import InventoryOverlay from "./Inventory/InventoryOverlay.jsx";
+import background from '../../../assets/images/background.png';
+import townHall from '../../../assets/images/town-hall.png';
+
+const path = require('path');
 
 const items = [
     'Axe',
@@ -11,11 +15,6 @@ const items = [
     'Axe Handle',
     'Iron Axe Head'
 ];
-
-import background from '../../../assets/images/background.png';
-import townHall from '../../../assets/images/town-hall.png';
-
-const path = require('path');
 
 export default class Overview extends React.Component {
     constructor(props) {
