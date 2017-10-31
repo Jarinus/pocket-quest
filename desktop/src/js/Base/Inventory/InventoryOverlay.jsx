@@ -4,7 +4,7 @@ import InventoryItem from "./InventoryItem.jsx";
 import ArrayUtils from '../../Util/ArrayUtils.jsx';
 import InventoryRow from "./InventoryRow.jsx";
 import ResizeHandle from "../../ResizeHandle/ResizeHandle.jsx";
-import {Content, Toolbar, ToolbarRow, ToolbarSection, ToolbarTitle} from 'react-mdc-web';
+import {Content, Title, Toolbar, ToolbarRow, ToolbarSection} from 'react-mdc-web';
 
 export const itemSize = 48;
 export const padding = 12;
@@ -24,6 +24,16 @@ export default class InventoryOverlay extends React.Component {
             minWidth: InventoryItem.getWidthForNumberOfItemsPerRow(this.props.minItemsPerRow),
             maxWidth: InventoryItem.getWidthForNumberOfItemsPerRow(this.props.maxItemsPerRow) + resizeHandleWidth
         }
+    }
+
+    static renderToolbar() {
+        return <Toolbar>
+            <ToolbarRow>
+                <ToolbarSection>
+                    <Title>Inventory</Title>
+                </ToolbarSection>
+            </ToolbarRow>
+        </Toolbar>;
     }
 
     snapToClosestNumberOfItems(actualWidth) {
@@ -70,13 +80,7 @@ export default class InventoryOverlay extends React.Component {
 
         return <div id="inventory-overlay"
                     style={styleProperty}>
-            <Toolbar>
-                <ToolbarRow>
-                    <ToolbarSection>
-                        <ToolbarTitle>Inventory</ToolbarTitle>
-                    </ToolbarSection>
-                </ToolbarRow>
-            </Toolbar>
+            {InventoryOverlay.renderToolbar()}
             <Content>
                 <div id="inventory-container"
                      style={style.container}>
@@ -117,7 +121,7 @@ const style = {
         top: 0,
         bottom: 0,
         left: 0,
-        userSelect: 'none'
+        background: 'white'
     },
     container: {
         display: 'flex',
