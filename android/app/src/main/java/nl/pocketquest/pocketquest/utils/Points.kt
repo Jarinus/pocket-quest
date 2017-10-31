@@ -1,6 +1,5 @@
 package nl.pocketquest.pocketquest.utils
 
-
 infix fun Number.xy(y: Number) = Point(this, y)
 infix fun Double.xy(y: Double) = DoublePoint(this, y)
 infix fun Int.xy(y: Int) = IntPoint(this, y)

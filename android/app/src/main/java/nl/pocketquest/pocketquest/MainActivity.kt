@@ -15,7 +15,8 @@ import nl.pocketquest.pocketquest.sprites.SpriteSheetCreator
 import nl.pocketquest.pocketquest.utils.*
 import org.jetbrains.anko.info
 
-
+private const val MAPBOX_TAG = "com.mapbox.map"
+private const val ANIMATION_DURATION = 42
 class MainActivity : BaseActivity(), PermissionsListener {
     private var map: MapboxMap? = null
     private var permissionsManager: PermissionsManager? = null
@@ -31,53 +32,47 @@ class MainActivity : BaseActivity(), PermissionsListener {
         requestLocationPermission()
         Mapbox.getInstance(this, getString(R.string.mapbox_key))
         lifecycle.addObserver(locationEngineWrapper)
-        val mapFragment = createOrLoadMapView(savedInstanceState)
-        initializeMap(mapFragment)
+        createOrLoadMapView(savedInstanceState).getMapAsync(this::initializeMap)
     }
 
     private fun createOrLoadMapView(savedInstanceState: Bundle?): SupportMapFragment {
-        val mapFragment: SupportMapFragment
-        if (savedInstanceState == null) {
-            val transaction = supportFragmentManager.beginTransaction()
-            mapFragment = SupportMapFragment.newInstance(createMapboxOptions())
-            transaction.replace(R.id.mapFragment, mapFragment, "com.mapbox.map").commit()
-        } else {
-            mapFragment = supportFragmentManager.findFragmentByTag("com.mapbox.map") as SupportMapFragment
+        savedInstanceState ?: return supportFragmentManager.findFragmentByTag(MAPBOX_TAG) as SupportMapFragment
+        val mapFragment = SupportMapFragment.newInstance(createMapboxOptions())
+        supportFragmentManager.doTransaction {
+            replace(R.id.mapFragment, mapFragment, MAPBOX_TAG)
         }
         return mapFragment
     }
 
     private fun createMapboxOptions() = buildMapboxOptions {
         styleUrl = getString(R.string.mapbox_custom_style)
-        zoomPreference = 18.1
+        zoomPreference = SETTINGS.MAPBOX_MAP.CAMERA_ZOOM
         enabledgestures {
             all = false
         }
         cameraPosition {
             locationEngineWrapper.location?.also { target(it.toLatLng()) }
-            zoom(18.1)
-            tilt(50.25)
+            zoom(SETTINGS.MAPBOX_MAP.CAMERA_ZOOM)
+            tilt(SETTINGS.MAPBOX_MAP.CAMERA_TILT)
         }
     }
 
 
-    private fun initializeMap(mapFragment: SupportMapFragment) {
-        mapFragment.getMapAsync {
-            map = it
+    private fun initializeMap(mapboxMap: MapboxMap) {
+            map = mapboxMap
             info { "About to add the player marker" }
             addPlayerMarker()
             info { "Added the player marker" }
             locationEngineWrapper.location?.also { map?.setCameraPosition(it) }
             info { "Map is loaded" }
-            locationEngineWrapper.location?.apply(this::onLocationChanged) ?: info { "No last location found!" }
+            locationEngineWrapper.location?.apply(this@MainActivity::onLocationChanged) ?: info { "No last location found!" }
             info { "Set the last location from the map" }
-        }
     }
 
     private fun addPlayerMarker() {
         val frames = SpriteSheetCreator(decodeResource(R.drawable.santasprite), 4 xy 4).frames
         player = GameObject(0 latLong 0, loadImage(R.drawable.knight)).also {
-            it.animate(frames, 42)
+            it.animate(frames, ANIMATION_DURATION)
             Game(map!!) += it
         }
     }

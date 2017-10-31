@@ -8,21 +8,19 @@ import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.MapboxMapOptions
-import nl.pocketquest.pocketquest.SETTINGS.MAPBOXMAP.DEFAULT_CAMERA_ZOOM
+import nl.pocketquest.pocketquest.SETTINGS.MAPBOX_MAP.CAMERA_ZOOM
 
 fun Location.toLatLng() = LatLng(this)
 operator fun LatLng.plus(other: LatLng) = LatLng(latitude + other.latitude, longitude + other.longitude)
 
-
 fun MapboxMap.setCameraPosition(location: Location) {
-    animateCamera(CameraUpdateFactory.newLatLngZoom(location.toLatLng(), DEFAULT_CAMERA_ZOOM))
+    animateCamera(CameraUpdateFactory.newLatLngZoom(location.toLatLng(), CAMERA_ZOOM))
 }
 
 infix fun Number.latLong(longitude: Number) = LatLng(this.toDouble(), longitude.toDouble())
 
 fun MapboxMap.addMarker(build: MarkerOptionBuilder.() -> Unit) = addMarker(buildMarkerOptions(build))
 fun buildMarkerOptions(build: MarkerOptionBuilder.() -> Unit) = MarkerOptionBuilder.build(build)
-
 
 class MarkerOptionBuilder {
     private var markerOptions = MarkerOptions()
@@ -72,7 +70,8 @@ class MapBoxOptionsDSL(private val mapboxMapOptions: MapboxMapOptions) {
     }
 
     fun cameraPosition(cameraOptions: CameraPosition.Builder.() -> Unit) {
-        mapboxMapOptions.camera(CameraPosition.Builder().also(cameraOptions).build())
+        val cameraPosition = CameraPosition.Builder().also(cameraOptions).build()
+        mapboxMapOptions.camera(cameraPosition)
     }
 
     var zoomPreference: Double
@@ -81,12 +80,12 @@ class MapBoxOptionsDSL(private val mapboxMapOptions: MapboxMapOptions) {
             mapboxMapOptions.minZoomPreference(value)
             mapboxMapOptions.maxZoomPreference(value)
         }
+
     var styleUrl
         get() = mapboxMapOptions.style
         set(value) {
             mapboxMapOptions.styleUrl(value)
         }
-
 
     inner class Gestures {
         operator fun invoke(apply: Gestures.() -> Unit) = this.apply(apply)
@@ -119,6 +118,7 @@ class MapBoxOptionsDSL(private val mapboxMapOptions: MapboxMapOptions) {
             set(value) {
                 mapboxMapOptions.doubleTapGesturesEnabled(value)
             }
+
         var all: Boolean
             set(value) {
                 scroll = false

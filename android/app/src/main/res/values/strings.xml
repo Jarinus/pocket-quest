@@ -3,7 +3,4 @@
     <string name="mapbox_key">pk.eyJ1IjoiamFyaW51cyIsImEiOiJjajh1MmV1b20wcDh5MndvYnhrbGs3ZmdrIn0.mk-KM9HSj21OzuLpdBGKqg</string>
     <string name="mapbox_custom_style">mapbox://styles/jarinus/cj8u2fi7qdwu22rqrri1hl2bc</string>
     <item name="text_line_spacing" format="float" type="dimen">1.0</item>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

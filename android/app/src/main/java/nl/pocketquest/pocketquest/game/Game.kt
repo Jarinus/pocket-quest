@@ -4,7 +4,6 @@ import com.mapbox.mapboxsdk.annotations.Marker
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import nl.pocketquest.pocketquest.utils.addMarker
 
-
 class Game(private val map: MapboxMap) {
     private val gameObjects = mutableMapOf<GameObject, Marker>()
 

@@ -13,7 +13,8 @@ object SETTINGS {
         val LOCATION_PROVIDER: (Context) -> LocationEngine = LostLocationEngine::getLocationEngine
     }
 
-    object MAPBOXMAP {
-        const val DEFAULT_CAMERA_ZOOM = 18.0
+    object MAPBOX_MAP {
+        const val CAMERA_ZOOM = 18.0
+        const val CAMERA_TILT = 50.25
     }
 }
