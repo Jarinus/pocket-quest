@@ -13,7 +13,8 @@ class GameObjectAnimator(
         private val context: Context,
         private val gameObject: GameObject,
         frames: Sequence<Bitmap>,
-        private val animationDuration: Int) {
+        private val animationDuration: Int
+) {
     private var index = 0
     private val frames = frames.map { IconFactory.getInstance(context).fromBitmap(it) }.toList()
 

@@ -9,9 +9,7 @@ import com.firebase.ui.storage.images.FirebaseImageLoader
 import com.google.firebase.storage.StorageReference
 import java.io.InputStream
 
-/**
- * Created by Laurens on 30-10-2017.
- */
+
 @GlideModule
 open class GlideModule : AppGlideModule() {
 

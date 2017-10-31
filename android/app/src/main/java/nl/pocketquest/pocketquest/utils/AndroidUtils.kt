@@ -2,6 +2,7 @@ package nl.pocketquest.pocketquest.utils
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -11,9 +12,6 @@ import android.support.annotation.DrawableRes
 import com.mapbox.mapboxsdk.annotations.IconFactory
 
 
-/**
- * Created by thijs on 20-10-2017.
- */
 fun Bitmap.dimensions() = width xy height
 
 fun Drawable.toBitmap(): Bitmap = (this as? BitmapDrawable)?.bitmap ?: drawBitmap()
@@ -23,7 +21,7 @@ private fun Drawable.drawBitmap(): Bitmap {
     val height = maxOf(intrinsicHeight, 1)
     val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
-    setBounds(0, 0, canvas.getWidth(), canvas.getHeight())
+    setBounds(0, 0, canvas.width, canvas.height)
     draw(canvas)
     return bitmap
 }

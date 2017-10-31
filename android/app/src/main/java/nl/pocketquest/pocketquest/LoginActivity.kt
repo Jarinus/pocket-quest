@@ -1,4 +1,4 @@
-package nl.pocketquest.pocketquest.login
+package nl.pocketquest.pocketquest
 
 import android.app.Activity
 import android.content.Intent
@@ -7,9 +7,10 @@ import android.support.v7.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
+import nl.hanze.distanceswimming.extensions.firebase.AUTH_UI
+import nl.hanze.distanceswimming.extensions.firebase.setAvailableProviders
 import nl.hanze.distanceswimming.extensions.firebase.buildSignInIntent
 import nl.hanze.distanceswimming.extensions.firebase.provider
-import nl.pocketquest.pocketquest.MainActivity
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
@@ -20,11 +21,10 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val authUi = AuthUI.getInstance()
-        val intent = authUi.buildSignInIntent {
-            setAvailableProviders(listOf(
+        val intent = AUTH_UI.buildSignInIntent {
+            setAvailableProviders(
                     provider(AuthUI.GOOGLE_PROVIDER)
-            ))
+            )
         }
         startActivityForResult(intent, RC_SIGN_IN)
     }
@@ -33,17 +33,14 @@ class LoginActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (RC_SIGN_IN != requestCode) return
         val response = IdpResponse.fromResultIntent(data)
-        when {
-            resultCode == Activity.RESULT_OK -> startMainActivity()
-            response == null -> toast("Response is null")
-            response.errorCode == ErrorCodes.NO_NETWORK -> toast("No network")
-            response.errorCode == ErrorCodes.UNKNOWN_ERROR -> toast("Unexpected error")
-            else -> toast("Unknown sign in response")
-        }
-    }
-
-    private inline fun startMainActivity() {
-        startActivity<MainActivity>()
-        finish()
+        if (resultCode == Activity.RESULT_OK) {
+            startActivity<MainActivity>()
+            finish()
+        } else toast(when {
+            response == null -> "Response is null"
+            response.errorCode == ErrorCodes.NO_NETWORK -> "No network"
+            response.errorCode == ErrorCodes.UNKNOWN_ERROR -> "Unexpected error"
+            else -> "Unknown sign in response"
+        })
     }
 }

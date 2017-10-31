@@ -10,12 +10,9 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.coroutines.experimental.asReference
 import org.jetbrains.anko.info
 
-/**
- * Created by Laurens on 30-10-2017.
- */
-class Entity(private val iconName: String, val context: Context) : AnkoLogger {
+class Entity(private val iconName: String) : AnkoLogger {
 
-    fun resolveImage() {
+    fun resolveImage(context: Context) {
         val ref = context.asReference()
         async(CommonPool) {
             GlideApp.with(ref.invoke())
