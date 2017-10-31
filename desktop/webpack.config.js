@@ -13,6 +13,10 @@ module.exports = {
             {
                 test : /\.jsx?/,
                 loader : 'babel-loader'
+            },
+            {
+                test : /\.png?/,
+                loader : 'file-loader'
             }
         ]
     },

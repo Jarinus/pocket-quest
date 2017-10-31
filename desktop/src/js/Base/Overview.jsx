@@ -12,9 +12,57 @@ const items = [
     'Iron Axe Head'
 ];
 
+import background from '../../../assets/images/background.png';
+import townHall from '../../../assets/images/town-hall.png';
+
+const path = require('path');
+
 export default class Overview extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            width: window.innerWidth,
+            height: window.innerHeight
+        }
+    }
+
+    componentDidMount() {
+        window.addEventListener("resize", this.updateDimensions.bind(this));
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.updateDimensions.bind(this));
+    }
+
+    updateDimensions() {
+        const state = this.state;
+        state.width = window.innerWidth;
+        state.height = window.innerHeight;
+        this.setState(state);
+    }
+
+    renderTownHall() {
+        const townHallUrl = path.join('js', townHall);
+        const style = {
+            position: 'absolute',
+            top: (this.state.height - 409) / 2,
+            left: (this.state.width - 564) / 2
+        };
+
+        return <img src={townHallUrl} style={style} draggable={false}/>
+    }
+
     render() {
-        return <div id="base-overview">
+        const backgroundUrl = path.join('js', background);
+        const fillFullScreenStyleProperty = {
+            width: this.state.width,
+            height: this.state.height
+        };
+
+        return <div id="base-overview" style={{position: 'relative'}}>
+            <img src={backgroundUrl} style={fillFullScreenStyleProperty} draggable={false}/>
+            {this.renderTownHall()}
             <InventoryOverlay items={items}
                               minItemsPerRow={4}
                               maxItemsPerRow={8}/>
