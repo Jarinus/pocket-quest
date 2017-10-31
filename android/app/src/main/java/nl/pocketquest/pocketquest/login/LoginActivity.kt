@@ -31,33 +31,19 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode === RC_SIGN_IN) {
-            val response = IdpResponse.fromResultIntent(data)
-
-            // Successfully signed in
-            if (resultCode === Activity.RESULT_OK) {
-                startActivity<MainActivity>()
-                finish()
-                return
-            }else
-
-            // Sign in failed
-            if (response == null) {
-                toast("Response is null")
-                return
-            }else
-
-            if (response.errorCode == ErrorCodes.NO_NETWORK) {
-                toast("No network")
-                return
-            }else
-
-            if (response.errorCode == ErrorCodes.UNKNOWN_ERROR) {
-                toast("Unexpected error")
-                return
-            }
-
-            toast("Unknown sign in response")
+        if (RC_SIGN_IN != requestCode) return
+        val response = IdpResponse.fromResultIntent(data)
+        when {
+            resultCode == Activity.RESULT_OK -> startMainActivity()
+            response == null -> toast("Response is null")
+            response.errorCode == ErrorCodes.NO_NETWORK -> toast("No network")
+            response.errorCode == ErrorCodes.UNKNOWN_ERROR -> toast("Unexpected error")
+            else -> toast("Unknown sign in response")
         }
+    }
+
+    private inline fun startMainActivity() {
+        startActivity<MainActivity>()
+        finish()
     }
 }

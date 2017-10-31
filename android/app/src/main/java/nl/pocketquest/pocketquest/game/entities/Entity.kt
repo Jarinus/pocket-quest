@@ -15,7 +15,6 @@ import org.jetbrains.anko.info
  */
 class Entity(private val iconName: String, val context: Context) : AnkoLogger {
 
-
     fun resolveImage() {
         val ref = context.asReference()
         async(CommonPool) {
@@ -28,7 +27,6 @@ class Entity(private val iconName: String, val context: Context) : AnkoLogger {
                     .also {
                         info { "Loaded bitmap width ${it.width} height ${it.height}" }
                     }
-
         }
     }
 }

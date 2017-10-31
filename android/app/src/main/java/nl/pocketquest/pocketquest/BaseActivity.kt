@@ -8,7 +8,7 @@ import nl.pocketquest.pocketquest.sprites.GameObjectAnimator
 import org.jetbrains.anko.AnkoLogger
 
 @SuppressLint("Registered")
-open class BaseActivity : AppCompatActivity(), AnkoLogger{
+open class BaseActivity : AppCompatActivity(), AnkoLogger {
     fun GameObject.animate(frames: Sequence<Bitmap>, duration: Int)
             = GameObjectAnimator(this@BaseActivity, this, frames, duration).apply { start() }
 

@@ -16,24 +16,15 @@ import com.mapbox.mapboxsdk.annotations.IconFactory
  */
 fun Bitmap.dimensions() = width xy height
 
-fun Drawable.toBitmap(): Bitmap {
-    var bitmap: Bitmap? = null
+fun Drawable.toBitmap(): Bitmap = (this as? BitmapDrawable)?.bitmap ?: drawBitmap()
 
-    if (this is BitmapDrawable) {
-        if (this.bitmap != null) {
-            return this.bitmap
-        }
-    }
-
-    if (this.intrinsicWidth <= 0 || this.intrinsicHeight <= 0) {
-        bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888) // Single color bitmap will be created of 1x1 pixel
-    } else {
-        bitmap = Bitmap.createBitmap(this.intrinsicWidth, this.intrinsicHeight, Bitmap.Config.ARGB_8888)
-    }
-
+private fun Drawable.drawBitmap(): Bitmap {
+    val width = maxOf(intrinsicWidth, 1)
+    val height = maxOf(intrinsicHeight, 1)
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
-    this.setBounds(0, 0, canvas.getWidth(), canvas.getHeight())
-    this.draw(canvas)
+    setBounds(0, 0, canvas.getWidth(), canvas.getHeight())
+    draw(canvas)
     return bitmap
 }
 

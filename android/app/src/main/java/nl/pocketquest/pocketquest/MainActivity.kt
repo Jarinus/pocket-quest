@@ -10,12 +10,10 @@ import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
 import nl.pocketquest.pocketquest.game.Game
 import nl.pocketquest.pocketquest.game.GameObject
-import nl.pocketquest.pocketquest.game.entities.Entity
 import nl.pocketquest.pocketquest.location.LocationEngineWrapper
 import nl.pocketquest.pocketquest.sprites.SpriteSheetCreator
 import nl.pocketquest.pocketquest.utils.*
 import org.jetbrains.anko.info
-import org.jetbrains.anko.toast
 
 
 class MainActivity : BaseActivity(), PermissionsListener {
@@ -28,36 +26,42 @@ class MainActivity : BaseActivity(), PermissionsListener {
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        whenLoggedIn { toast(it.uid) }
-        Entity("images/tree.png", this).resolveImage()
         info { "Starting onCreate" }
         setContentView(R.layout.activity_main)
         requestLocationPermission()
         Mapbox.getInstance(this, getString(R.string.mapbox_key))
-
         lifecycle.addObserver(locationEngineWrapper)
+        val mapFragment = createOrLoadMapView(savedInstanceState)
+        initializeMap(mapFragment)
+    }
 
+    private fun createOrLoadMapView(savedInstanceState: Bundle?): SupportMapFragment {
         val mapFragment: SupportMapFragment
         if (savedInstanceState == null) {
             val transaction = supportFragmentManager.beginTransaction()
-            val options = buildMapboxOptions {
-                styleUrl = getString(R.string.mapbox_custom_style)
-                zoomPreference = 18.1
-                enabledgestures {
-                    all = false
-                }
-                cameraPosition {
-                    locationEngineWrapper.location?.also { target(it.toLatLng()) }
-                    zoom(18.1)
-                    tilt(50.25)
-                }
-            }
-            mapFragment = SupportMapFragment.newInstance(options)
+            mapFragment = SupportMapFragment.newInstance(createMapboxOptions())
             transaction.replace(R.id.mapFragment, mapFragment, "com.mapbox.map").commit()
         } else {
             mapFragment = supportFragmentManager.findFragmentByTag("com.mapbox.map") as SupportMapFragment
         }
+        return mapFragment
+    }
 
+    private fun createMapboxOptions() = buildMapboxOptions {
+        styleUrl = getString(R.string.mapbox_custom_style)
+        zoomPreference = 18.1
+        enabledgestures {
+            all = false
+        }
+        cameraPosition {
+            locationEngineWrapper.location?.also { target(it.toLatLng()) }
+            zoom(18.1)
+            tilt(50.25)
+        }
+    }
+
+
+    private fun initializeMap(mapFragment: SupportMapFragment) {
         mapFragment.getMapAsync {
             map = it
             info { "About to add the player marker" }

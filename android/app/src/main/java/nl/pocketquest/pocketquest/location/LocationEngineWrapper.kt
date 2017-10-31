@@ -22,8 +22,8 @@ class LocationEngineWrapper(
         private var locationListener: (Location) -> Unit
 ) : LocationEngineListener, AnkoLogger, LifecycleObserver {
 
-    private var currentLocation : Location? = null
-    val location : Location? get() = currentLocation
+    private var currentLocation: Location? = null
+    val location: Location? get() = currentLocation
 
     lateinit var locationEngine: LocationEngine
         private set
@@ -41,7 +41,7 @@ class LocationEngineWrapper(
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun onStart(owner: LifecycleOwner){
+    fun onStart(owner: LifecycleOwner) {
         info { "Requesting updates from onStart" }
         locationEngine.requestLocationUpdates()
     }
@@ -54,12 +54,12 @@ class LocationEngineWrapper(
 
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun onStop(owner: LifecycleOwner){
+    fun onStop(owner: LifecycleOwner) {
         locationEngine.removeLocationUpdates()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun onDestroy(owner: LifecycleOwner){
+    fun onDestroy(owner: LifecycleOwner) {
         locationEngine.deactivate()
     }
 

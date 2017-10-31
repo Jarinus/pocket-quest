@@ -7,6 +7,7 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import kotlin.properties.Delegates.observable
 
+typealias Consumer<T> = suspend CoroutineScope.(T) -> Unit
 /**
  * A game object should be:
  *  - Displayed on the map with a location and an image
@@ -14,8 +15,6 @@ import kotlin.properties.Delegates.observable
  *  - Able to change its state based on a database update
  * Created by Laurens on 20-10-2017.
  */
-
-typealias Consumer<T> = suspend CoroutineScope.(T) -> Unit
 open class GameObject(location: LatLng, image: Icon) {
 
     private val listeners = mutableListOf<Consumer<GameObject>>()
