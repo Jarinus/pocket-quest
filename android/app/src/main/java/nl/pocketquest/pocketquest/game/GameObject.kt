@@ -16,7 +16,6 @@ typealias Consumer<T> = suspend CoroutineScope.(T) -> Unit
  * Created by Laurens on 20-10-2017.
  */
 open class GameObject(location: LatLng, image: Icon) {
-
     private val listeners = mutableListOf<Consumer<GameObject>>()
     fun onChange(consumer: Consumer<GameObject>) = listeners.add(consumer)
 

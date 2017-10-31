@@ -11,5 +11,4 @@ import org.jetbrains.anko.AnkoLogger
 open class BaseActivity : AppCompatActivity(), AnkoLogger {
     fun GameObject.animate(frames: Sequence<Bitmap>, duration: Int)
             = GameObjectAnimator(this@BaseActivity, this, frames, duration).apply { start() }
-
 }

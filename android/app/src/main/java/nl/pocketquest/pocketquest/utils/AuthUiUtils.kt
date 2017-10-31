@@ -9,6 +9,7 @@ inline fun AuthUI.buildSignInIntent(settings: AuthUI.SignInIntentBuilder.() -> U
     settings(builder)
     return builder.build()
 }
+
 fun AuthUI.SignInIntentBuilder.setAvailableProviders(vararg providers: AuthUI.IdpConfig)
         = setAvailableProviders(providers.toList())
 

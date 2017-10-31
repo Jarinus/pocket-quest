@@ -21,7 +21,6 @@ class LocationEngineWrapper(
         private val context: Context,
         private var locationListener: (Location) -> Unit
 ) : LocationEngineListener, AnkoLogger, LifecycleObserver {
-
     var location: Location? = null
         private set
 
@@ -45,17 +44,14 @@ class LocationEngineWrapper(
         locationEngine.requestLocationUpdates()
     }
 
-
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume(owner: LifecycleOwner) = locationEngine.activate()
-
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onStop(owner: LifecycleOwner) = locationEngine.removeLocationUpdates()
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy(owner: LifecycleOwner) = locationEngine.deactivate()
-
 
     override fun onConnected() {
         info { "Connected to engine." }

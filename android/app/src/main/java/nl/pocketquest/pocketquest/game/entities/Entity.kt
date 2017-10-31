@@ -11,7 +11,6 @@ import org.jetbrains.anko.coroutines.experimental.asReference
 import org.jetbrains.anko.info
 
 class Entity(private val iconName: String) : AnkoLogger {
-
     fun resolveImage(context: Context) {
         val ref = context.asReference()
         async(CommonPool) {

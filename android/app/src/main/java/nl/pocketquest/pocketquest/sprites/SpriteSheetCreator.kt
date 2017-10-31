@@ -11,7 +11,6 @@ class SpriteSheetCreator(
         private val spriteSheet: Bitmap,
         private val numberOfFrames: IntPoint
 ) : AnkoLogger {
-
     private val spriteSheetDimensions: IntPoint = spriteSheet.dimensions()
     val frames: Sequence<Bitmap> = numberOfFrames.toIntPoint()
             .allSmallerPoints()

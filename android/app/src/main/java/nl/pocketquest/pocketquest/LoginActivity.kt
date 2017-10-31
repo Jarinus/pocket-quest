@@ -18,7 +18,6 @@ import org.jetbrains.anko.toast
 private const val RC_SIGN_IN = 1
 
 class LoginActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val intent = AUTH_UI.buildSignInIntent {
