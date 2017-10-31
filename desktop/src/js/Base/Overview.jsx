@@ -5,6 +5,9 @@ import townHall from '../../../assets/images/town-hall.png';
 
 const path = require('path');
 
+const townHallWidth = 564;
+const townHallHeight = 409;
+
 const items = [
     'Axe',
     'Pickaxe',
@@ -43,10 +46,12 @@ export default class Overview extends React.Component {
 
     renderTownHall() {
         const townHallUrl = path.join('js', townHall);
+        const topOffset = (this.state.height - townHallHeight) / 2;
+        const leftOffset = (this.state.width - townHallWidth) / 2;
         const style = {
             position: 'absolute',
-            top: (this.state.height - 409) / 2,
-            left: (this.state.width - 564) / 2
+            top: topOffset,
+            left: leftOffset
         };
 
         return <img src={townHallUrl} style={style} draggable={false}/>
