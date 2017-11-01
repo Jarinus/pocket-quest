@@ -36,7 +36,7 @@ class MainActivity : BaseActivity(), PermissionsListener {
     }
 
     private fun createOrLoadMapView(savedInstanceState: Bundle?): SupportMapFragment {
-        savedInstanceState ?: return supportFragmentManager.findFragmentByTag(MAPBOX_TAG) as SupportMapFragment
+        savedInstanceState ?: (supportFragmentManager.findFragmentByTag(MAPBOX_TAG) as? SupportMapFragment)?.also { return it }
         val mapFragment = SupportMapFragment.newInstance(createMapboxOptions())
         supportFragmentManager.doTransaction {
             replace(R.id.mapFragment, mapFragment, MAPBOX_TAG)
