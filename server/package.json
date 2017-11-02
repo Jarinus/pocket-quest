@@ -1,0 +1,18 @@
+{
+  "name": "pocket-quest-server",
+  "version": "1.0.0",
+  "description": "The game server for Pocket Quest",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "keywords": [
+    "Pocket Quest",
+    "Game Server"
+  ],
+  "author": "J.A. Germeraad",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^4.10.0"
+  }
+}
