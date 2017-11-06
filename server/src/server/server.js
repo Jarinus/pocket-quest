@@ -1,6 +1,7 @@
 // import * as scheduler from 'node-schedule'
 import * as firebase from '../firebase/firebase'
-import * as admin from 'firebase-admin';
+import * as admin from 'firebase-admin'
+import Item from '../entities/Item.js'
 
 let initialized = false;
 let entities = {};
@@ -27,8 +28,19 @@ export class Server {
         const entitiesRef = db.ref('/entities');
 
         entitiesRef.once('value', function(snapshot) {
-            entities = snapshot.val();
+            entities = Server.parseEntities(snapshot.val());
+
+            console.log(entities)
         });
+    }
+
+    /**
+     * @param {object} data.items
+     */
+    static parseEntities(data) {
+        return {
+            items: Item.parse(data.items)
+        }
     }
 
     /**
