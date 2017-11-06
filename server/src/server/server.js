@@ -9,11 +9,10 @@ export class Server {
 
     /**
      * Initializes the Game Server
-     * @throws Error when Game Server has already been initialized
      */
     static init() {
         if (initialized) {
-            throw new Error("Game Server has already been initialized");
+            return;
         }
 
         initialized = true;
