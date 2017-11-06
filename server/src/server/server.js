@@ -39,13 +39,17 @@ export class Server {
     /**
      * @param {object} data.items
      * @param {object} data.resource_nodes
+     * @param {object} data.resource_node_supplied_items
      * @param {object} data.resource_node_families
      * @param {object} data.resource_node_resource_node_families
      */
     static parseEntities(data) {
         return {
             items: Item.parse(data.items),
-            resource_nodes: ResourceNode.parse(data.resource_nodes),
+            resource_nodes: ResourceNode.parse(
+                data.resource_nodes,
+                data.resource_node_supplied_items
+            ),
             resource_node_families: ResourceNodeFamily.parse(
                 data.resource_node_families,
                 data.resource_node_resource_node_families
