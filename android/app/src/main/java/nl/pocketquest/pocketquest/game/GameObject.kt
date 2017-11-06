@@ -16,13 +16,18 @@ typealias Consumer<T> = suspend CoroutineScope.(T) -> Unit
  * Created by Laurens on 20-10-2017.
  */
 open class GameObject(location: LatLng, image: Icon) {
-    private val listeners = mutableListOf<Consumer<GameObject>>()
-    fun onChange(consumer: Consumer<GameObject>) = listeners.add(consumer)
 
-    var location by observable(location) { _, _, _ -> notifyListeners() }
-    var image by observable(image) { _, _, _ -> notifyListeners() }
+    private val changeListeners = mutableListOf<Consumer<GameObject>>()
+    private val onClickListeners = mutableListOf<Consumer<GameObject>>()
 
-    private fun notifyListeners() = listeners.forEach {
+    fun onClick(consumer: Consumer<GameObject>) = onClickListeners.add(consumer)
+    fun clicked() = notifyListeners(onClickListeners)
+    fun onChange(consumer: Consumer<GameObject>) = changeListeners.add(consumer)
+
+    var location by observable(location) { _, _, _ -> notifyListeners(changeListeners) }
+    var image by observable(image) { _, _, _ -> notifyListeners(changeListeners) }
+
+    private fun notifyListeners(listeners: List<Consumer<GameObject>>) = listeners.forEach {
         launch(UI) {
             it(this@GameObject)
         }

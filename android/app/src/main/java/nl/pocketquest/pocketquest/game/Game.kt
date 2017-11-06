@@ -6,6 +6,14 @@ import nl.pocketquest.pocketquest.utils.addMarker
 
 class Game(private val map: MapboxMap) {
     private val gameObjects = mutableMapOf<GameObject, Marker>()
+    private val markers = mutableMapOf<Marker, GameObject>()
+
+    init {
+        map.setOnMarkerClickListener {
+            markers[it]?.clicked()
+            true
+        }
+    }
 
     operator fun plusAssign(gameObject: GameObject) {
         val marker = map.addMarker {
@@ -17,6 +25,7 @@ class Game(private val map: MapboxMap) {
             marker.position = it.location
         }
         gameObjects[gameObject] = marker
+        markers[marker] = gameObject
     }
 
     operator fun minusAssign(gameObject: GameObject) {
