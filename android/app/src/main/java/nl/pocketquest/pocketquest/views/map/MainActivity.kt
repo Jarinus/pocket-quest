@@ -17,11 +17,9 @@ import org.jetbrains.anko.info
 private const val MAPBOX_TAG = "com.mapbox.map"
 
 class MainActivity : BaseActivity(), MapContract.MapView {
-
     private var map: MapboxMap? = null
     private val presenter: MapContract.MapPresenter = MapPresenter(this)
     private val locationEngineWrapper = LocationEngineWrapper(this, presenter::onLocationChanged)
-    private val iconCache = IconCache(this)
     private val gameObjectsToMarker = mutableMapOf<GameObject, Marker>()
     private val markerToGameObjects = mutableMapOf<Marker, GameObject>()
 
@@ -74,12 +72,12 @@ class MainActivity : BaseActivity(), MapContract.MapView {
     override fun addGameObject(gameObject: GameObject) {
         runOnUiThread {
             val marker = map?.addMarker {
-                icon = iconCache.get(gameObject.image)
+                icon = IconCache.get(this@MainActivity, gameObject.image)
                 position = gameObject.location
             } ?: return@runOnUiThread
             gameObject.onChange {
                 runOnUiThread {
-                    marker.icon = iconCache.get(it.image)
+                    marker.icon = IconCache.get(this@MainActivity, it.image)
                     marker.position = it.location
 
                 }

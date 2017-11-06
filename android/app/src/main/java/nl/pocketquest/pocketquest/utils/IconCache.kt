@@ -9,12 +9,14 @@ import java.util.*
 /**
  * Created by Laurens on 6-11-2017.
  */
-class IconCache(private val context: Context) {
+object IconCache {
 
     private val cache = WeakHashMap<Bitmap, Icon>()
 
-    fun get(bitmap: Bitmap): Icon {
-        var icon = cache[bitmap] ?: IconFactory.getInstance(context).fromBitmap(bitmap)
+    fun get(context: Context, bitmap: Bitmap): Icon {
+        var icon = cache[bitmap] ?: IconFactory
+                .getInstance(context)
+                .fromBitmap(bitmap)
         cache[bitmap] = icon
         return icon
     }

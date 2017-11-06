@@ -15,7 +15,6 @@ import org.jetbrains.anko.startActivity
 private const val RC_SIGN_IN = 1
 
 class LoginActivity : BaseActivity(), LoginContract.LoginView {
-
     private val presenter = LoginPresenter(this)
 
     override fun goToMainActivity() {

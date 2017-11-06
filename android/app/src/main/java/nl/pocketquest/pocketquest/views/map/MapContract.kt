@@ -6,10 +6,10 @@ import nl.pocketquest.pocketquest.mvp.BasePresenter
 import nl.pocketquest.pocketquest.mvp.BaseView
 
 class MapContract {
-
     interface MapView : BaseView {
         /**
          * Focuses the Center of the map to the specified location
+         * @param location The location to center the map on
          */
         fun focusMapCenterOn(location: Location)
 

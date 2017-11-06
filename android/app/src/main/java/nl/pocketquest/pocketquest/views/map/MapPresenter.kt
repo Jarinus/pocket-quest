@@ -35,7 +35,7 @@ class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapV
 
     override fun onGameObjectClicked(gameObject: GameObject) {
         view.displayToast("GameObject was clicked $gameObject")
-        (gameObject as ClickableGameObject)?.clicked()
+        (gameObject as? ClickableGameObject)?.clicked()
     }
 
     override fun onMapReady() {
