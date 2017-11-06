@@ -23,13 +23,11 @@ class LocationEngineWrapper(
 ) :
         Activity(), LocationEngineListener, PermissionsListener, AnkoLogger, LifecycleObserver {
 
-    var location: Location? = null
-        private set
-        get() = field ?: locationEngine.lastLocation
 
     private lateinit var locationEngine: LocationEngine
     private var permissionsManager: PermissionsManager? = null
 
+    fun getLastLocation() = locationEngine.lastLocation
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate(owner: LifecycleOwner) {
@@ -39,7 +37,6 @@ class LocationEngineWrapper(
             it.interval = SETTINGS.LOCATION_ENGINE.DEFAULT_INTERVAL
             it.priority = SETTINGS.LOCATION_ENGINE.ACCURACY_MODE
             it.addLocationEngineListener(this)
-            this.location = it.lastLocation
         }
     }
 
@@ -66,7 +63,6 @@ class LocationEngineWrapper(
     override fun onLocationChanged(location: Location?) {
         location?.also {
             info { "New location received: $location." }
-            this.location = it
             locationListener(it)
         }
     }

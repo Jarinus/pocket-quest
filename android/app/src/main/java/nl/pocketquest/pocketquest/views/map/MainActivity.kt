@@ -10,8 +10,8 @@ import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.SETTINGS
 import nl.pocketquest.pocketquest.game.GameObject
 import nl.pocketquest.pocketquest.location.LocationEngineWrapper
-import nl.pocketquest.pocketquest.utils.*
 import nl.pocketquest.pocketquest.mvp.BaseActivity
+import nl.pocketquest.pocketquest.utils.*
 import org.jetbrains.anko.info
 
 private const val MAPBOX_TAG = "com.mapbox.map"
@@ -58,7 +58,7 @@ class MainActivity : BaseActivity(), MapContract.MapView {
     private fun initializeMap(mapboxMap: MapboxMap) {
         map = mapboxMap
         presenter.onMapReady()
-        locationEngineWrapper.location?.apply(presenter::onLocationChanged)
+        locationEngineWrapper.getLastLocation()?.apply(presenter::onLocationChanged)
         map?.setOnMarkerClickListener {
             markerToGameObjects[it]?.also(presenter::onGameObjectClicked)
             true
