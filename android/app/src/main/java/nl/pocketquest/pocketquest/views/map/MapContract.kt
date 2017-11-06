@@ -25,7 +25,7 @@ class MapContract {
         /**
          * Removes a GameObject from the view. After calling this operation the gameObject must
          * not be drawn anymore
-         * 
+         *
          * @param gameObject The game object to remove
          */
         fun removeGameObject(gameObject: GameObject)
