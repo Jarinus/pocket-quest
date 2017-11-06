@@ -20,8 +20,7 @@ import org.jetbrains.anko.info
 class LocationEngineWrapper(
         private val context: Context,
         private var locationListener: (Location) -> Unit
-) :
-        Activity(), LocationEngineListener, PermissionsListener, AnkoLogger, LifecycleObserver {
+) : Activity(), LocationEngineListener, PermissionsListener, AnkoLogger, LifecycleObserver {
 
 
     private lateinit var locationEngine: LocationEngine

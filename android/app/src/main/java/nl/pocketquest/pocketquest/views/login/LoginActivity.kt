@@ -12,7 +12,6 @@ import nl.pocketquest.pocketquest.mvp.BaseActivity
 import nl.pocketquest.pocketquest.views.map.MainActivity
 import org.jetbrains.anko.startActivity
 
-
 private const val RC_SIGN_IN = 1
 
 class LoginActivity : BaseActivity(), LoginContract.LoginView {

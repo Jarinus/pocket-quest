@@ -1,6 +1,5 @@
 package nl.pocketquest.pocketquest.sprites
 
-import android.content.Context
 import android.graphics.Bitmap
 import kotlinx.coroutines.experimental.CommonPool
 import nl.pocketquest.pocketquest.game.GameObject
@@ -12,6 +11,7 @@ class GameObjectAnimator(
         frames: Sequence<Bitmap>,
         private val frameDuration: Int
 ) {
+
     private val frames = frames
             .repeat()
             .iterator()

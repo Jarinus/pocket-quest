@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import nl.pocketquest.pocketquest.utils.Point
 import nl.pocketquest.pocketquest.utils.times
 
-
 fun Bitmap.padded(padding: Point) = createScaledEmptyBitmap(padding)
         .also(this::drawInto)
 
@@ -17,4 +16,3 @@ private fun Bitmap.createScaledEmptyBitmap(padding: Point) = Bitmap.createBitmap
         (height * padding.y).toInt(),
         config
 )
-

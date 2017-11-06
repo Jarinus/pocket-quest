@@ -24,7 +24,6 @@ class MapContract {
          * not be drawn anymore
          */
         fun removeGameObject(gameObject: GameObject)
-
     }
 
     abstract class MapPresenter(mapView: MapView) : BasePresenter<MapView>(mapView) {
