@@ -21,16 +21,15 @@ export default class Item {
 
     /**
      * @param {object} data The Firebase object, containing item id's as keys and the item's properties as values
-     * @return Array An array of Item objects
+     * @return Object An object of Item objects
      */
     static parse(data) {
-        const items = [];
+        const items = {};
 
         for (let key of Object.keys(data)) {
             const value = data[key];
 
-            const item = Item.parseItem(key, value);
-            items.push(item);
+            items[key] = Item.parseItem(key, value);
         }
 
         return items;

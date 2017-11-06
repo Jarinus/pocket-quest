@@ -25,7 +25,7 @@ export default class ResourceNode {
     /**
      * @param {object} data The Firebase object, containing resource node id's as keys and the resource node's
      * properties as values
-     * @return Array An array of ResourceNode objects
+     * @return Object An object of ResourceNode objects
      */
     static parse(data) {
         const resourceNodes = [];
@@ -33,8 +33,7 @@ export default class ResourceNode {
         for (let key of Object.keys(data)) {
             const value = data[key];
 
-            const resourceNode = ResourceNode.parseResourceNode(key, value);
-            resourceNodes.push(resourceNode);
+            resourceNodes[key] = ResourceNode.parseResourceNode(key, value);
         }
 
         return resourceNodes;
