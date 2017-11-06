@@ -16,12 +16,14 @@ class MapContract {
         /**
          * Adds a GameObject to the view. The view is responsible for drawing this GameObject.
          * It also needs to observe the gameObject and respond appropriately to changes
+         * @param gameObject The game object to display
          */
         fun addGameObject(gameObject: GameObject)
 
         /**
          * Removes a GameObject from the view. After calling this operation the gameObject must
          * not be drawn anymore
+         * @param gameObject The game object to remove
          */
         fun removeGameObject(gameObject: GameObject)
     }
