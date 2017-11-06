@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nl.pocketquest.pocketquest.MainActivity">
+    tools:context="nl.pocketquest.pocketquest.views.map.MainActivity">
 
     <FrameLayout
         android:id="@+id/mapFragment"

@@ -1,4 +1,4 @@
-package nl.pocketquest.pocketquest
+package nl.pocketquest.pocketquest.views.login
 
 import android.app.Activity
 import android.content.Intent
@@ -11,6 +11,7 @@ import nl.hanze.distanceswimming.extensions.firebase.AUTH_UI
 import nl.hanze.distanceswimming.extensions.firebase.setAvailableProviders
 import nl.hanze.distanceswimming.extensions.firebase.buildSignInIntent
 import nl.hanze.distanceswimming.extensions.firebase.provider
+import nl.pocketquest.pocketquest.views.map.MainActivity
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
