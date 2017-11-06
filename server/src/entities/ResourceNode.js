@@ -28,7 +28,7 @@ export default class ResourceNode {
      * @return Object An object of ResourceNode objects
      */
     static parse(data) {
-        const resourceNodes = [];
+        const resourceNodes = {};
 
         for (let key of Object.keys(data)) {
             const value = data[key];
