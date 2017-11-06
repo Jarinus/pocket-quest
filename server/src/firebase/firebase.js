@@ -28,7 +28,7 @@ function readConfigurationFile(relativeConfigurationURL) {
 /**
  * @param {object} data The configuration data
  * @param {object} data.project_info The configuration data's project info
- * @param {string} data.project_info.firebase_url The configuration data's project Firebase url
+ * @param {string} data.project_info.firebase_url The configuration data's project Firebase URL
  */
 function extractDatabaseURL(data) {
     if (!data.project_info || !data.project_info.firebase_url) {
