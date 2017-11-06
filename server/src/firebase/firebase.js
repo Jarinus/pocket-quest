@@ -37,5 +37,3 @@ function extractDatabaseURL(data) {
 
     return data.project_info.firebase_url;
 }
-
-
