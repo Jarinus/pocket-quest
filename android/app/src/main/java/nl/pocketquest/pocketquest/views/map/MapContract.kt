@@ -9,6 +9,7 @@ class MapContract {
     interface MapView : BaseView {
         /**
          * Focuses the Center of the map to the specified location
+         *
          * @param location The location to center the map on
          */
         fun focusMapCenterOn(location: Location)
@@ -16,6 +17,7 @@ class MapContract {
         /**
          * Adds a GameObject to the view. The view is responsible for drawing this GameObject.
          * It also needs to observe the gameObject and respond appropriately to changes
+         *
          * @param gameObject The game object to display
          */
         fun addGameObject(gameObject: GameObject)
@@ -23,6 +25,7 @@ class MapContract {
         /**
          * Removes a GameObject from the view. After calling this operation the gameObject must
          * not be drawn anymore
+         * 
          * @param gameObject The game object to remove
          */
         fun removeGameObject(gameObject: GameObject)
