@@ -8,7 +8,6 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.SupportMapFragment
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.SETTINGS
-import nl.pocketquest.pocketquest.game.GameObject
 import nl.pocketquest.pocketquest.game.IGameObject
 import nl.pocketquest.pocketquest.game.entities.FirebaseImageResolver
 import nl.pocketquest.pocketquest.game.entities.ImageResolver

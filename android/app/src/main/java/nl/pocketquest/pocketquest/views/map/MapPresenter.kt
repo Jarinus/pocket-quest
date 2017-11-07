@@ -18,9 +18,6 @@ import nl.pocketquest.pocketquest.utils.xy
 
 const val ANIMATION_DURATION = 42
 
-/**
- * Created by Laurens on 6-11-2017.
- */
 class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapView), GameObjectAcceptor {
 
     private var cachedLocation: Location? = null
@@ -41,7 +38,6 @@ class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapV
     }
 
     override fun onGameObjectClicked(gameObject: IGameObject) {
-        view.displayToast("GameObject was clicked $gameObject")
         (gameObject as? Clickable<*>)?.clicked()
     }
 

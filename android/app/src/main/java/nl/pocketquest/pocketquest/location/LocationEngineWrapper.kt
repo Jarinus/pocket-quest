@@ -22,7 +22,6 @@ class LocationEngineWrapper(
         private var locationListener: (Location) -> Unit
 ) : Activity(), LocationEngineListener, PermissionsListener, AnkoLogger, LifecycleObserver {
 
-
     private lateinit var locationEngine: LocationEngine
     private var permissionsManager: PermissionsManager? = null
 

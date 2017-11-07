@@ -13,9 +13,6 @@ import nl.pocketquest.pocketquest.utils.toLatLng
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
-/**
- * Created by Laurens on 7-11-2017.
- */
 class ResourceInstanceCreator : GameObjectCreator, AnkoLogger {
 
     private lateinit var imageResolver: ImageResolver

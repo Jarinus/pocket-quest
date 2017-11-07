@@ -1,7 +1,6 @@
 package nl.pocketquest.pocketquest.views.map
 
 import android.location.Location
-import nl.pocketquest.pocketquest.game.GameObject
 import nl.pocketquest.pocketquest.game.IGameObject
 import nl.pocketquest.pocketquest.game.entities.ImageResolver
 import nl.pocketquest.pocketquest.mvp.BasePresenter

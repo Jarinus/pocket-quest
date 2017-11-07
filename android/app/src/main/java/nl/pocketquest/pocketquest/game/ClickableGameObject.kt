@@ -8,9 +8,6 @@ interface Clickable<T> {
     fun clicked()
 }
 
-/**
- * Created by Laurens on 6-11-2017.
- */
 class ClickableGameObject(location: LatLng, image: Bitmap) : GameObject(location, image), Clickable<GameObject> {
 
     private val onClickListeners = mutableListOf<Consumer<GameObject>>()

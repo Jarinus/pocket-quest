@@ -32,9 +32,6 @@ data class FBResourceNode(
         val tier: Int = 0,
         val name: String = "")
 
-/**
- * Created by Laurens on 6-11-2017.
- */
 object Entities : AnkoLogger {
     var items = mapOf<String, FBItem>()
         private set

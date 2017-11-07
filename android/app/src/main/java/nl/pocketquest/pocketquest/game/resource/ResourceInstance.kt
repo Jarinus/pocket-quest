@@ -10,9 +10,6 @@ import nl.pocketquest.pocketquest.utils.DATABASE
 import nl.pocketquest.pocketquest.utils.whenLoggedIn
 import org.jetbrains.anko.AnkoLogger
 
-/**
- * Created by Laurens on 7-11-2017.
- */
 class ResourceInstance(
         val resourceID: String,
         private val clickableGameObject: ClickableGameObject,
@@ -28,7 +25,11 @@ class ResourceInstance(
             }
             clicked = true
             whenLoggedIn {
-                val resourceInstanceID = resourceID
+                val resourceInstanceID = if ("/" in resourceID) {
+                    resourceID.substringAfterLast("/")
+                } else {
+                    resourceID
+                }
                 DATABASE.getReference("requests/resource_gathering/${it.uid}").push()
                         .setValue(FBResourceGatherRequest(resourceInstanceID))
             }
