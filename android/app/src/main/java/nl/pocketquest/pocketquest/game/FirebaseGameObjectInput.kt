@@ -9,29 +9,35 @@ import com.google.firebase.database.FirebaseDatabase
 import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
-import nl.pocketquest.pocketquest.game.entities.FBResourceInstance
-import nl.pocketquest.pocketquest.game.entities.FBResourceNode
-import nl.pocketquest.pocketquest.utils.DATABASE
-import nl.pocketquest.pocketquest.utils.readAsync
+import nl.pocketquest.pocketquest.game.construction.GameObjectAcceptor
+import nl.pocketquest.pocketquest.game.entities.ImageResolver
+import nl.pocketquest.pocketquest.game.resource.ResourceInstanceCreator
 import nl.pocketquest.pocketquest.utils.toGeoLocation
+import nl.pocketquest.pocketquest.utils.toLatLng
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
-/**
- * Created by Laurens on 6-11-2017.
- */
-class FirebaseGameObjectInput(queryCenter: LatLng) : GeoQueryEventListener, AnkoLogger {
+class FirebaseGameObjectInput(
+        queryCenter: LatLng,
+        private val gameObjectAcceptor: GameObjectAcceptor,
+        private val imageResolver: ImageResolver
+) : GeoQueryEventListener, AnkoLogger {
     var queryCenter: LatLng = queryCenter
         set(value) {
             field = value
             query.center = value.toGeoLocation()
         }
+
     private val geoFire = GeoFire(FirebaseDatabase.getInstance().getReference("locations/geofire"))
     private val query: GeoQuery
+    private val objectCreators = listOf(
+            ResourceInstanceCreator()
+    )
 
     init {
         query = geoFire.queryAtLocation(queryCenter.toGeoLocation(), 0.2)
         query.addGeoQueryEventListener(this)
+        objectCreators.forEach { it.initialize(imageResolver) }
     }
 
     override fun onGeoQueryReady() = Unit
@@ -40,24 +46,25 @@ class FirebaseGameObjectInput(queryCenter: LatLng) : GeoQueryEventListener, Anko
         if (key == null || location == null) {
             return
         }
-        info { "Key arrived $key" }
-        if (key.startsWith("resource_instances")) {
-            async(CommonPool) {
-                val resource = DATABASE.getReference(key).readAsync<FBResourceInstance>()
-                val resourceNode = DATABASE.getReference(resource.type).readAsync<FBResourceNode>()
-            }
+        info { "Key entered:  $key on location $location" }
+        async(CommonPool) {
+            objectCreators
+                    .filter { it.applicableTo(key) }
+                    .map { it.createGameObject(key, location) }
+                    .filterNotNull()
+                    .forEach { gameObjectAcceptor.gameObjectArrived(key, it) }
         }
     }
 
     override fun onKeyMoved(key: String?, location: GeoLocation?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (key != null && location != null) {
+            gameObjectAcceptor.gameObjectMoved(key, location.toLatLng())
+        }
     }
 
     override fun onKeyExited(key: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        key?.also(gameObjectAcceptor::gameObjectDeleted)
     }
 
-    override fun onGeoQueryError(error: DatabaseError?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun onGeoQueryError(error: DatabaseError?) = Unit
 }

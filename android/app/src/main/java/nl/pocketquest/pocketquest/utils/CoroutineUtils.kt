@@ -1,10 +1,7 @@
 package nl.pocketquest.pocketquest.utils
 
 import android.net.Uri
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.storage.OnProgressListener
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.StorageReference
@@ -55,16 +52,17 @@ inline suspend fun <T> suspendCoroutineW(crossinline block: (WrappedContinuation
             block(wd)
         }
 
-suspend inline fun <reified T> DatabaseReference.readAsync() = readFromDatabaseAsync(this, T::class.java)
+suspend inline fun <reified T> DatabaseReference.readAsync(): T = readFromDatabaseAsync(this)
 
-suspend fun <T> readFromDatabaseAsync(dbref: DatabaseReference, dataType: Class<T>): T = suspendCoroutineW { d ->
+suspend inline fun <reified T> readFromDatabaseAsync(dbref: DatabaseReference): T = suspendCoroutineW { d ->
     dbref.addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onCancelled(e: DatabaseError?) {
             d.resumeWithException(e?.toException() ?: Exception("cancelled"))
         }
 
         override fun onDataChange(snapshot: DataSnapshot) = try {
-            val data: T? = snapshot.getValue(dataType)
+            val ti: GenericTypeIndicator<T> = object : GenericTypeIndicator<T>() {}
+            val data: T? = snapshot.getValue(ti)
             if (data != null) {
                 d.resume(data)
             } else {

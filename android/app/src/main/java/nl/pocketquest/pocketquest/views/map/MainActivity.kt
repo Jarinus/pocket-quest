@@ -9,6 +9,9 @@ import com.mapbox.mapboxsdk.maps.SupportMapFragment
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.SETTINGS
 import nl.pocketquest.pocketquest.game.GameObject
+import nl.pocketquest.pocketquest.game.IGameObject
+import nl.pocketquest.pocketquest.game.entities.FirebaseImageResolver
+import nl.pocketquest.pocketquest.game.entities.ImageResolver
 import nl.pocketquest.pocketquest.location.LocationEngineWrapper
 import nl.pocketquest.pocketquest.mvp.BaseActivity
 import nl.pocketquest.pocketquest.utils.*
@@ -20,8 +23,8 @@ class MainActivity : BaseActivity(), MapContract.MapView {
     private var map: MapboxMap? = null
     private val presenter: MapContract.MapPresenter = MapPresenter(this)
     private val locationEngineWrapper = LocationEngineWrapper(this, presenter::onLocationChanged)
-    private val gameObjectsToMarker = mutableMapOf<GameObject, Marker>()
-    private val markerToGameObjects = mutableMapOf<Marker, GameObject>()
+    private val gameObjectsToMarker = mutableMapOf<IGameObject, Marker>()
+    private val markerToGameObjects = mutableMapOf<Marker, IGameObject>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +72,7 @@ class MainActivity : BaseActivity(), MapContract.MapView {
         }
     }
 
-    override fun addGameObject(gameObject: GameObject) {
+    override fun addGameObject(gameObject: IGameObject) {
         runOnUiThread {
             val marker = map?.addMarker {
                 icon = IconCache.get(this@MainActivity, gameObject.image)
@@ -87,7 +90,12 @@ class MainActivity : BaseActivity(), MapContract.MapView {
         }
     }
 
-    override fun removeGameObject(gameObject: GameObject) {
+    override fun getImageResolver() = object : ImageResolver {
+        suspend override fun resolveImage(imageID: String) =
+                FirebaseImageResolver.resolveImage(this@MainActivity, imageID)
+    }
+
+    override fun removeGameObject(gameObject: IGameObject) {
         gameObjectsToMarker[gameObject]?.also { map?.removeMarker(it) }
         gameObjectsToMarker -= gameObject
     }
