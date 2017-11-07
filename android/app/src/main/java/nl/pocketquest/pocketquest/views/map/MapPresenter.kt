@@ -3,7 +3,7 @@ package nl.pocketquest.pocketquest.views.map
 import android.location.Location
 import com.mapbox.mapboxsdk.geometry.LatLng
 import nl.pocketquest.pocketquest.R
-import nl.pocketquest.pocketquest.game.ClickableGameObject
+import nl.pocketquest.pocketquest.game.Clickable
 import nl.pocketquest.pocketquest.game.FirebaseGameObjectInput
 import nl.pocketquest.pocketquest.game.GameObject
 import nl.pocketquest.pocketquest.game.IGameObject
@@ -42,7 +42,7 @@ class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapV
 
     override fun onGameObjectClicked(gameObject: IGameObject) {
         view.displayToast("GameObject was clicked $gameObject")
-        (gameObject as? ClickableGameObject)?.clicked()
+        (gameObject as? Clickable<*>)?.clicked()
     }
 
     override fun onMapReady() {

@@ -26,9 +26,10 @@ class FirebaseGameObjectInput(
         set(value) {
             field = value
             query.center = value.toGeoLocation()
+            info { "Setting new value for qeoQuery" }
         }
 
-    private val geoFire = GeoFire(FirebaseDatabase.getInstance().getReference("locations/geofire"))
+    private val geoFire = GeoFire(FirebaseDatabase.getInstance().getReference("locations"))
     private val query: GeoQuery
     private val objectCreators = listOf(
             ResourceInstanceCreator()
@@ -43,27 +44,32 @@ class FirebaseGameObjectInput(
     override fun onGeoQueryReady() = Unit
 
     override fun onKeyEntered(key: String?, location: GeoLocation?) {
+        info { "Key entered:  $key on location $location" }
         if (key == null || location == null) {
             return
         }
-        info { "Key entered:  $key on location $location" }
+        val escapedKey = escapeKey(key)
         async(CommonPool) {
             objectCreators
-                    .filter { it.applicableTo(key) }
-                    .map { it.createGameObject(key, location) }
+                    .filter { it.applicableTo(escapedKey) }
+                    .map { it.createGameObject(escapedKey, location) }
                     .filterNotNull()
-                    .forEach { gameObjectAcceptor.gameObjectArrived(key, it) }
+                    .forEach { gameObjectAcceptor.gameObjectArrived(escapedKey, it) }
         }
     }
 
+    private fun escapeKey(key: String) = key.replace('-', '/')
+
     override fun onKeyMoved(key: String?, location: GeoLocation?) {
         if (key != null && location != null) {
-            gameObjectAcceptor.gameObjectMoved(key, location.toLatLng())
+            gameObjectAcceptor.gameObjectMoved(escapeKey(key), location.toLatLng())
         }
     }
 
     override fun onKeyExited(key: String?) {
-        key?.also(gameObjectAcceptor::gameObjectDeleted)
+        key
+                ?.let(this::escapeKey)
+                ?.also(gameObjectAcceptor::gameObjectDeleted)
     }
 
     override fun onGeoQueryError(error: DatabaseError?) = Unit

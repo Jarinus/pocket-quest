@@ -1,5 +1,6 @@
 package nl.pocketquest.pocketquest.game.entities
 
+import com.google.firebase.database.ServerValue
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import nl.pocketquest.pocketquest.utils.DATABASE
@@ -8,8 +9,12 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.getStackTraceString
 import org.jetbrains.anko.wtf
 
+data class FBResourceGatherRequest(
+        val resource_node_uid: String,
+        val requested_at: Map<String, String> = ServerValue.TIMESTAMP
+)
+
 data class FBResourceInstance(
-        val id: String = "",
         val type: String = "",
         val resources_left: Map<String, Int> = mapOf()
 )

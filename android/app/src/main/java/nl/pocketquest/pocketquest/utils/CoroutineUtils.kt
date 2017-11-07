@@ -53,6 +53,7 @@ inline suspend fun <T> suspendCoroutineW(crossinline block: (WrappedContinuation
         }
 
 suspend inline fun <reified T> DatabaseReference.readAsync(): T = readFromDatabaseAsync(this)
+suspend inline fun <reified T> DatabaseReference.writeAsync(t: T) = writeToDatabaseAsync(this, t)
 
 suspend inline fun <reified T> readFromDatabaseAsync(dbref: DatabaseReference): T = suspendCoroutineW { d ->
     dbref.addListenerForSingleValueEvent(object : ValueEventListener {
