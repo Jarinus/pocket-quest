@@ -16,14 +16,8 @@ class ResourceInstance(
         private val resourceNode: FBResourceNode
 ) : IGameObject by clickableGameObject, Clickable<GameObject> by clickableGameObject, AnkoLogger {
 
-    private var clicked = false
-
     init {
         clickableGameObject.onClick {
-            if (clicked) {
-                return@onClick
-            }
-            clicked = true
             whenLoggedIn {
                 val resourceInstanceID = if ("/" in resourceID) {
                     resourceID.substringAfterLast("/")
