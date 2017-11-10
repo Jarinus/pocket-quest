@@ -45,15 +45,12 @@ class FirebaseGameObjectInput(
 
     override fun onKeyEntered(key: String?, location: GeoLocation?) {
         info { "Key entered:  $key on location $location" }
-        if (key == null || location == null) {
-            return
-        }
+        if (key == null || location == null) return
         val escapedKey = escapeKey(key)
         async(CommonPool) {
             objectCreators
                     .filter { it.applicableTo(escapedKey) }
-                    .map { it.createGameObject(escapedKey, location) }
-                    .filterNotNull()
+                    .mapNotNull { it.createGameObject(escapedKey, location) }
                     .forEach { gameObjectAcceptor.gameObjectArrived(escapedKey, it) }
         }
     }

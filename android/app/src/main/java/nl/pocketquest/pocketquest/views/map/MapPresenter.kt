@@ -31,10 +31,9 @@ class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapV
                 .frames
                 .map { it.padded(1.1 xy 1.7) }
 
-        val player = GameObject(0 latLong 0, frames.first()).also {
+        return GameObject(0 latLong 0, frames.first()).also {
             GameObjectAnimator(it, frames, ANIMATION_DURATION).start()
         }
-        return player
     }
 
     override fun onGameObjectClicked(gameObject: IGameObject) {
@@ -46,7 +45,7 @@ class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapV
         ready = true
         cachedLocation?.also { setNewLocation(it) }
         player = createPlayerMarker()
-        player?.also { view.addGameObject(it) }
+                .also { view.addGameObject(it) }
     }
 
     override fun onLocationChanged(location: Location) {

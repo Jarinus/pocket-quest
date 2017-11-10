@@ -6,6 +6,8 @@ import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.Marker
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.SupportMapFragment
+import com.uchuhimo.collections.BiMap
+import com.uchuhimo.collections.mutableBiMapOf
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.SETTINGS
 import nl.pocketquest.pocketquest.game.IGameObject
@@ -18,12 +20,11 @@ import org.jetbrains.anko.info
 
 private const val MAPBOX_TAG = "com.mapbox.map"
 
-class MainActivity : BaseActivity(), MapContract.MapView {
+class MapActivity : BaseActivity(), MapContract.MapView {
     private var map: MapboxMap? = null
     private val presenter: MapContract.MapPresenter = MapPresenter(this)
     private val locationEngineWrapper = LocationEngineWrapper(this, presenter::onLocationChanged)
-    private val gameObjectsToMarker = mutableMapOf<IGameObject, Marker>()
-    private val markerToGameObjects = mutableMapOf<Marker, IGameObject>()
+    private val gameObjectsMarkerBiMap = mutableBiMapOf<IGameObject, Marker>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,9 +59,11 @@ class MainActivity : BaseActivity(), MapContract.MapView {
     private fun initializeMap(mapboxMap: MapboxMap) {
         map = mapboxMap
         presenter.onMapReady()
-        locationEngineWrapper.getLastLocation()?.apply(presenter::onLocationChanged)
+        locationEngineWrapper.lastLocation?.apply(presenter::onLocationChanged)
         map?.setOnMarkerClickListener {
-            markerToGameObjects[it]?.also(presenter::onGameObjectClicked)
+            gameObjectsMarkerBiMap
+                    .inverse[it]
+                    ?.also(presenter::onGameObjectClicked)
             true
         }
     }
@@ -74,28 +77,27 @@ class MainActivity : BaseActivity(), MapContract.MapView {
     override fun addGameObject(gameObject: IGameObject) {
         runOnUiThread {
             val marker = map?.addMarker {
-                icon = IconCache.get(this@MainActivity, gameObject.image)
+                icon = IconCache.get(this@MapActivity, gameObject.image)
                 position = gameObject.location
             } ?: return@runOnUiThread
             gameObject.onChange {
                 runOnUiThread {
-                    marker.icon = IconCache.get(this@MainActivity, it.image)
+                    marker.icon = IconCache.get(this@MapActivity, it.image)
                     marker.position = it.location
-
                 }
             }
-            gameObjectsToMarker[gameObject] = marker
-            markerToGameObjects[marker] = gameObject
+            gameObjectsMarkerBiMap[gameObject] = marker
         }
     }
 
     override fun getImageResolver() = object : ImageResolver {
         suspend override fun resolveImage(imageID: String) =
-                FirebaseImageResolver.resolveImage(this@MainActivity, imageID)
+                FirebaseImageResolver.resolveImage(this@MapActivity, imageID)
     }
 
     override fun removeGameObject(gameObject: IGameObject) {
-        gameObjectsToMarker[gameObject]?.also { map?.removeMarker(it) }
-        gameObjectsToMarker -= gameObject
+        gameObjectsMarkerBiMap[gameObject]
+                ?.also { map?.removeMarker(it) }
+        gameObjectsMarkerBiMap -= gameObject
     }
 }

@@ -21,9 +21,7 @@ class ResourceInstanceCreator : GameObjectCreator, AnkoLogger {
         this.imageResolver = imageResolver
     }
 
-    override fun applicableTo(key: String): Boolean {
-        return key.startsWith("resource_instances")
-    }
+    override fun applicableTo(key: String) =  key.startsWith("resource_instances")
 
     suspend override fun createGameObject(key: String, location: GeoLocation): IGameObject? {
         info { "Creating a new gameobject from key $key" }
@@ -31,7 +29,7 @@ class ResourceInstanceCreator : GameObjectCreator, AnkoLogger {
         info { "Loaded resource $resource" }
         val resourceNode = Entities.resource_nodes[resource.type] ?: return null
         info { "Loaded resourceNode $resourceNode" }
-        val image = imageResolver.resolveImage(resourceNode?.icon)
+        val image = imageResolver.resolveImage(resourceNode.icon)
         info { "Loaded image $image" }
         val gameObject = ClickableGameObject(location.toLatLng(), image)
         return ResourceInstance(key, gameObject, resourceNode)

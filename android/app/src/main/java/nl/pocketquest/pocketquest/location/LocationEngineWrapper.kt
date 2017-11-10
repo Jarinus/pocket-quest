@@ -25,7 +25,7 @@ class LocationEngineWrapper(
     private lateinit var locationEngine: LocationEngine
     private var permissionsManager: PermissionsManager? = null
 
-    fun getLastLocation() = locationEngine.lastLocation
+    val lastLocation get() = locationEngine.lastLocation
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate(owner: LifecycleOwner) {
