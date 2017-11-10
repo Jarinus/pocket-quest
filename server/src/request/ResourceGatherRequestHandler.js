@@ -86,6 +86,22 @@ export default class ResourceGatherRequestHandler {
             .child(itemId)
             .ref;
 
+        resourceRef.transaction(function (value) {
+            if (value != null) {
+                value -= 1
+            }
+            if (value < 0) {
+                return
+            }
+            return value
+        }, function (error, commited, snapshot) {
+            if (commited) {
+                backpackRef.transaction(function (current) {
+                    return (current || 0 ) + 1
+                })
+            }
+        });
+
         resourceRef.once('value', (snapshot) => {
             if (snapshot.val() > 0) {
                 resourceRef.transaction((currentAmount) => {
