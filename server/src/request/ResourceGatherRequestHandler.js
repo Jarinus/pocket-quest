@@ -88,17 +88,17 @@ export default class ResourceGatherRequestHandler {
 
         resourceRef.transaction(function (value) {
             if (value != null) {
-                value -= 1
+                value -= 1;
             }
             if (value < 0) {
-                return
+                return;
             }
-            return value
-        }, function (error, commited, snapshot) {
-            if (commited) {
+            return value;
+        }, function (error, committed, snapshot) {
+            if (committed) {
                 backpackRef.transaction(function (current) {
-                    return (current || 0 ) + 1
-                })
+                    return (current || 0 ) + 1;
+                });
             }
         });
     }
