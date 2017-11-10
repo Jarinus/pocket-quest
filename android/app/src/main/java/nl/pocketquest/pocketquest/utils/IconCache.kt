@@ -6,18 +6,12 @@ import com.mapbox.mapboxsdk.annotations.Icon
 import com.mapbox.mapboxsdk.annotations.IconFactory
 import java.util.*
 
-/**
- * Created by Laurens on 6-11-2017.
- */
 object IconCache {
 
     private val cache = WeakHashMap<Bitmap, Icon>()
 
-    fun get(context: Context, bitmap: Bitmap): Icon {
-        var icon = cache[bitmap] ?: IconFactory
-                .getInstance(context)
-                .fromBitmap(bitmap)
-        cache[bitmap] = icon
-        return icon
-    }
+    fun get(context: Context, bitmap: Bitmap): Icon = cache[bitmap] ?: IconFactory
+            .getInstance(context)
+            .fromBitmap(bitmap)
+            .also { cache[bitmap] = it }
 }

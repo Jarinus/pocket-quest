@@ -9,7 +9,7 @@ import nl.hanze.distanceswimming.extensions.firebase.buildSignInIntent
 import nl.hanze.distanceswimming.extensions.firebase.provider
 import nl.hanze.distanceswimming.extensions.firebase.setAvailableProviders
 import nl.pocketquest.pocketquest.mvp.BaseActivity
-import nl.pocketquest.pocketquest.views.map.MainActivity
+import nl.pocketquest.pocketquest.views.map.MapActivity
 import org.jetbrains.anko.startActivity
 
 private const val RC_SIGN_IN = 1
@@ -18,7 +18,7 @@ class LoginActivity : BaseActivity(), LoginContract.LoginView {
     private val presenter = LoginPresenter(this)
 
     override fun goToMainActivity() {
-        startActivity<MainActivity>()
+        startActivity<MapActivity>()
         finish()
     }
 

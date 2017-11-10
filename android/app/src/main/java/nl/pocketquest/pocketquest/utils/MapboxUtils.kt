@@ -1,6 +1,7 @@
 package nl.pocketquest.pocketquest.utils
 
 import android.location.Location
+import com.firebase.geofire.GeoLocation
 import com.mapbox.mapboxsdk.annotations.Icon
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraPosition
@@ -11,6 +12,8 @@ import com.mapbox.mapboxsdk.maps.MapboxMapOptions
 import nl.pocketquest.pocketquest.SETTINGS.MAPBOX_MAP.CAMERA_ZOOM
 
 fun Location.toLatLng() = LatLng(this)
+fun LatLng.toGeoLocation() = GeoLocation(latitude, longitude)
+fun GeoLocation.toLatLng() = LatLng(latitude, longitude)
 operator fun LatLng.plus(other: LatLng) = LatLng(latitude + other.latitude, longitude + other.longitude)
 
 fun MapboxMap.setCameraPosition(location: Location) {

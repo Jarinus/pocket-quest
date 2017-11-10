@@ -25,7 +25,7 @@ private fun Drawable.drawBitmap(): Bitmap {
 }
 
 fun Activity.loadImage(@DrawableRes image: Int) = IconFactory.getInstance(this).fromResource(image)
-fun Context.decodeResource(@DrawableRes rss: Int) = BitmapFactory.decodeResource(resources, rss)
+fun Context.decodeResource(@DrawableRes rss: Int): Bitmap = BitmapFactory.decodeResource(resources, rss)
 
 fun FragmentManager.doTransaction(transaction: FragmentTransaction.() -> Unit)
         = beginTransaction().also(transaction).commit()

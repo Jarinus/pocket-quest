@@ -1,7 +1,8 @@
 package nl.pocketquest.pocketquest.views.map
 
 import android.location.Location
-import nl.pocketquest.pocketquest.game.GameObject
+import nl.pocketquest.pocketquest.game.IGameObject
+import nl.pocketquest.pocketquest.game.entities.ImageResolver
 import nl.pocketquest.pocketquest.mvp.BasePresenter
 import nl.pocketquest.pocketquest.mvp.BaseView
 
@@ -20,19 +21,21 @@ class MapContract {
          *
          * @param gameObject The game object to display
          */
-        fun addGameObject(gameObject: GameObject)
+        fun addGameObject(gameObject: IGameObject)
 
         /**
          * Removes a GameObject from the view. After calling this operation the gameObject must
          * not be drawn anymore
-         * 
+         *
          * @param gameObject The game object to remove
          */
-        fun removeGameObject(gameObject: GameObject)
+        fun removeGameObject(gameObject: IGameObject)
+
+        fun getImageResolver(): ImageResolver
     }
 
     abstract class MapPresenter(mapView: MapView) : BasePresenter<MapView>(mapView) {
-        abstract fun onGameObjectClicked(gameObject: GameObject)
+        abstract fun onGameObjectClicked(gameObject: IGameObject)
         abstract fun onMapReady()
         abstract fun onLocationChanged(location: Location)
     }

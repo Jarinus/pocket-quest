@@ -3,14 +3,16 @@ package nl.pocketquest.pocketquest.game
 import android.graphics.Bitmap
 import com.mapbox.mapboxsdk.geometry.LatLng
 
-/**
- * Created by Laurens on 6-11-2017.
- */
-class ClickableGameObject(location: LatLng, image: Bitmap) : GameObject(location, image) {
+interface Clickable<out T> {
+    fun onClick(consumer: Consumer<T>): Boolean
+    fun clicked()
+}
+
+class ClickableGameObject(location: LatLng, image: Bitmap) : GameObject(location, image), Clickable<GameObject> {
 
     private val onClickListeners = mutableListOf<Consumer<GameObject>>()
 
-    fun onClick(consumer: Consumer<GameObject>) = onClickListeners.add(consumer)
+    override fun onClick(consumer: Consumer<GameObject>) = onClickListeners.add(consumer)
 
-    fun clicked() = notifyListeners(onClickListeners)
+    override fun clicked() = notifyListeners(onClickListeners)
 }
