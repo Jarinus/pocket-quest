@@ -78,34 +78,25 @@ export default class ResourceGatherRequestHandler {
      */
     processGathering(request, itemId) {
         const db = admin.database();
-        const resourceNodeInstanceRef = db.ref('/resource_instances/' + request.resourceNodeUID);
-        const backpackRef = db.ref('/user_items/' + request.userId + '/backpack');
-        const backpackReferenceHandler = (snapshot) => {
-            const item = snapshot.child(itemId);
-            let amount = 1;
+        const resourceRef = db.ref(`/resource_instances/${request.resourceNodeUID}`)
+            .child('resources_left')
+            .child(itemId)
+            .ref;
+        const backpackRef = db.ref(`/user_items/${request.userId}/backpack`)
+            .child(itemId)
+            .ref;
 
-            if (item.exists()) {
-                amount += item.val();
+        resourceRef.once('value', (snapshot) => {
+            if (snapshot.val() > 0) {
+                resourceRef.transaction((currentAmount) => {
+                    return (currentAmount || 0) - 1;
+                });
+
+                backpackRef.transaction((currentAmount) => {
+                    return (currentAmount || 0) + 1;
+                });
             }
-
-            item.ref.set(amount);
-        };
-
-        resourceNodeInstanceRef.once('value')
-            .then((snapshot) => {
-                const itemSnapshot = snapshot.child('resources_left').child(itemId)
-                const itemsLeft = itemSnapshot.val();
-
-                if (itemsLeft > 0) {
-                    const itemSnapshot = snapshot.child('resources_left').child(itemId);
-                    itemSnapshot.ref.set(itemSnapshot.val() - 1);
-
-                    backpackRef.once('value')
-                        .then(backpackReferenceHandler)
-                } else {
-                    console.error("too few items")
-                }
-            })
+        });
     }
 
     /**
