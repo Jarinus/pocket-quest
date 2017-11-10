@@ -101,18 +101,6 @@ export default class ResourceGatherRequestHandler {
                 })
             }
         });
-
-        resourceRef.once('value', (snapshot) => {
-            if (snapshot.val() > 0) {
-                resourceRef.transaction((currentAmount) => {
-                    return (currentAmount || 0) - 1;
-                });
-
-                backpackRef.transaction((currentAmount) => {
-                    return (currentAmount || 0) + 1;
-                });
-            }
-        });
     }
 
     /**
