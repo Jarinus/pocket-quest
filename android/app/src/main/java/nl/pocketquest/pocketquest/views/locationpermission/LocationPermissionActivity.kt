@@ -31,6 +31,8 @@ class LocationPermissionActivity : BaseActivity(), PermissionsListener, Location
             permissionsManager = PermissionsManager(this).also {
                 it.requestLocationPermissions(this)
             }
+        } else {
+            presenter.onPermissionGranted(true)
         }
     }
 
