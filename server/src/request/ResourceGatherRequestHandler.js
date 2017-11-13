@@ -79,28 +79,29 @@ export default class ResourceGatherRequestHandler {
     processGathering(request, itemId) {
         const db = admin.database();
         const resourceRef = db.ref(`/resource_instances/${request.resourceNodeUID}`)
-            .child('resources_left')
-            .child(itemId)
+            .child(`resources_left/${itemId}`)
             .ref;
         const backpackRef = db.ref(`/user_items/${request.userId}/backpack`)
             .child(itemId)
             .ref;
 
-        resourceRef.transaction(function (value) {
-            if (value != null) {
-                value -= 1;
+        resourceRef.transaction((value) => {
+            if (value !== null) {
+                value -= 1
             }
+
             if (value < 0) {
-                return;
+                return
             }
-            return value;
-        }, function (error, committed, snapshot) {
+
+            return value
+        }, (_, committed) => {
             if (committed) {
-                backpackRef.transaction(function (current) {
-                    return (current || 0 ) + 1;
-                });
+                backpackRef.transaction((current) => {
+                    return (current || 0 ) + 1
+                })
             }
-        });
+        })
     }
 
     /**
