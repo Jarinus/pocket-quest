@@ -18,27 +18,38 @@ export default class ResourceGatherRequestHandler {
         this.items = items;
         this.resourceNodes = resourceNodes;
         this.resourceNodeFamilies = resourceNodeFamilies;
+        this.database = admin.database();
     }
 
-    newRequests(data) {
-        for (let userId of Object.keys(data)) {
-            const requestObjects = data[userId];
+    handle(snapshot) {
+        const key = snapshot.ref.key;
+        const properties = snapshot.val();
 
-            for (let requestId of Object.keys(requestObjects)) {
-                const requestProperties = requestObjects[requestId];
-                const requestObject = this.parse(userId, requestId, requestProperties);
+        const requestObject = ResourceGatherRequestHandler.parse(key, properties);
 
-                this.handle(requestObject);
-            }
-        }
+        this.database.ref(`/users/${requestObject.userId}/status`)
+            .transaction((currentStatus) => {
+                if (currentStatus === null) {
+                    return currentStatus;
+                }
+
+                if (currentStatus !== "gathering") {
+                    return "gathering"
+                }
+            }, (_, committed) => {
+                if (committed) {
+                    this.processRequest(requestObject);
+                }
+            });
+
+        snapshot.ref.remove();
     }
 
     /**
      * @param {ResourceGatherRequest} request
      */
-    handle(request) {
-        const db = admin.database();
-        const resourceNodeUIDsRef = db.ref('/resource_instances/' + request.resourceNodeUID);
+    processRequest(request) {
+        const resourceNodeUIDsRef = this.database.ref('/resource_instances/' + request.resourceNodeUID);
 
         resourceNodeUIDsRef.once('value', (snapshot) => {
             if (!snapshot.exists()) {
@@ -77,13 +88,8 @@ export default class ResourceGatherRequestHandler {
      * @param {string} itemId
      */
     processGathering(request, itemId) {
-        const db = admin.database();
-        const resourceRef = db.ref(`/resource_instances/${request.resourceNodeUID}`)
-            .child(`resources_left/${itemId}`)
-            .ref;
-        const backpackRef = db.ref(`/user_items/${request.userId}/backpack`)
-            .child(itemId)
-            .ref;
+        const resourceRef = this.database.ref(`/resource_instances/${request.resourceNodeUID}/resources_left/${itemId}`);
+        const backpackRef = this.database.ref(`/user_items/${request.userId}/backpack/${itemId}`);
 
         resourceRef.transaction((value) => {
             if (value !== null) {
@@ -95,27 +101,45 @@ export default class ResourceGatherRequestHandler {
             }
 
             return value
-        }, (_, committed) => {
+        }, (_, committed, snapshot) => {
             if (committed) {
                 backpackRef.transaction((current) => {
                     return (current || 0 ) + 1
-                })
+                });
+
+                if (snapshot.val() === 0) {
+                    this.setUserStatus(request.userId, "idle");
+                }
             }
         })
     }
 
+    setUserStatus(userId, status) {
+        this.database
+            .ref(`/users/${userId}/status`)
+            .transaction((currentValue) => {
+                if (currentValue === null) {
+                    return currentValue;
+                }
+
+                if (currentValue !== status) {
+                    return status;
+                }
+            });
+    }
+
     /**
-     * @param {string} userId
      * @param {string} requestId
      * @param {object} properties
+     * @param {string} properties.user_id
      * @param {string} properties.requested_at
      * @param {string} properties.resource_node_uid
      * @return ResourceGatherRequest
      */
-    parse(userId, requestId, properties) {
+    static parse(requestId, properties) {
         return new ResourceGatherRequest(
             requestId,
-            userId,
+            properties.user_id,
             properties.requested_at,
             properties.resource_node_uid
         );
