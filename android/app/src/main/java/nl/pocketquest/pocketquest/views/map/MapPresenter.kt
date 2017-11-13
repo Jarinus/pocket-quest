@@ -41,7 +41,6 @@ class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapV
     }
 
     override fun onMapReady() {
-        Entities.items
         ready = true
         cachedLocation?.also { setNewLocation(it) }
         player = createPlayerMarker()

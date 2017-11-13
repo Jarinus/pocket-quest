@@ -1,13 +1,9 @@
 package nl.pocketquest.pocketquest.game.entities
 
 import com.google.firebase.database.ServerValue
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
 import nl.pocketquest.pocketquest.utils.DATABASE
 import nl.pocketquest.pocketquest.utils.readAsync
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.getStackTraceString
-import org.jetbrains.anko.wtf
 
 data class FBResourceGatherRequest(
         val resource_node_uid: String,
@@ -34,20 +30,16 @@ data class FBResourceNode(
         val name: String = "")
 
 object Entities : AnkoLogger {
-    var items = mapOf<String, FBItem>()
-        private set
-    var resource_nodes = mapOf<String, FBResourceNode>()
-        private set
+    private var items: Map<String, FBItem>? = null
+    private var resource_nodes: Map<String, FBResourceNode>? = null
 
-    init {
-        async(CommonPool) {
-            try {
-                items = DATABASE.getReference("entities/items").readAsync<HashMap<String, FBItem>>()
-                resource_nodes = DATABASE.getReference("entities/resource_nodes").readAsync<HashMap<String, FBResourceNode>>()
-            } catch (e: Exception) {
-                wtf(e)
-                error(e.getStackTraceString())
-            }
-        }
-    }
+    suspend fun getItems() = items ?:
+            DATABASE.getReference("entities/items")
+                    .readAsync<HashMap<String, FBItem>>()
+                    .also { items = it }
+
+    suspend fun getResourceNodes() = resource_nodes ?:
+            DATABASE.getReference("entities/resource_nodes")
+                    .readAsync<HashMap<String, FBResourceNode>>()
+                    .also { resource_nodes = it }
 }
