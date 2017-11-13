@@ -7,7 +7,7 @@ class LoginPresenter(view: LoginContract.LoginView) : LoginContract.LoginPresent
 
     override fun handleAuthenticationResult(resultCode: Int, errorCode: Int) {
         if (resultCode == Activity.RESULT_OK) {
-            view.goToMainActivity()
+            view.goToLocationPermissionActivity()
         } else view.displayToast(when (errorCode) {
             ErrorCodes.NO_NETWORK -> "No network"
             ErrorCodes.UNKNOWN_ERROR -> "Unexpected error"
