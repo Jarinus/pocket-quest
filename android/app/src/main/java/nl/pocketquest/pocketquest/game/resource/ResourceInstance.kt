@@ -24,8 +24,8 @@ class ResourceInstance(
                 } else {
                     resourceID
                 }
-                DATABASE.getReference("requests/resource_gathering/${it.uid}").push()
-                        .setValue(FBResourceGatherRequest(resourceInstanceID))
+                DATABASE.getReference("requests/resource_gathering").push()
+                        .setValue(FBResourceGatherRequest(resourceInstanceID, user_id = it.uid))
             }
         }
     }
