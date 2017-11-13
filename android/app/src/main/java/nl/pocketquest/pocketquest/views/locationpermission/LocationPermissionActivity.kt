@@ -1,24 +1,27 @@
 package nl.pocketquest.pocketquest.views.locationpermission
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
 import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
+import nl.pocketquest.pocketquest.mvp.BaseActivity
+import nl.pocketquest.pocketquest.views.locationpermission.LocationPermissionContract.LocationPermissionView
 import nl.pocketquest.pocketquest.views.map.MapActivity
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
 
-class LocationPermissionActivity : AppCompatActivity(), PermissionsListener {
+class LocationPermissionActivity : BaseActivity(), PermissionsListener, LocationPermissionView {
     private var permissionsManager: PermissionsManager? = null
     private var messageText: TextView? = null
+    val presenter = LocationPermissionPresenter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         verticalLayout {
-            messageText = textView("Please grant location permission")
+            messageText = textView("")
         }
+        presenter.onAttach()
         requestLocationPermission()
     }
 
@@ -36,11 +39,16 @@ class LocationPermissionActivity : AppCompatActivity(), PermissionsListener {
     }
 
     override fun onPermissionResult(granted: Boolean) {
-        if (!granted) {
-            messageText?.setText("Can't start app without location permission. Restart and grant access.")
-            finish()
-        } else startActivity<MapActivity>()
+        presenter.onPermissionGranted(granted)
     }
 
     override fun onExplanationNeeded(permissionsToExplain: MutableList<String>?) = Unit
+
+    override fun goToMainActivity() {
+        startActivity<MapActivity>()
+    }
+
+    override fun setDisplayMessage(message: String) {
+        messageText?.text = message
+    }
 }
