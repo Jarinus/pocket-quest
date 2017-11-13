@@ -11,7 +11,8 @@ import org.jetbrains.anko.wtf
 
 data class FBResourceGatherRequest(
         val resource_node_uid: String,
-        val requested_at: Map<String, String> = ServerValue.TIMESTAMP
+        val requested_at: Map<String, String> = ServerValue.TIMESTAMP,
+        val user_id: String
 )
 
 data class FBResourceInstance(
