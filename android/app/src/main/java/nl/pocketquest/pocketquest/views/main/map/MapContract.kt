@@ -1,4 +1,4 @@
-package nl.pocketquest.pocketquest.views.map
+package nl.pocketquest.pocketquest.views.main.map
 
 import android.location.Location
 import nl.pocketquest.pocketquest.game.IGameObject
@@ -35,7 +35,7 @@ class MapContract {
     }
 
     abstract class MapPresenter(mapView: MapView) : BasePresenter<MapView>(mapView) {
-        abstract fun onGameObjectClicked(gameObject: IGameObject)
+        abstract fun onGameObjectClicked(gameObject: IGameObject): Boolean
         abstract fun onMapReady()
         abstract fun onLocationChanged(location: Location)
     }

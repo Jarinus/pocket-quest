@@ -29,3 +29,6 @@ fun Context.decodeResource(@DrawableRes rss: Int): Bitmap = BitmapFactory.decode
 
 fun FragmentManager.doTransaction(transaction: FragmentTransaction.() -> Unit)
         = beginTransaction().also(transaction).commit()
+
+fun FragmentManager.doTransactionAllowingStateLoss(transaction: FragmentTransaction.() -> Unit)
+        = beginTransaction().also(transaction).commitAllowingStateLoss()

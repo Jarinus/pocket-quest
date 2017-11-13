@@ -1,4 +1,4 @@
-package nl.pocketquest.pocketquest.views.map
+package nl.pocketquest.pocketquest.views.main.map
 
 import android.location.Location
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -8,17 +8,18 @@ import nl.pocketquest.pocketquest.game.FirebaseGameObjectInput
 import nl.pocketquest.pocketquest.game.GameObject
 import nl.pocketquest.pocketquest.game.IGameObject
 import nl.pocketquest.pocketquest.game.construction.GameObjectAcceptor
-import nl.pocketquest.pocketquest.game.entities.Entities
 import nl.pocketquest.pocketquest.sprites.GameObjectAnimator
 import nl.pocketquest.pocketquest.sprites.SpriteSheetCreator
 import nl.pocketquest.pocketquest.sprites.padded
 import nl.pocketquest.pocketquest.utils.latLong
 import nl.pocketquest.pocketquest.utils.toLatLng
 import nl.pocketquest.pocketquest.utils.xy
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 
 const val ANIMATION_DURATION = 42
 
-class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapView), GameObjectAcceptor {
+class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapView), GameObjectAcceptor, AnkoLogger {
 
     private var cachedLocation: Location? = null
     private var ready = false
@@ -36,8 +37,13 @@ class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapV
         }
     }
 
-    override fun onGameObjectClicked(gameObject: IGameObject) {
+    override fun onGameObjectClicked(gameObject: IGameObject): Boolean {
+        if (gameObject === player) {
+            return false
+        }
+        info { "Game object was clicked" }
         (gameObject as? Clickable<*>)?.clicked()
+        return true
     }
 
     override fun onMapReady() {

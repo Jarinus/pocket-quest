@@ -3,4 +3,9 @@
     <string name="mapbox_key">pk.eyJ1IjoiamFyaW51cyIsImEiOiJjajh1MmV1b20wcDh5MndvYnhrbGs3ZmdrIn0.mk-KM9HSj21OzuLpdBGKqg</string>
     <string name="mapbox_custom_style">mapbox://styles/jarinus/cj8u2fi7qdwu22rqrri1hl2bc</string>
     <item name="text_line_spacing" format="float" type="dimen">1.0</item>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="tab_text_1">Map</string>
+    <string name="tab_text_2">Inventory</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 </resources>
