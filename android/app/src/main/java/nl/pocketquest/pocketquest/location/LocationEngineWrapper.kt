@@ -1,7 +1,6 @@
 package nl.pocketquest.pocketquest.location
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
@@ -10,7 +9,6 @@ import android.content.Context
 import android.location.Location
 import com.mapbox.services.android.telemetry.location.LocationEngine
 import com.mapbox.services.android.telemetry.location.LocationEngineListener
-import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
 import nl.pocketquest.pocketquest.SETTINGS
 import org.jetbrains.anko.AnkoLogger
@@ -20,16 +18,14 @@ import org.jetbrains.anko.info
 class LocationEngineWrapper(
         private val context: Context,
         private var locationListener: (Location) -> Unit
-) : Activity(), LocationEngineListener, PermissionsListener, AnkoLogger, LifecycleObserver {
+) : LocationEngineListener, AnkoLogger, LifecycleObserver {
 
     private lateinit var locationEngine: LocationEngine
-    private var permissionsManager: PermissionsManager? = null
 
     val lastLocation get() = locationEngine.lastLocation
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate(owner: LifecycleOwner) {
-        requestLocationPermission()
         locationEngine = SETTINGS.LOCATION_ENGINE.LOCATION_PROVIDER(context).also {
             it.fastestInterval = SETTINGS.LOCATION_ENGINE.DEFAULT_FASTEST_INTERVAL
             it.interval = SETTINGS.LOCATION_ENGINE.DEFAULT_INTERVAL
@@ -63,24 +59,5 @@ class LocationEngineWrapper(
             info { "New location received: $location." }
             locationListener(it)
         }
-    }
-
-    @SuppressWarnings("MissingPermission")
-    private fun requestLocationPermission() {
-        if (!PermissionsManager.areLocationPermissionsGranted(context)) {
-            permissionsManager = PermissionsManager(this).also {
-                it.requestLocationPermissions(this)
-            }
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        permissionsManager!!.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    override fun onExplanationNeeded(permissionsToExplain: MutableList<String>?) = Unit
-
-    override fun onPermissionResult(granted: Boolean) {
-        if (!granted) finish()
     }
 }

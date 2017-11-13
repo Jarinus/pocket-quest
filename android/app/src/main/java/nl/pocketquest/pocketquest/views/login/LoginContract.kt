@@ -9,7 +9,7 @@ import nl.pocketquest.pocketquest.mvp.BaseView
 class LoginContract {
 
     interface LoginView : BaseView {
-        fun goToMainActivity()
+        fun goToLocationPermissionActivity()
     }
 
     abstract class LoginPresenter(loginView: LoginView) : BasePresenter<LoginView>(loginView) {

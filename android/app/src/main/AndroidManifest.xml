@@ -31,7 +31,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.map.MapActivity"/>
+        <activity android:name=".views.map.MapActivity" />
+        <activity android:name=".views.locationpermission.LocationPermissionActivity"></activity>
     </application>
 
 </manifest>
