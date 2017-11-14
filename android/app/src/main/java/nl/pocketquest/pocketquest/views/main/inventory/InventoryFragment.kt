@@ -22,14 +22,3 @@ class InventoryFragment : BaseFragment() {
         }.view
     }
 }
-
-class MyActivityUI : AnkoComponent<InventoryFragment> {
-    override fun createView(ui: AnkoContext<InventoryFragment>) = with(ui) {
-        verticalLayout {
-            val name = editText()
-            button("Say Hello") {
-                onClick { ctx.toast("Hello, ${name.text}!") }
-            }
-        }
-    }
-}
