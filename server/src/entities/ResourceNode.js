@@ -1,10 +1,10 @@
 /**
- * @property {string} id
- * @property {string} icon
- * @property {string} family
- * @property {string} name
- * @property {number} tier
- * @property {object} suppliedItems
+ * @property {string} _id
+ * @property {string} _icon
+ * @property {string} _family
+ * @property {string} _name
+ * @property {number} _tier
+ * @property {object} _suppliedItems
  */
 export default class ResourceNode {
 
@@ -17,12 +17,54 @@ export default class ResourceNode {
      * @param {object} suppliedItems
      */
     constructor(id, icon, family, name, tier, suppliedItems) {
-        this.id = id;
-        this.icon = icon;
-        this.family = family;
-        this.name = name;
-        this.tier = tier;
-        this.suppliedItems = suppliedItems;
+        this._id = id;
+        this._icon = icon;
+        this._family = family;
+        this._name = name;
+        this._tier = tier;
+        this._suppliedItems = suppliedItems;
+    }
+
+    /**
+     * @returns {string}
+     */
+    get id() {
+        return this._id
+    }
+
+    /**
+     * @returns {string}
+     */
+    get icon() {
+        return this._icon
+    }
+
+    /**
+     * @returns {string}
+     */
+    get family() {
+        return this._family
+    }
+
+    /**
+     * @returns {string}
+     */
+    get name() {
+        return this._name;
+    }
+
+    /**
+     * @returns {number}
+     */
+    get tier() {
+        return this._tier;
+    }
+
+    /**
+     * @returns {Object}
+     */
+    get suppliedItems() {
+        return this._suppliedItems;
     }
 
     /**
@@ -63,6 +105,19 @@ export default class ResourceNode {
             data.tier,
             suppliedItems
         );
+    }
+
+    parse(data, resourceNodeSuppliedItems) {
+        const resourceNodes = {};
+
+        for (let key of Object.keys(data)) {
+            const value = data[key];
+            const suppliedItems = resourceNodeSuppliedItems[key];
+
+            resourceNodes[key] = ResourceNode.parseResourceNode(key, value, suppliedItems);
+        }
+
+        return resourceNodes;
     }
 
 }

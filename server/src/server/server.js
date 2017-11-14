@@ -2,37 +2,37 @@
 import * as firebase from '../firebase/firebase'
 import * as admin from 'firebase-admin'
 import Item from '../entities/Item'
-import ResourceNode from "../entities/ResourceNode";
-import ResourceNodeFamily from "../entities/ResourceNodeFamily";
+import ResourceNode from '../entities/ResourceNode';
+import ResourceNodeFamily from '../entities/ResourceNodeFamily';
+import ResourceGatherRequestHandler from '../request/ResourceGatherRequestHandler';
 
-let initialized = false;
 let entities = {};
+let resourceGatherRequestHandler;
 
 export class Server {
 
     /**
      * Initializes the Game Server
      */
-    static init() {
-        if (initialized) {
-            return;
-        }
-
-        initialized = true;
-
+    static start() {
         firebase.init();
 
-        Server.loadEntities();
+        Server.loadEntities((_entities) => {
+            entities = _entities;
+
+            resourceGatherRequestHandler = new ResourceGatherRequestHandler(_entities);
+
+            Server.listenToRequests();
+        });
     }
 
-    static loadEntities() {
+    static loadEntities(entitiesCallback) {
         const db = admin.database();
         const entitiesRef = db.ref('/entities');
 
-        entitiesRef.once('value', function(snapshot) {
-            entities = Server.parseEntities(snapshot.val());
-
-            console.log(entities);
+        entitiesRef.once('value', (snapshot) => {
+            const _entities = Server.parseEntities(snapshot.val());
+            entitiesCallback(_entities);
         });
     }
 
@@ -46,25 +46,22 @@ export class Server {
     static parseEntities(data) {
         return {
             items: Item.parse(data.items),
-            resource_nodes: ResourceNode.parse(
+            resourceNodes: ResourceNode.parse(
                 data.resource_nodes,
                 data.resource_node_supplied_items
             ),
-            resource_node_families: ResourceNodeFamily.parse(
+            resourceNodeFamilies: ResourceNodeFamily.parse(
                 data.resource_node_families,
                 data.resource_node_resource_node_families
             )
         }
     }
 
-    /**
-     * Starts the Game Server
-     * @throws Error when Game Server has not been initialized
-     */
-    static start() {
-        if (!initialized) {
-            throw new Error("Game Server must be initialized before use");
-        }
+    static listenToRequests() {
+        const db = admin.database();
+
+        db.ref('/requests/resource_gathering')
+            .on('child_added', resourceGatherRequestHandler.handle.bind(resourceGatherRequestHandler))
     }
 
 }
