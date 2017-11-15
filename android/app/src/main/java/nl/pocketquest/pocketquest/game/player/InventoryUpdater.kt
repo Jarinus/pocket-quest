@@ -1,9 +1,6 @@
 package nl.pocketquest.pocketquest.game.player
 
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.*
 import nl.pocketquest.pocketquest.game.entities.Entities
 import nl.pocketquest.pocketquest.game.entities.FBItem
 import nl.pocketquest.pocketquest.utils.DATABASE
@@ -30,9 +27,17 @@ class Inventory(ref: DatabaseReference) {
     private val items = mutableMapOf<String, Long>()
     private val inventoryListeners = mutableListOf<InventoryListener>()
     private val inventoryUpdater = InventoryUpdater(this)
+    private var initialLoad = false
 
     init {
         ref.addChildEventListener(inventoryUpdater)
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError?) = Unit
+
+            override fun onDataChange(p0: DataSnapshot?) {
+                initialLoad = true
+            }
+        })
     }
 
     fun setItem(itemName: String, count: Long) {
@@ -45,7 +50,8 @@ class Inventory(ref: DatabaseReference) {
         items[itemName] = count
         inventoryListeners.forEach {
             it.newInventoryState(item)
-            it.itemAdded(item, prevItemCount)
+            if (initialLoad)
+                it.itemAdded(item, prevItemCount)
         }
     }
 
