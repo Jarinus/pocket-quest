@@ -1,4 +1,4 @@
-package nl.pocketquest.server.request.resourceGathering
+package nl.pocketquest.server.request.impl
 
 import nl.pocketquest.server.request.Request
 

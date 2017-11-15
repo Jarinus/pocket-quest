@@ -1,4 +1,4 @@
-package nl.pocketquest.server.request.schedule
+package nl.pocketquest.server.schedule
 
 import java.util.*
 import java.util.concurrent.TimeUnit

@@ -1,4 +1,6 @@
-package nl.pocketquest.server.request
+package nl.pocketquest.server.request.handler
+
+import nl.pocketquest.server.request.Request
 
 abstract class RequestHandler<in T : Request> {
 

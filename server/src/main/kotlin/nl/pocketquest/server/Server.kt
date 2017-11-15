@@ -3,7 +3,7 @@ package nl.pocketquest.server
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
-import nl.pocketquest.server.request.resourceGathering.ResourceGatheringRequestHandler
+import nl.pocketquest.server.request.handler.impl.ResourceGatheringRequestHandler
 import java.io.InputStream
 
 fun main(args: Array<String>) {
