@@ -33,6 +33,8 @@ object Entities : AnkoLogger {
     private var items: Map<String, FBItem>? = null
     private var resource_nodes: Map<String, FBResourceNode>? = null
 
+    suspend fun getItem(name: String) = getItems()[name]
+
     suspend fun getItems() = items ?:
             DATABASE.getReference("entities/items")
                     .readAsync<HashMap<String, FBItem>>()

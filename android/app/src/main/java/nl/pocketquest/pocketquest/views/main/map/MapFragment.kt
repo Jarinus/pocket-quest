@@ -1,5 +1,6 @@
 package nl.pocketquest.pocketquest.views.main.map
 
+import android.content.Context
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -36,6 +37,7 @@ class MapFragment : BaseFragment(), MapContract.MapView {
         info { "Starting onCreate" }
         locationEngineWrapper = LocationEngineWrapper(ctx, presenter::onLocationChanged)
         lifecycle.addObserver(locationEngineWrapper)
+        mapView?.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -86,7 +88,7 @@ class MapFragment : BaseFragment(), MapContract.MapView {
 
     override fun getImageResolver() = object : ImageResolver {
         suspend override fun resolveImage(imageID: String) =
-                FirebaseImageResolver.resolveImage(ctx, imageID)
+                FirebaseImageResolver.resolveImage(ctx, "images/" + imageID)
     }
 
     override fun removeGameObject(gameObject: IGameObject) {
