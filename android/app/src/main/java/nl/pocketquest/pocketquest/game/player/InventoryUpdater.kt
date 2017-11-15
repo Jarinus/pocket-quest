@@ -18,11 +18,7 @@ interface InventoryListener {
     fun itemRemoved(item: Item)
 }
 
-class Item(
-        val itemName: String,
-        val itemCount: Long
-) {
-
+class Item(val itemName: String, val itemCount: Long) {
     suspend fun getItemProperties(): FBItem? = Entities.getItem(itemName)
 }
 
