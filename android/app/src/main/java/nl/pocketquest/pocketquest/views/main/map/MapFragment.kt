@@ -1,8 +1,8 @@
 package nl.pocketquest.pocketquest.views.main.map
 
-import android.content.Context
 import android.location.Location
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,6 +61,13 @@ class MapFragment : BaseFragment(), MapContract.MapView {
                     .inverse[it]
                     ?.let(presenter::onGameObjectClicked)
                     ?: false
+        }
+    }
+
+    override fun showSnackbar(text: String) {
+        ctx.runOnUiThread {
+            Snackbar.make(view!!, text, Snackbar.LENGTH_SHORT)
+                    .show()
         }
     }
 
