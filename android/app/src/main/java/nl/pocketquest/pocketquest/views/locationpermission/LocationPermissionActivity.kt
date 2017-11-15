@@ -6,7 +6,7 @@ import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
 import nl.pocketquest.pocketquest.mvp.BaseActivity
 import nl.pocketquest.pocketquest.views.locationpermission.LocationPermissionContract.LocationPermissionView
-import nl.pocketquest.pocketquest.views.map.MapActivity
+import nl.pocketquest.pocketquest.views.main.MainActivity
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
@@ -47,7 +47,7 @@ class LocationPermissionActivity : BaseActivity(), PermissionsListener, Location
     override fun onExplanationNeeded(permissionsToExplain: MutableList<String>?) = Unit
 
     override fun goToMainActivity() {
-        startActivity<MapActivity>()
+        startActivity<MainActivity>()
     }
 
     override fun setDisplayMessage(message: String) {

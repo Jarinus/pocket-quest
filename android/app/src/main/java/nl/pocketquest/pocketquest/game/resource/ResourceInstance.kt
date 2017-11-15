@@ -9,6 +9,7 @@ import nl.pocketquest.pocketquest.game.entities.FBResourceNode
 import nl.pocketquest.pocketquest.utils.DATABASE
 import nl.pocketquest.pocketquest.utils.whenLoggedIn
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 
 class ResourceInstance(
         val resourceID: String,
@@ -18,6 +19,7 @@ class ResourceInstance(
 
     init {
         clickableGameObject.onClick {
+            info { "This resource was clicked" }
             whenLoggedIn {
                 val resourceInstanceID = if ("/" in resourceID) {
                     resourceID.substringAfterLast("/")
