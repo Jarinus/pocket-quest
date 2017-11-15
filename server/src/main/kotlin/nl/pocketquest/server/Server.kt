@@ -4,6 +4,7 @@ import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import nl.pocketquest.server.request.handler.impl.ResourceGatheringRequestHandler
+import nl.pocketquest.server.state.State
 import java.io.InputStream
 
 fun main(args: Array<String>) {
@@ -17,17 +18,21 @@ fun main(args: Array<String>) {
 
 object Server {
     fun init() {
-        val serviceAccount = loadServiceAccount()
-        val options = FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .setDatabaseUrl("https://pocket-quests.firebaseio.com")
-                .build()
+        val firebaseOptions = getFirebaseOptions()
+        FirebaseApp.initializeApp(firebaseOptions)
 
-        FirebaseApp.initializeApp(options)
+        State.init()
     }
 
     fun start() {
         ResourceGatheringRequestHandler.listen()
+    }
+
+    private fun getFirebaseOptions(): FirebaseOptions {
+        return FirebaseOptions.Builder()
+                .setCredentials(GoogleCredentials.fromStream(this.loadServiceAccount()))
+                .setDatabaseUrl("https://pocket-quests.firebaseio.com")
+                .build()
     }
 
     private fun loadServiceAccount(): InputStream {
