@@ -1,5 +1,6 @@
-package nl.pocketquest.server
+package nl.pocketquest.server.task.impl
 
+import nl.pocketquest.server.task.Task
 import java.util.concurrent.TimeUnit
 
 class ResourceGatheringTask(

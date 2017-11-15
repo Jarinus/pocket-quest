@@ -1,6 +1,6 @@
-package nl.pocketquest.server
+package nl.pocketquest.server.task
 
-import nl.pocketquest.server.request.schedule.Scheduler
+import nl.pocketquest.server.schedule.Scheduler
 import java.util.concurrent.TimeUnit
 
 abstract class Task(
