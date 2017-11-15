@@ -2,7 +2,7 @@ package nl.pocketquest.server.request.handler.impl
 
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.FirebaseDatabase
-import nl.pocketquest.server.firebaseListener.FBChildListener
+import nl.pocketquest.server.firebase.FBChildListener
 import nl.pocketquest.server.request.handler.RequestHandler
 import nl.pocketquest.server.request.impl.ResourceGatheringRequest
 import nl.pocketquest.server.task.impl.ResourceGatheringTask
