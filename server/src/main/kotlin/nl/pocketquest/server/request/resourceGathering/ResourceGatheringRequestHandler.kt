@@ -4,6 +4,7 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import nl.pocketquest.server.ResourceGatheringTask
 import nl.pocketquest.server.request.RequestHandler
 import nl.pocketquest.server.request.schedule.Scheduler
 import java.util.concurrent.TimeUnit
@@ -22,9 +23,9 @@ object ResourceGatheringRequestHandler : RequestHandler<ResourceGatheringRequest
     }
 
     override fun processRequest(request: ResourceGatheringRequest): Boolean {
-        Scheduler.scheduleAfter(1, TimeUnit.SECONDS, {
-            println(request)
-        })
+        val task = ResourceGatheringTask(8, 1, TimeUnit.SECONDS)
+
+        task.run()
 
         return true
     }
