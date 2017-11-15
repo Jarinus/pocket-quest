@@ -1,5 +1,6 @@
 package nl.pocketquest.server.task.impl
 
+import nl.pocketquest.server.state.State
 import nl.pocketquest.server.task.Task
 import java.util.concurrent.TimeUnit
 
@@ -14,7 +15,7 @@ class ResourceGatheringTask(
     }
 
     override fun execute() {
-        println("Gathering resources")
+        println("Gathering resources from: ${State.resourceNode("tree_1")}")
     }
 
 }
