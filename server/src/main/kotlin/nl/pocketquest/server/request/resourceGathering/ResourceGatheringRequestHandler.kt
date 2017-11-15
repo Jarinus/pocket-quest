@@ -5,6 +5,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import nl.pocketquest.server.request.RequestHandler
+import nl.pocketquest.server.request.schedule.Scheduler
+import java.util.concurrent.TimeUnit
 
 object ResourceGatheringRequestHandler : RequestHandler<ResourceGatheringRequest>() {
     override fun listen() {
@@ -20,7 +22,10 @@ object ResourceGatheringRequestHandler : RequestHandler<ResourceGatheringRequest
     }
 
     override fun processRequest(request: ResourceGatheringRequest): Boolean {
-        println(request)
+        Scheduler.scheduleAfter(1, TimeUnit.SECONDS, {
+            println(request)
+        })
+
         return true
     }
 
@@ -39,7 +44,6 @@ object ResourceGatheringRequestHandler : RequestHandler<ResourceGatheringRequest
             override fun onChildAdded(snapshot: DataSnapshot?, previousChildName: String?) {
                 snapshot?.toResourceGatheringRequest()
                         ?.let(this@ResourceGatheringRequestHandler::handle)
-                        ?.apply(::println)
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot?) {
