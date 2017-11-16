@@ -1,3 +1,5 @@
 package nl.pocketquest.pocketquest.mvp
 
-open class BasePresenter<out View : BaseView>(protected val view: View)
+import org.jetbrains.anko.AnkoLogger
+
+open class BasePresenter<out View : BaseView>(protected val view: View) : AnkoLogger

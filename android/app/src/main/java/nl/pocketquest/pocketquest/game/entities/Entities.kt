@@ -26,7 +26,7 @@ data class FBResourceNode(
         val id: String = "",
         val icon: String = "",
         val family: String = "",
-        val tier: Int = 0,
+        val tier: String = "",
         val name: String = "")
 
 object Entities : AnkoLogger {
