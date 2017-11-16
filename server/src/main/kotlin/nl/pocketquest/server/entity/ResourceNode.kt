@@ -7,7 +7,7 @@ class ResourceNode(
         private val family: String,
         val icon: String,
         val name: String,
-        val tier: Int,
+        val tier: String,
         val suppliedItems: Map<String, ResourceNodeSuppliedItem>
 ) {
     fun family() = State.resourceNodeFamily(family)
@@ -21,7 +21,7 @@ data class ResourceNodeModel(
         val family: String = "",
         val icon: String = "",
         val name: String = "",
-        val tier: Int = 0,
+        val tier: String = "",
         var suppliedItems: Map<String, ResourceNodeSuppliedItem> = mapOf()
 ) {
     fun toResourceNode(id: String): ResourceNode {

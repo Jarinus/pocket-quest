@@ -4,18 +4,17 @@ import nl.pocketquest.server.schedule.Scheduler
 import java.util.concurrent.TimeUnit
 
 abstract class Task(
-        private var iterationsLeft: Int,
         private val interval: Long,
-        private val timeUnit: TimeUnit
+        private val timeUnit: TimeUnit,
+        protected var scheduleNext: Boolean = false
 ) {
+    var iterationCount = 0
+        private set
+
     protected abstract fun validate(): Boolean
     protected abstract fun execute()
 
     fun run() {
-        if (iterationsLeft < 1) {
-            return
-        }
-
         iteration()
     }
 
@@ -23,9 +22,9 @@ abstract class Task(
         Scheduler.scheduleAfter(interval, timeUnit, {
             if (validate()) {
                 execute()
-                iterationsLeft--
+                iterationCount++
 
-                if (iterationsLeft > 0) {
+                if (scheduleNext) {
                     iteration()
                 }
             }
