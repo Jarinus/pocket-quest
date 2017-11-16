@@ -21,11 +21,13 @@ object ResourceGatheringRequestHandler : RequestHandler<ResourceGatheringRequest
     }
 
     override fun validateRequest(request: ResourceGatheringRequest): Boolean {
+        //TODO: Check (pseudo code) !"gathering".equals(user_state)
+
         return true
     }
 
     override fun processRequest(request: ResourceGatheringRequest): Boolean {
-        val task = ResourceGatheringTask(8, 1, TimeUnit.SECONDS)
+        val task = ResourceGatheringTask(1, TimeUnit.SECONDS, request)
 
         task.run()
 

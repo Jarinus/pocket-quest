@@ -4,7 +4,7 @@ class Item(
         val id: String,
         val icon: String,
         val name: String,
-        val tier: Int
+        val tier: String
 ) {
     override fun toString(): String {
         return "Item(id='$id', icon='$icon', name='$name', tier=$tier)"
@@ -14,7 +14,7 @@ class Item(
 data class ItemModel(
         val icon: String = "",
         val name: String = "",
-        val tier: Int = 0
+        val tier: String = ""
 ) {
     fun toItem(key: String): Item {
         return Item(key, icon, name, tier)
