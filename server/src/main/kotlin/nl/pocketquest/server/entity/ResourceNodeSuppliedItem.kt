@@ -1,19 +1,11 @@
 package nl.pocketquest.server.entity
 
 class ResourceNodeSuppliedItem(
-        private val itemId: String,
-        private val duration: Int,
-        private val amount: Pair<Int, Int>,
-        private val respawnTime: Int
+        val itemId: String,
+        val duration: Int,
+        val amount: Pair<Int, Int>,
+        val respawnTime: Int
 ) {
-    fun itemId() = itemId
-
-    fun duration() = duration
-
-    fun amount() = amount
-
-    fun respawnTime() = respawnTime
-
     override fun toString(): String {
         return "ResourceNodeSuppliedItem(itemId='$itemId', duration=$duration, amount=$amount, respawnTime=$respawnTime)"
     }
