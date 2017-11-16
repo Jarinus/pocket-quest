@@ -59,10 +59,10 @@ object State {
                 .mapValues { it.value.keys }
     }
 
-    private suspend fun loadResourceSuppliedItems(): Map<String, Map<String, SuppliedItem>> {
+    private suspend fun loadResourceSuppliedItems(): Map<String, Map<String, ResourceNodeSuppliedItem>> {
         return FirebaseDatabase.getInstance()
                 .getReference("/entities/resource_node_supplied_items")
-                .readAsync<HashMap<String, HashMap<String, SuppliedItemModel>>>()
+                .readAsync<HashMap<String, HashMap<String, ResourceNodeSuppliedItemModel>>>()
                 .mapValues { it.value.mapValues { it.value.toSuppliedItem(it.key) } }
     }
 }
