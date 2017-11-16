@@ -10,6 +10,7 @@ import nl.hanze.distanceswimming.extensions.firebase.provider
 import nl.hanze.distanceswimming.extensions.firebase.setAvailableProviders
 import nl.pocketquest.pocketquest.mvp.BaseActivity
 import nl.pocketquest.pocketquest.views.locationpermission.LocationPermissionActivity
+import org.jetbrains.anko.info
 import org.jetbrains.anko.startActivity
 
 private const val RC_SIGN_IN = 1
@@ -19,11 +20,13 @@ class LoginActivity : BaseActivity(), LoginContract.LoginView {
 
     override fun goToLocationPermissionActivity() {
         startActivity<LocationPermissionActivity>()
+        info { "Going to next activity" }
         finish()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        info { "Going to login" }
         val intent = AUTH_UI.buildSignInIntent {
             setAvailableProviders(
                     provider(AuthUI.GOOGLE_PROVIDER)

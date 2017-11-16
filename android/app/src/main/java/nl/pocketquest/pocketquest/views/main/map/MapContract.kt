@@ -1,5 +1,6 @@
 package nl.pocketquest.pocketquest.views.main.map
 
+import android.graphics.Bitmap
 import android.location.Location
 import nl.pocketquest.pocketquest.game.IGameObject
 import nl.pocketquest.pocketquest.game.entities.ImageResolver
@@ -30,6 +31,8 @@ class MapContract {
          * @param gameObject The game object to remove
          */
         fun removeGameObject(gameObject: IGameObject)
+
+        fun displayNotification(text: String)
 
         fun getImageResolver(): ImageResolver
     }
