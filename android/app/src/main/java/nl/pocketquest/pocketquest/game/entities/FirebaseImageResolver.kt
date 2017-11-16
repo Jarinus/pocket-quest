@@ -2,6 +2,7 @@ package nl.pocketquest.pocketquest.game.entities
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.widget.ImageView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import nl.pocketquest.pocketquest.utils.STORAGE
 import nl.pocketquest.pocketquest.utils.toBitmap
@@ -21,3 +22,10 @@ object FirebaseImageResolver : AnkoLogger {
                     .get()
                     .toBitmap()
 }
+
+fun ImageView.load(context: Context, iconName: String) =
+        GlideApp.with(context)
+                .load(STORAGE.getReference(iconName))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerInside()
+                .into(this)

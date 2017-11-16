@@ -4,13 +4,11 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import kotlinx.coroutines.experimental.runBlocking
 import nl.pocketquest.pocketquest.game.entities.Entities
 import nl.pocketquest.pocketquest.game.entities.FBItem
 import nl.pocketquest.pocketquest.utils.DATABASE
 
-/**
- * Created by Laurens on 13-11-2017.
- */
 interface InventoryListener {
 
     fun newInventoryState(item: Item)
@@ -18,10 +16,9 @@ interface InventoryListener {
     fun itemRemoved(item: Item)
 }
 
-class Item(val itemName: String, val itemCount: Long) {
+data class Item(val itemName: String, val itemCount: Long) {
     suspend fun getItemProperties(): FBItem? = Entities.getItem(itemName)
 }
-
 class Inventory(ref: DatabaseReference) {
     private val items = mutableMapOf<String, Long>()
     private val inventoryListeners = mutableListOf<InventoryListener>()
