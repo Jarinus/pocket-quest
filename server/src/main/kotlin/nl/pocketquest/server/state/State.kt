@@ -6,22 +6,29 @@ import nl.pocketquest.server.entity.*
 import nl.pocketquest.server.utils.readAsync
 
 object State {
+    private lateinit var items: Map<String, Item>
     private lateinit var resourceNodes: Map<String, ResourceNode>
     private lateinit var resourceNodeFamilies: Map<String, ResourceNodeFamily>
 
     fun init() {
         runBlocking {
+            items = loadItems()
             resourceNodes = loadResourceNodes()
             resourceNodeFamilies = loadResourceNodeFamilies()
         }
     }
 
-    fun resourceNode(identifier: String): ResourceNode? {
-        return resourceNodes[identifier]
-    }
+    fun item(identifier: String) = items[identifier]
 
-    fun resourceNodeFamily(identifier: String): ResourceNodeFamily? {
-        return resourceNodeFamilies[identifier]
+    fun resourceNode(identifier: String) = resourceNodes[identifier]
+
+    fun resourceNodeFamily(identifier: String) = resourceNodeFamilies[identifier]
+
+    private suspend fun loadItems(): Map<String, Item> {
+        return FirebaseDatabase.getInstance()
+                .getReference("/entities/items")
+                .readAsync<HashMap<String, ItemModel>>()
+                .mapValues { it.value.toItem(it.key) }
     }
 
     private suspend fun loadResourceNodes(): Map<String, ResourceNode> {
