@@ -3,6 +3,7 @@ package nl.pocketquest.server
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
+import nl.pocketquest.server.request.handler.impl.ResourceGatheringRequestHandler
 import nl.pocketquest.server.state.State
 import java.io.InputStream
 
@@ -24,7 +25,7 @@ object Server {
     }
 
     fun start() {
-//        ResourceGatheringRequestHandler.listen()
+        ResourceGatheringRequestHandler.listen()
     }
 
     private fun getFirebaseOptions(): FirebaseOptions {
