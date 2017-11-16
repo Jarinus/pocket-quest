@@ -64,7 +64,7 @@ class MapFragment : BaseFragment(), MapContract.MapView {
         }
     }
 
-    override fun showSnackbar(text: String) {
+    override fun displayNotification(text: String) {
         ctx.runOnUiThread {
             Snackbar.make(view!!, text, Snackbar.LENGTH_SHORT)
                     .show()

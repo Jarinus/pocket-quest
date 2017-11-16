@@ -106,7 +106,7 @@ class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapV
         }
         async(CommonPool) {
             item.getItemProperties()?.name?.also {
-                view.showSnackbar("$it +$addition")
+                view.displayNotification("$it +$addition")
             }
         }
     }

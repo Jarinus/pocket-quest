@@ -32,7 +32,7 @@ class MapContract {
          */
         fun removeGameObject(gameObject: IGameObject)
 
-        fun showSnackbar(text: String)
+        fun displayNotification(text: String)
 
         fun getImageResolver(): ImageResolver
     }

@@ -50,8 +50,9 @@ class Inventory(ref: DatabaseReference) {
         items[itemName] = count
         inventoryListeners.forEach {
             it.newInventoryState(item)
-            if (initialLoad)
+            if (initialLoad) {
                 it.itemAdded(item, prevItemCount)
+            }
         }
     }
 
