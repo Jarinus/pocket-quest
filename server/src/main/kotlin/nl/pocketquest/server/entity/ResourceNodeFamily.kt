@@ -1,20 +1,10 @@
 package nl.pocketquest.server.entity
 
 class ResourceNodeFamily(
-        private val id: String,
-        private val gatheringToolTypes: Collection<String>,
-        private val members: Collection<ResourceNode>
+        val id: String,
+        val gatheringToolTypes: Collection<String>,
+        val members: Collection<ResourceNode>
 ) {
-    fun id() = id
-
-    fun gatheringToolTypes() = gatheringToolTypes
-
-    fun supportsToolType(toolType: String) = gatheringToolTypes.contains(toolType)
-
-    fun members() = members
-
-    fun isMember(resourceNode: ResourceNode) = members.contains(resourceNode)
-
     override fun toString(): String {
         return "ResourceNodeFamily(id='$id', gatheringToolTypes=$gatheringToolTypes, members=$members)"
     }

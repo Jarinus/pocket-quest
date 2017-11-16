@@ -1,18 +1,14 @@
 package nl.pocketquest.server.entity
 
 class Item(
-        private val key: String,
-        private val icon: String,
-        private val name: String,
-        private val tier: Int
+        val id: String,
+        val icon: String,
+        val name: String,
+        val tier: Int
 ) {
-    fun key() = key
-
-    fun icon() = icon
-
-    fun name() = name
-
-    fun tier() = tier
+    override fun toString(): String {
+        return "Item(id='$id', icon='$icon', name='$name', tier=$tier)"
+    }
 }
 
 data class ItemModel(
