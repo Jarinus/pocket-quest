@@ -7,7 +7,8 @@ class ResourceNode(
         private val family: String,
         private val icon: String,
         private val name: String,
-        private val tier: Int
+        private val tier: Int,
+        private val suppliedItems: Map<String, SuppliedItem>
 ) {
     fun id() = id
 
@@ -18,15 +19,22 @@ class ResourceNode(
     fun name() = name
 
     fun tier() = tier
+
+    fun suppliedItems() = suppliedItems
+
+    override fun toString(): String {
+        return "ResourceNode(id='$id', family='$family', icon='$icon', name='$name', tier=$tier, suppliedItems=$suppliedItems)"
+    }
 }
 
 data class ResourceNodeModel(
         val family: String = "",
         val icon: String = "",
         val name: String = "",
-        val tier: Int = 0
+        val tier: Int = 0,
+        var suppliedItems: Map<String, SuppliedItem> = mapOf()
 ) {
     fun toResourceNode(id: String): ResourceNode {
-        return ResourceNode(id, family, icon, name, tier)
+        return ResourceNode(id, family, icon, name, tier, suppliedItems)
     }
 }

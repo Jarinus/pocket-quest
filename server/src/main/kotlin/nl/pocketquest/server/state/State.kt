@@ -2,10 +2,7 @@ package nl.pocketquest.server.state
 
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.experimental.runBlocking
-import nl.pocketquest.server.entity.ResourceNode
-import nl.pocketquest.server.entity.ResourceNodeFamily
-import nl.pocketquest.server.entity.ResourceNodeFamilyModel
-import nl.pocketquest.server.entity.ResourceNodeModel
+import nl.pocketquest.server.entity.*
 import nl.pocketquest.server.utils.readAsync
 
 object State {
@@ -28,10 +25,16 @@ object State {
     }
 
     private suspend fun loadResourceNodes(): Map<String, ResourceNode> {
-        return FirebaseDatabase.getInstance()
+        val resourceNodes = FirebaseDatabase.getInstance()
                 .getReference("/entities/resource_nodes")
                 .readAsync<HashMap<String, ResourceNodeModel>>()
-                .mapValues { it.value.toResourceNode(it.key) }
+
+        loadResourceSuppliedItems()
+                .forEach({ resourceNodeId, suppliedItems ->
+                    resourceNodes[resourceNodeId]?.suppliedItems = suppliedItems
+                })
+
+        return resourceNodes.mapValues { it.value.toResourceNode(it.key) }
     }
 
     private suspend fun loadResourceNodeFamilies(): Map<String, ResourceNodeFamily> {
@@ -54,5 +57,12 @@ object State {
                 .getReference("/entities/resource_node_resource_node_families")
                 .readAsync<HashMap<String, HashMap<String, Boolean>>>()
                 .mapValues { it.value.keys }
+    }
+
+    private suspend fun loadResourceSuppliedItems(): Map<String, Map<String, SuppliedItem>> {
+        return FirebaseDatabase.getInstance()
+                .getReference("/entities/resource_node_supplied_items")
+                .readAsync<HashMap<String, HashMap<String, SuppliedItemModel>>>()
+                .mapValues { it.value.mapValues { it.value.toSuppliedItem(it.key) } }
     }
 }

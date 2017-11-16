@@ -14,6 +14,10 @@ class ResourceNodeFamily(
     fun members() = members
 
     fun isMember(resourceNode: ResourceNode) = members.contains(resourceNode)
+
+    override fun toString(): String {
+        return "ResourceNodeFamily(id='$id', gatheringToolTypes=$gatheringToolTypes, members=$members)"
+    }
 }
 
 data class ResourceNodeFamilyModel(
