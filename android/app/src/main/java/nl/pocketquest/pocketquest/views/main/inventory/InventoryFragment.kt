@@ -1,16 +1,14 @@
 package nl.pocketquest.pocketquest.views.main.inventory
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
-import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -18,9 +16,7 @@ import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.entities.load
 import nl.pocketquest.pocketquest.game.player.Item
 import nl.pocketquest.pocketquest.mvp.BaseFragment
-import nl.pocketquest.pocketquest.utils.squaredRelativeLayout
 import org.jetbrains.anko.*
-import org.jetbrains.anko.appcompat.v7.fitWindowsFrameLayout
 import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.ctx
 
@@ -38,8 +34,10 @@ private fun Item.toInventoryItem(lambda: (InventoryItem) -> Unit) {
     }
 }
 
-class InventoryFragment : BaseFragment(), InventoryContract.InventoryView {
-    private val presenter = InventoryPresenter(this)
+private fun InventoryItem.toItem(): Item = Item(name, count)
+
+class InventoryFragment : BaseFragment(), InventoryContract.InventoryView, AdapterView.OnItemClickListener {
+    private val presenter: InventoryContract.InventoryPresenter = InventoryPresenter(this)
     private lateinit var mAdapter: InvertoryItemAdapter
     override fun addItem(item: Item) = item.toInventoryItem {
         mAdapter.add(it)
@@ -58,20 +56,26 @@ class InventoryFragment : BaseFragment(), InventoryContract.InventoryView {
         presenter.attached()
     }
 
+    override fun onItemClick(adapterView: AdapterView<*>?, view: View?, position: Int, itemID: Long) {
+        mAdapter.getItem(position)
+                ?.let(InventoryItem::toItem)
+                ?.also(presenter::itemClicked)
+    }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mAdapter = InvertoryItemAdapter(ctx)
 
         return UI {
-            fitWindowsFrameLayout {
-                gridView {
-                    lparams {
-                        width = matchParent
-                        height = matchParent
-                    }
-                    horizontalSpacing = dip(5)
-                    numColumns = 3
-                    adapter = mAdapter
+            gridView {
+                lparams {
+                    width = matchParent
+                    height = matchParent
                 }
+                horizontalSpacing = dip(5)
+                verticalSpacing = dip(5)
+                numColumns = 3
+                adapter = mAdapter
+                onItemClickListener = this@InventoryFragment
             }
         }.view
     }
@@ -83,6 +87,7 @@ class InvertoryItemAdapter(val context: Context) : BaseAdapter(), AnkoLogger {
     private val list = mutableListOf<String>()
     private fun write(update: () -> Unit) {
         update()
+        info { "Get count = $count" }
         notifyDataSetChanged()
     }
 
@@ -102,7 +107,7 @@ class InvertoryItemAdapter(val context: Context) : BaseAdapter(), AnkoLogger {
         if (!list.contains(item.id)) {
             add(item)
         }
-        map[item.name] = item
+        map[item.id] = item
     }
 
     override fun getItemId(pos: Int) = pos.toLong()
@@ -110,7 +115,7 @@ class InvertoryItemAdapter(val context: Context) : BaseAdapter(), AnkoLogger {
     override fun getCount() = map.size
 
     override fun getView(position: Int, view: View?, viewGroup: ViewGroup): View {
-        val contentView = view ?: InventoryItemObject().createView(AnkoContext.create(viewGroup.context, viewGroup))
+        val contentView = view ?: context.layoutInflater.inflate(R.layout.individual_item_view, viewGroup, false)
         val item = getItem(position)!!
         contentView.find<TextView>(R.id.tvRss).text = "${item.count}"
         contentView.find<ImageView>(R.id.imgRss).also {
@@ -118,27 +123,4 @@ class InvertoryItemAdapter(val context: Context) : BaseAdapter(), AnkoLogger {
         }
         return contentView
     }
-}
-
-class InventoryItemObject : AnkoComponent<ViewGroup> {
-    override fun createView(ui: AnkoContext<ViewGroup>) = with(ui) {
-        squaredRelativeLayout {
-            backgroundColor = Color.LTGRAY
-            imageView {
-                id = R.id.imgRss
-            }
-            textView {
-                id = R.id.tvRss
-            }
-        }
-    }
-}
-
-class SquaredRelativeLayout(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyle: Int = 0
-) : RelativeLayout(context, attrs, defStyle) {
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int)
-            = super.onMeasure(widthMeasureSpec, widthMeasureSpec)
 }

@@ -31,7 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="nl.pocketquest.pocketquest.views.main.map.MapFragment" />
         <activity android:name=".views.locationpermission.LocationPermissionActivity" />
         <activity
             android:name=".views.main.MainActivity"

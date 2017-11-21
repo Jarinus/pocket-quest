@@ -5,11 +5,10 @@ import nl.pocketquest.pocketquest.game.player.InventoryListener
 import nl.pocketquest.pocketquest.game.player.Item
 import nl.pocketquest.pocketquest.utils.whenLoggedIn
 
-
 class InventoryPresenter(
-        private val inventoryView: InventoryContract.InventoryView
-) : InventoryContract.InventoryPresenter(inventoryView), InventoryListener{
-    fun attached() {
+        val inventoryView: InventoryContract.InventoryView
+) : InventoryContract.InventoryPresenter(inventoryView), InventoryListener {
+    override fun attached() {
         whenLoggedIn {
             Inventory.getUserInventory(it.uid).addInventoryListener(this)
         }
@@ -27,9 +26,7 @@ class InventoryPresenter(
         inventoryView.removeItem(item)
     }
 
-
-    override fun itemClicked(item: Item): Boolean {
-        inventoryView.displayToast("item clicked: $item")
-        return true
+    override fun itemClicked(item: Item) {
+        view.displayToast("item clicked: $item")
     }
 }
