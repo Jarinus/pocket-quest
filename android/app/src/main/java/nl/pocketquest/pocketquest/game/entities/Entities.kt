@@ -26,6 +26,7 @@ data class FBResourceNode(
         val id: String = "",
         val icon: String = "",
         val family: String = "",
+        val icon_empty: String = "",
         val tier: String = "",
         val name: String = "")
 
