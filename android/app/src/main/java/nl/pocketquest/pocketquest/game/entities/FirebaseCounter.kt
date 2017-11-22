@@ -6,7 +6,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 
 /**
- * Used for objects which have children which are integers. Each change fires the current state of the object
+ * Used for objects which have children which are integers. Each change fires an event containing the current state of the object
  */
 class FirebaseCounter(private val reference: DatabaseReference) {
 

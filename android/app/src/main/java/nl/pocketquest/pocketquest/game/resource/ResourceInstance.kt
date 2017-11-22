@@ -17,7 +17,7 @@ import org.jetbrains.anko.getStackTraceString
 import org.jetbrains.anko.info
 import org.jetbrains.anko.wtf
 
-enum class Status { EMPTY, HAS_RESOURCES }
+private enum class Status { EMPTY, HAS_RESOURCES }
 class ResourceInstance(
         val resourceID: String,
         private val clickableGameObject: ClickableGameObject,
@@ -35,26 +35,30 @@ class ResourceInstance(
     }
 
     fun lookAtNewCounts(counts: Map<String, Long>) {
-        val newResourceStatus = when (counts.values.all { it == 0L }) {
+        val newResourcesStatus = when (counts.values.all { it == 0L }) {
             true -> Status.EMPTY
             false -> Status.HAS_RESOURCES
         }
-        updateResourcesStatus(newResourceStatus)
+        updateResourcesStatus(newResourcesStatus)
     }
 
-    private fun updateResourcesStatus(newResourceStatus: Status) {
-        if (newResourceStatus != status) {
-            status = newResourceStatus
-            val newIcon = when (newResourceStatus) {
-                Status.EMPTY -> resourceNode.icon_empty
-                Status.HAS_RESOURCES -> resourceNode.icon
-            }
-            async(CommonPool) {
-                try {
-                    clickableGameObject.image = imageResolver.resolveImage(newIcon)
-                } catch (e: Exception) {
-                    wtf(e.getStackTraceString())
-                }
+    private fun updateResourcesStatus(newResourcesStatus: Status) {
+        if (newResourcesStatus != status) {
+            status = newResourcesStatus
+            updateImageIcon(newResourcesStatus)
+        }
+    }
+
+    private fun updateImageIcon(newResourcesStatus: Status) {
+        val newIcon = when (newResourcesStatus) {
+            Status.EMPTY -> resourceNode.icon_empty
+            Status.HAS_RESOURCES -> resourceNode.icon
+        }
+        async(CommonPool) {
+            try {
+                clickableGameObject.image = imageResolver.resolveImage(newIcon)
+            } catch (e: Exception) {
+                wtf(e.getStackTraceString())
             }
         }
     }
