@@ -4,6 +4,7 @@ import nl.pocketquest.pocketquest.game.player.Inventory
 import nl.pocketquest.pocketquest.game.player.InventoryListener
 import nl.pocketquest.pocketquest.game.player.Item
 import nl.pocketquest.pocketquest.utils.whenLoggedIn
+import org.jetbrains.anko.info
 
 class InventoryPresenter(
         val inventoryView: InventoryContract.InventoryView
@@ -27,6 +28,6 @@ class InventoryPresenter(
     }
 
     override fun itemClicked(item: Item) {
-        view.displayToast("item clicked: $item")
+        info("item clicked: $item")
     }
 }

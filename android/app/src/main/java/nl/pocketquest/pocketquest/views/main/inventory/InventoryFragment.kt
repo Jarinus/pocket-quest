@@ -22,23 +22,23 @@ import org.jetbrains.anko.support.v4.ctx
 
 data class InventoryItem(val id: String, val name: String, val count: Long, val img: String)
 
-private fun Item.toInventoryItem(lambda: (InventoryItem) -> Unit) {
+private fun Item.toInventoryItem(itemConsumer: (InventoryItem) -> Unit) {
     async(UI) {
         try {
             val (name, icon, _) = getItemProperties()!!
             val item = InventoryItem(itemName, name, itemCount, icon)
-            lambda(item)
+            itemConsumer(item)
         } catch (e: Exception) {
             Log.wtf("inventory", e.getStackTraceString())
         }
     }
 }
 
-private fun InventoryItem.toItem(): Item = Item(name, count)
+private fun InventoryItem.toItem() = Item(name, count)
 
 class InventoryFragment : BaseFragment(), InventoryContract.InventoryView, AdapterView.OnItemClickListener {
     private val presenter: InventoryContract.InventoryPresenter = InventoryPresenter(this)
-    private lateinit var mAdapter: InvertoryItemAdapter
+    private lateinit var mAdapter: InventoryItemAdapter
     override fun addItem(item: Item) = item.toInventoryItem {
         mAdapter.add(it)
     }
@@ -63,7 +63,7 @@ class InventoryFragment : BaseFragment(), InventoryContract.InventoryView, Adapt
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mAdapter = InvertoryItemAdapter(ctx)
+        mAdapter = InventoryItemAdapter(ctx)
 
         return UI {
             gridView {
@@ -81,7 +81,7 @@ class InventoryFragment : BaseFragment(), InventoryContract.InventoryView, Adapt
     }
 }
 
-class InvertoryItemAdapter(val context: Context) : BaseAdapter(), AnkoLogger {
+class InventoryItemAdapter(val context: Context) : BaseAdapter(), AnkoLogger {
 
     private val map = mutableMapOf<String, InventoryItem>()
     private val list = mutableListOf<String>()
