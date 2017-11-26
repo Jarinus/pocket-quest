@@ -1,3 +1,5 @@
 package nl.pocketquest.server.request
 
-interface Request
+interface Request {
+    var requestID: String
+}
