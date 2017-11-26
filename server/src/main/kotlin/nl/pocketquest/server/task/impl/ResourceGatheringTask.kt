@@ -8,6 +8,7 @@ import nl.pocketquest.server.user.User
 import nl.pocketquest.server.utils.DATABASE
 import nl.pocketquest.server.utils.incrementBy
 import nl.pocketquest.server.utils.incrementByOrCreate
+import nl.pocketquest.server.utils.readAsync
 import java.util.concurrent.TimeUnit
 
 
@@ -31,8 +32,7 @@ class ResourceGatheringTask(
     override suspend fun execute() {
         if (nodeResourcesRef.incrementBy(-1, LongRange(0, Long.MAX_VALUE))) {
             userResourcesRef.incrementByOrCreate(1, 1)
-        } else {
-            scheduleNext = false
         }
+        scheduleNext = nodeResourcesRef.readAsync<Long>() > 0
     }
 }
