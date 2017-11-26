@@ -47,8 +47,68 @@ inline suspend fun <T> suspendCoroutineW(crossinline block: (WrappedContinuation
             block(wd)
         }
 
+data class TransactionResult<T>(
+        val value: T?,
+        val abort: Boolean
+) {
+    companion object {
+        fun <T> abort() = TransactionResult<T>(null, true)
+        fun <T> success(value: T?) = TransactionResult<T>(value, false)
+    }
+}
+
 suspend inline fun <reified T> DatabaseReference.readAsync(): T = readFromDatabaseAsync(this)
 suspend inline fun <reified T> DatabaseReference.writeAsync(t: T) = writeToDatabaseAsync(this, t)
+suspend inline fun <reified T> DatabaseReference.transaction(crossinline transformer: (T?) -> TransactionResult<T>) = doTransaction(this, transformer)
+suspend inline fun <reified T> DatabaseReference.transactionNotNull(crossinline transformer: (T) -> TransactionResult<T>) = doTransaction<T>(this) {
+    it?.let(transformer) ?: TransactionResult.success(it)
+}
+
+suspend inline fun DatabaseReference.incrementByOrCreate(increment: Long, initialValue: Long): Boolean = doTransaction<Long>(this) {
+    TransactionResult.success(when (it) {
+        null -> initialValue
+        else -> it + increment
+    })
+}
+
+suspend inline fun DatabaseReference.incrementBy(increment: Long, range: LongRange): Boolean = transactionNotNull<Long> {
+    val newValue = it + increment
+    if (range.contains(newValue)) {
+        TransactionResult.success(newValue)
+    } else {
+        TransactionResult.abort()
+    }
+}
+
+suspend inline fun DatabaseReference.remove(): Boolean = suspendCoroutineW { d ->
+    this.removeValue(object : DatabaseReference.CompletionListener {
+        override fun onComplete(error: DatabaseError?, ref: DatabaseReference?) {
+            d.resume(error == null)
+        }
+    })
+}
+
+suspend inline fun <reified T> doTransaction(dbref: DatabaseReference, crossinline transformer: (T?) -> TransactionResult<T>): Boolean = suspendCoroutineW { d ->
+
+    dbref.runTransaction(object : Transaction.Handler {
+        override fun onComplete(error: DatabaseError?, committed: Boolean, currentData: DataSnapshot?) {
+            d.resume(committed)
+        }
+
+        override fun doTransaction(currentData: MutableData): Transaction.Result {
+            val currentValue = currentData.getValue(T::class.java)
+            val result = transformer(currentValue)
+            return when (result.abort) {
+                true -> Transaction.abort()
+                false -> {
+                    currentData.value = result.value
+                    Transaction.success(currentData)
+                }
+            }
+        }
+    })
+
+}
 
 suspend inline fun <reified T> readFromDatabaseAsync(dbref: DatabaseReference): T = suspendCoroutineW { d ->
     dbref.addListenerForSingleValueEvent(object : ValueEventListener {

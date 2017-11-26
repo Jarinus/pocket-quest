@@ -1,5 +1,7 @@
 package nl.pocketquest.server.task
 
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
 import nl.pocketquest.server.schedule.Scheduler
 import java.util.concurrent.TimeUnit
 
@@ -11,8 +13,11 @@ abstract class Task(
     var iterationCount = 0
         private set
 
-    protected abstract fun validate(): Boolean
-    protected abstract fun execute()
+    protected suspend abstract fun execute()
+    /**
+     * Will be called after the last execution of this task
+     */
+    protected suspend open fun beforeDestruction() = Unit
 
     fun run() {
         iteration()
@@ -20,12 +25,14 @@ abstract class Task(
 
     private fun iteration() {
         Scheduler.scheduleAfter(interval, timeUnit, {
-            if (validate()) {
+            async(CommonPool) {
                 execute()
                 iterationCount++
 
                 if (scheduleNext) {
                     iteration()
+                } else {
+                    beforeDestruction()
                 }
             }
         })
