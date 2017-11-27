@@ -64,14 +64,15 @@ suspend inline fun <reified T> DatabaseReference.transactionNotNull(crossinline 
     it?.let(transformer) ?: TransactionResult.success(it)
 }
 
-suspend inline fun DatabaseReference.incrementByOrCreate(increment: Long, initialValue: Long): Boolean = doTransaction<Long>(this) {
+suspend fun DatabaseReference.incrementByOrCreate(increment: Long, initialValue: Long): Boolean = doTransaction<Long>(this) {
     TransactionResult.success(when (it) {
         null -> initialValue
         else -> it + increment
     })
 }
 
-suspend inline fun DatabaseReference.incrementBy(increment: Long, range: LongRange): Boolean = transactionNotNull<Long> {
+suspend fun DatabaseReference.incrementBy(increment: Long, min: Long, max: Long): Boolean = transactionNotNull<Long> {
+    val range = LongRange(min, max)
     val newValue = it + increment
     if (range.contains(newValue)) {
         TransactionResult.success(newValue)
@@ -80,12 +81,8 @@ suspend inline fun DatabaseReference.incrementBy(increment: Long, range: LongRan
     }
 }
 
-suspend inline fun DatabaseReference.remove(): Boolean = suspendCoroutineW { d ->
-    this.removeValue(object : DatabaseReference.CompletionListener {
-        override fun onComplete(error: DatabaseError?, ref: DatabaseReference?) {
-            d.resume(error == null)
-        }
-    })
+suspend fun DatabaseReference.remove(): Boolean = suspendCoroutineW { d ->
+    this.removeValue { error, ref -> d.resume(error == null) }
 }
 
 suspend inline fun <reified T> doTransaction(dbref: DatabaseReference, crossinline transformer: (T?) -> TransactionResult<T>): Boolean = suspendCoroutineW { d ->

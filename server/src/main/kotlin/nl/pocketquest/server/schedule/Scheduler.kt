@@ -8,7 +8,7 @@ object Scheduler {
     private val timer = Timer()
 
     fun scheduleAfter(duration: Long, timeUnit: TimeUnit, task: () -> Unit) {
-        val timerTask = timerTask { task.invoke() }
+        val timerTask = timerTask { task() }
         val durationMillis = timeUnit.toMillis(duration)
 
         timer.schedule(timerTask, durationMillis)

@@ -10,7 +10,6 @@ import nl.pocketquest.server.firebase.FBChildListener
 import nl.pocketquest.server.request.Request
 import nl.pocketquest.server.utils.getLogger
 import nl.pocketquest.server.utils.remove
-import org.slf4j.LoggerFactory
 
 
 class BaseHandler<T : Request>(private val handler: RequestHandler<T>) {
@@ -27,24 +26,28 @@ class BaseHandler<T : Request>(private val handler: RequestHandler<T>) {
 
     private fun handleRequest(snapshot: DataSnapshot?) {
         try {
-            val request = snapshot?.getValue(handler.requestType()) ?: return
-            request.requestID = snapshot.key
-            async(CommonPool) {
-                try {
-                    val response = handler.handle(request)
-                    handleResponse(response)
-                } catch (e: Exception) {
-                    getLogger().error("Exception while handling request", e)
-                }
-            }
+            handleRequestUnsafe(snapshot)
         } catch (e: Exception) {
             getLogger().error("Can't parse request", e)
-        } finally {
-            async(CommonPool) {
-                val succes = snapshot?.ref?.remove() ?: true
-                if (!succes) {
-                    getLogger().warn("Failed to remove request after handling")
-                }
+        }
+        async(CommonPool) {
+            val success = snapshot?.ref?.remove() ?: true
+            if (!success) {
+                getLogger().warn("Failed to remove request after handling")
+            }
+        }
+
+    }
+
+    private fun handleRequestUnsafe(snapshot: DataSnapshot?) {
+        val request = snapshot?.getValue(handler.requestType()) ?: return
+        request.requestID = snapshot.key
+        async(CommonPool) {
+            try {
+                val response = handler.handle(request)
+                handleResponse(response)
+            } catch (e: Exception) {
+                getLogger().error("Exception while handling request", e)
             }
         }
     }

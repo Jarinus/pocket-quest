@@ -10,6 +10,7 @@ import nl.pocketquest.server.state.State
 import nl.pocketquest.server.task.impl.ResourceGatheringTask
 import nl.pocketquest.server.user.Status
 import nl.pocketquest.server.user.User
+import nl.pocketquest.server.user.updateUser
 import nl.pocketquest.server.utils.DATABASE
 import nl.pocketquest.server.utils.getLogger
 import nl.pocketquest.server.utils.readAsync
@@ -26,9 +27,10 @@ object ResourceGatheringRequestHandler : RequestHandler<ResourceGatheringRequest
                 ?.get(request.resource_id)
                 ?.duration
                 ?: return Response("Invalid request", 400)
-        if (User(request.user_id).setStatus(Status.GATHERING)) {
-            ResourceGatheringTask(interval.toLong(), TimeUnit.SECONDS, request)
-                    .run()
+        updateUser(request.user_id) {
+            if (setStatus(Status.GATHERING)) {
+                ResourceGatheringTask(interval, TimeUnit.SECONDS, request).run()
+            }
         }
         return Response(null, 200)
     }

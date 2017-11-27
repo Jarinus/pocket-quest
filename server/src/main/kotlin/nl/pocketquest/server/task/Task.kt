@@ -6,7 +6,7 @@ import nl.pocketquest.server.schedule.Scheduler
 import java.util.concurrent.TimeUnit
 
 abstract class Task(
-        private val interval: Long,
+        private val interval: Number,
         private val timeUnit: TimeUnit,
         protected var scheduleNext: Boolean = false
 ) {
@@ -24,7 +24,7 @@ abstract class Task(
     }
 
     private fun iteration() {
-        Scheduler.scheduleAfter(interval, timeUnit, {
+        Scheduler.scheduleAfter(interval.toLong(), timeUnit, {
             async(CommonPool) {
                 execute()
                 iterationCount++
