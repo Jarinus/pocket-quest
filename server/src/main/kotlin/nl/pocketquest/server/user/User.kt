@@ -5,20 +5,22 @@ import nl.pocketquest.server.utils.DATABASE
 import nl.pocketquest.server.utils.TransactionResult
 import nl.pocketquest.server.utils.transaction
 
+suspend fun updateUser(id: String, update: suspend User.() -> Unit) {
+    User(id).update()
+}
+
 class User(private val id: String) {
 
     private val statusRef = DATABASE.getReference("users/$id/status")
 
     suspend fun setStatus(newStatus: Status) = statusRef.transaction<String> { currentValue ->
-        if (currentValue == null) {
-            return@transaction TransactionResult.success(newStatus.firebaseName)
+        return@transaction if (currentValue == null) {
+            TransactionResult.success(newStatus.firebaseName)
         } else {
-            val currentStatus = Status.fromFirebaseName(currentValue)
-            if (currentStatus != null && currentStatus.statusChangeValidator(newStatus)) {
-                return@transaction TransactionResult.success(newStatus.firebaseName)
-            }
-            return@transaction TransactionResult.abort()
+            Status.fromFirebaseName(currentValue)
+                    ?.takeIf { it.statusChangeValidator(newStatus) }
+                    ?.let { TransactionResult.success(it.firebaseName) }
+                    ?: TransactionResult.abort()
         }
     }
-
 }

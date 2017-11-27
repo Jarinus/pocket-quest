@@ -14,6 +14,6 @@ enum class Status(
 
     companion object {
         fun fromFirebaseName(name: String) = Status.values()
-                .find { name == it.firebaseName }
+                .find { it.firebaseName == name }
     }
 }

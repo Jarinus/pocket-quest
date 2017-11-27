@@ -31,15 +31,12 @@ object Server {
     private val requestHandlers = mutableListOf<RequestHandler<*>>(
             ResourceGatheringRequestHandler
     )
-    private lateinit var baseHandlers: MutableList<BaseHandler<*>>
+    private val baseHandlers = requestHandlers.map { BaseHandler(it) }
 
     fun init() {
         val firebaseOptions = getFirebaseOptions()
         FirebaseApp.initializeApp(firebaseOptions)
         State.init()
-        baseHandlers = requestHandlers
-                .map { BaseHandler(it) }
-                .toMutableList()
     }
 
     fun start() {
