@@ -27,6 +27,7 @@ class ResourceInstance(
 
     private var status = Status.HAS_RESOURCES
     private val counter: FirebaseCounter
+    private var resourceCounts = mapOf<String, Long>()
 
     init {
         addOnClick()
@@ -34,7 +35,8 @@ class ResourceInstance(
         counter.addListener(::lookAtNewCounts)
     }
 
-    fun lookAtNewCounts(counts: Map<String, Long>) {
+    private fun lookAtNewCounts(counts: Map<String, Long>) {
+        this.resourceCounts = counts
         val newResourcesStatus = when (counts.values.all { it == 0L }) {
             true -> Status.EMPTY
             false -> Status.HAS_RESOURCES
@@ -72,8 +74,15 @@ class ResourceInstance(
                 } else {
                     resourceID
                 }
+                val resourceID = resourceCounts.filter {
+                    it.value > 0
+                }.keys.firstOrNull() ?: return@whenLoggedIn
                 DATABASE.getReference("requests/resource_gathering").push()
-                        .setValue(FBResourceGatherRequest(resourceInstanceID, user_id = it.uid))
+                        .setValue(FBResourceGatherRequest(
+                                resourceInstanceID,
+                                user_id = it.uid,
+                                resource_id = resourceID
+                        ))
             }
         }
     }

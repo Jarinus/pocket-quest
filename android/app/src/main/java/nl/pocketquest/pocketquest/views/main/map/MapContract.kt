@@ -31,13 +31,6 @@ class MapContract {
          * @param gameObject The game object to remove
          */
         fun removeGameObject(gameObject: IGameObject)
-
-        fun displayNotification(text: String)
-
-        fun setRightCornerImage(bitmap: Bitmap)
-
-        fun setRightCornerImageVisibility(visible: Boolean)
-
         fun getImageResolver(): ImageResolver
     }
 

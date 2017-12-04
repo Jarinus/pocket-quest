@@ -1,9 +1,7 @@
 package nl.pocketquest.pocketquest.views.main.map
 
-import android.graphics.Bitmap
 import android.location.Location
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +10,7 @@ import com.mapbox.mapboxsdk.annotations.Marker
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.uchuhimo.collections.mutableBiMapOf
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.fragment_map.view.*
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.IGameObject
 import nl.pocketquest.pocketquest.game.entities.FirebaseImageResolver
@@ -23,10 +20,10 @@ import nl.pocketquest.pocketquest.mvp.BaseFragment
 import nl.pocketquest.pocketquest.utils.IconCache
 import nl.pocketquest.pocketquest.utils.addMarker
 import nl.pocketquest.pocketquest.utils.setCameraPosition
+import nl.pocketquest.pocketquest.views.main.map.overlay.MapOverlayFragment
 import org.jetbrains.anko.info
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.ctx
-import org.jetbrains.anko.support.v4.onUiThread
 
 class MapFragment : BaseFragment(), MapContract.MapView {
     private var map: MapboxMap? = null
@@ -41,12 +38,16 @@ class MapFragment : BaseFragment(), MapContract.MapView {
         locationEngineWrapper = LocationEngineWrapper(ctx, presenter::onLocationChanged)
         lifecycle.addObserver(locationEngineWrapper)
         mapView?.onCreate(savedInstanceState)
+        fragmentManager.beginTransaction().also {
+            it.replace(R.id.mapOverlay, MapOverlayFragment())
+            it.commit()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
         Mapbox.getInstance(ctx, getString(R.string.mapbox_key))
-        val view = inflater.inflate(R.layout.activity_main, container, false)
+        val view = inflater.inflate(R.layout.fragment_map, container, false)
         val mapView = view.mapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this::initializeMap)
@@ -64,13 +65,6 @@ class MapFragment : BaseFragment(), MapContract.MapView {
                     .inverse[it]
                     ?.let(presenter::onGameObjectClicked)
                     ?: false
-        }
-    }
-
-    override fun displayNotification(text: String) {
-        ctx.runOnUiThread {
-            Snackbar.make(view!!, text, Snackbar.LENGTH_SHORT)
-                    .show()
         }
     }
 
@@ -105,18 +99,6 @@ class MapFragment : BaseFragment(), MapContract.MapView {
         gameObjectsMarkerBiMap[gameObject]
                 ?.also { map?.removeMarker(it) }
         gameObjectsMarkerBiMap -= gameObject
-    }
-
-    override fun setRightCornerImage(bitmap: Bitmap) = onUiThread {
-        imageIcon.setImageBitmap(bitmap)
-        imageIcon.invalidate()
-    }
-
-    override fun setRightCornerImageVisibility(visible: Boolean) = onUiThread {
-        imageIcon.visibility = when (visible) {
-            true -> View.VISIBLE
-            false -> View.INVISIBLE
-        }
     }
 
     override fun onStart() {
