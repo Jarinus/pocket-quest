@@ -1,6 +1,7 @@
 package nl.pocketquest.pocketquest.views.main.map
 
 import android.location.Location
+import com.google.firebase.auth.FirebaseUser
 import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
@@ -16,12 +17,11 @@ import nl.pocketquest.pocketquest.game.player.Item
 import nl.pocketquest.pocketquest.sprites.GameObjectAnimator
 import nl.pocketquest.pocketquest.sprites.SpriteSheetCreator
 import nl.pocketquest.pocketquest.sprites.padded
-import nl.pocketquest.pocketquest.utils.latLong
-import nl.pocketquest.pocketquest.utils.toLatLng
-import nl.pocketquest.pocketquest.utils.whenLoggedIn
-import nl.pocketquest.pocketquest.utils.xy
+import nl.pocketquest.pocketquest.utils.*
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.getStackTraceString
 import org.jetbrains.anko.info
+import org.jetbrains.anko.wtf
 
 const val ANIMATION_DURATION = 42
 
@@ -59,6 +59,25 @@ class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapV
                 .also { view.addGameObject(it) }
         whenLoggedIn {
             Inventory.getUserInventory(it.uid).addInventoryListener(this)
+            initializeGatheringStatus(it)
+        }
+    }
+
+    private fun initializeGatheringStatus(it: FirebaseUser) {
+        DATABASE.getReference("users/${it.uid}/status").listen(this::onUserStatusChange)
+        async(CommonPool) {
+            try {
+                view.setRightCornerImage(view.getImageResolver().resolveImage("axe.png"))
+            } catch (e: Exception) {
+                wtf(e.getStackTraceString())
+            }
+        }
+    }
+
+    fun onUserStatusChange(newStatus: String) {
+        when (newStatus) {
+            "gathering" -> view.setRightCornerImageVisibility(true)
+            else -> view.setRightCornerImageVisibility(false)
         }
     }
 

@@ -1,5 +1,6 @@
 package nl.pocketquest.pocketquest.views.main.map
 
+import android.graphics.Bitmap
 import android.location.Location
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -11,6 +12,7 @@ import com.mapbox.mapboxsdk.annotations.Marker
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.uchuhimo.collections.mutableBiMapOf
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.IGameObject
@@ -24,6 +26,7 @@ import nl.pocketquest.pocketquest.utils.setCameraPosition
 import org.jetbrains.anko.info
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.ctx
+import org.jetbrains.anko.support.v4.onUiThread
 
 class MapFragment : BaseFragment(), MapContract.MapView {
     private var map: MapboxMap? = null
@@ -102,6 +105,18 @@ class MapFragment : BaseFragment(), MapContract.MapView {
         gameObjectsMarkerBiMap[gameObject]
                 ?.also { map?.removeMarker(it) }
         gameObjectsMarkerBiMap -= gameObject
+    }
+
+    override fun setRightCornerImage(bitmap: Bitmap) = onUiThread {
+        imageIcon.setImageBitmap(bitmap)
+        imageIcon.invalidate()
+    }
+
+    override fun setRightCornerImageVisibility(visible: Boolean) = onUiThread {
+        imageIcon.visibility = when (visible) {
+            true -> View.VISIBLE
+            false -> View.INVISIBLE
+        }
     }
 
     override fun onStart() {

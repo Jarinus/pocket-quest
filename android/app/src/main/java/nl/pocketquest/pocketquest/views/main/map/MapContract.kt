@@ -34,6 +34,10 @@ class MapContract {
 
         fun displayNotification(text: String)
 
+        fun setRightCornerImage(bitmap: Bitmap)
+
+        fun setRightCornerImageVisibility(visible: Boolean)
+
         fun getImageResolver(): ImageResolver
     }
 
