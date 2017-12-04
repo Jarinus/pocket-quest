@@ -6,6 +6,7 @@ import kotlinx.coroutines.experimental.async
 import nl.pocketquest.pocketquest.game.player.Inventory
 import nl.pocketquest.pocketquest.game.player.InventoryListener
 import nl.pocketquest.pocketquest.game.player.Item
+import nl.pocketquest.pocketquest.game.player.Status
 import nl.pocketquest.pocketquest.utils.DATABASE
 import nl.pocketquest.pocketquest.utils.listen
 import nl.pocketquest.pocketquest.utils.whenLoggedIn
@@ -37,7 +38,7 @@ class MapOverlayPresenter(mapOverlayView: MapOverlayContract.MapOverlayView) :
     }
 
     fun onUserStatusChange(newStatus: String) = when (newStatus) {
-        "gathering" -> view.setRightCornerImageVisibility(true)
+        Status.GATHERING.firebaseName -> view.setRightCornerImageVisibility(true)
         else -> view.setRightCornerImageVisibility(false)
     }
 
