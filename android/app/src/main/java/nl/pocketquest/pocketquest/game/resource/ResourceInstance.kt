@@ -1,5 +1,7 @@
 package nl.pocketquest.pocketquest.game.resource
 
+import android.graphics.Bitmap
+import android.graphics.Bitmap.createBitmap
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import nl.pocketquest.pocketquest.game.Clickable
@@ -17,7 +19,8 @@ import org.jetbrains.anko.getStackTraceString
 import org.jetbrains.anko.info
 import org.jetbrains.anko.wtf
 
-private enum class Status { EMPTY, HAS_RESOURCES }
+private enum class Status { UNCERTAIN, EMPTY, HAS_RESOURCES }
+
 class ResourceInstance(
         val resourceID: String,
         private val clickableGameObject: ClickableGameObject,
@@ -25,7 +28,7 @@ class ResourceInstance(
         private val imageResolver: ImageResolver
 ) : IGameObject by clickableGameObject, Clickable<GameObject> by clickableGameObject, AnkoLogger {
 
-    private var status = Status.HAS_RESOURCES
+    private var status = Status.UNCERTAIN
     private val counter: FirebaseCounter
     private var resourceCounts = mapOf<String, Long>()
 
@@ -52,13 +55,14 @@ class ResourceInstance(
     }
 
     private fun updateImageIcon(newResourcesStatus: Status) {
-        val newIcon = when (newResourcesStatus) {
-            Status.EMPTY -> resourceNode.icon_empty
-            Status.HAS_RESOURCES -> resourceNode.icon
-        }
         async(CommonPool) {
+            val newIcon = when (newResourcesStatus) {
+                Status.UNCERTAIN -> EMPTY_ICON
+                Status.EMPTY -> imageResolver.resolveImage(resourceNode.icon_empty)
+                Status.HAS_RESOURCES -> imageResolver.resolveImage(resourceNode.icon)
+            }
             try {
-                clickableGameObject.image = imageResolver.resolveImage(newIcon)
+                clickableGameObject.image = newIcon
             } catch (e: Exception) {
                 wtf(e.getStackTraceString())
             }
@@ -85,5 +89,9 @@ class ResourceInstance(
                         ))
             }
         }
+    }
+
+    companion object {
+        val EMPTY_ICON: Bitmap = createBitmap(1, 1, Bitmap.Config.ALPHA_8)
     }
 }
