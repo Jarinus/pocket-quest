@@ -14,12 +14,12 @@ class User(private val id: String) {
     private val statusRef = DATABASE.getReference("users/$id/status")
 
     suspend fun setStatus(newStatus: Status) = statusRef.transaction<String> { currentValue ->
-        return@transaction if (currentValue == null) {
-            TransactionResult.success(newStatus.firebaseName)
+        if (currentValue == null) {
+            return@transaction TransactionResult.success(newStatus.firebaseName)
         } else {
-            Status.fromFirebaseName(currentValue)
+            return@transaction Status.fromFirebaseName(currentValue)
                     ?.takeIf { it.statusChangeValidator(newStatus) }
-                    ?.let { TransactionResult.success(it.firebaseName) }
+                    ?.let { TransactionResult.success(newStatus.firebaseName) }
                     ?: TransactionResult.abort()
         }
     }
