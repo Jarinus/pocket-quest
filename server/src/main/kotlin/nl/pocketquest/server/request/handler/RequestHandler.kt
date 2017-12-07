@@ -2,21 +2,16 @@ package nl.pocketquest.server.request.handler
 
 import nl.pocketquest.server.request.Request
 
-abstract class RequestHandler<in T : Request> {
+data class Response(
+        val message: String?,
+        val statusCode: Int
+)
 
-    abstract fun listen()
+interface RequestHandler<T : Request> {
 
-    protected fun handle(request: T): Boolean {
-        return validateRequest(request) && processRequest(request)
-    }
+    fun listenPath(): String
 
-    /**
-     * Validates the request's contents. Note: the request's type is already validated at this point.
-     */
-    abstract protected fun validateRequest(request: T): Boolean
+    suspend fun handle(request: T): Response
 
-    /**
-     * Processes the request. This is called when all validations pass.
-     */
-    abstract protected fun processRequest(request: T): Boolean
+    fun requestType(): Class<T>
 }

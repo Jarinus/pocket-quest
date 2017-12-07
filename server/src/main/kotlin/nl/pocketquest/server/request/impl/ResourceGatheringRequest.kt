@@ -3,7 +3,7 @@ package nl.pocketquest.server.request.impl
 import nl.pocketquest.server.request.Request
 
 data class ResourceGatheringRequest(
-        var id: String = "",
+        override var requestID: String = "",
         val user_id: String = "",
         val resource_id: String = "",
         val requested_at: Long = 0,

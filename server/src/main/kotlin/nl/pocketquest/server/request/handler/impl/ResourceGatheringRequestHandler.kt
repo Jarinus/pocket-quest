@@ -4,38 +4,36 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.FirebaseDatabase
 import nl.pocketquest.server.firebase.FBChildListener
 import nl.pocketquest.server.request.handler.RequestHandler
+import nl.pocketquest.server.request.handler.Response
 import nl.pocketquest.server.request.impl.ResourceGatheringRequest
+import nl.pocketquest.server.state.State
 import nl.pocketquest.server.task.impl.ResourceGatheringTask
+import nl.pocketquest.server.user.Status
+import nl.pocketquest.server.user.User
+import nl.pocketquest.server.user.updateUser
+import nl.pocketquest.server.utils.DATABASE
+import nl.pocketquest.server.utils.getLogger
+import nl.pocketquest.server.utils.readAsync
 import java.util.concurrent.TimeUnit
 
-object ResourceGatheringRequestHandler : RequestHandler<ResourceGatheringRequest>() {
-    override fun listen() {
-        FirebaseDatabase.getInstance()
-                .getReference("/requests/resource_gathering")
-                .addChildEventListener(object : FBChildListener() {
-                    override fun onChildAdded(snapshot: DataSnapshot?, previousChildName: String?) {
-                        snapshot?.toResourceGatheringRequest()
-                                ?.let(this@ResourceGatheringRequestHandler::handle)
-                    }
-                })
+object ResourceGatheringRequestHandler : RequestHandler<ResourceGatheringRequest> {
+
+    override fun listenPath() = "requests/resource_gathering"
+
+    suspend override fun handle(request: ResourceGatheringRequest): Response {
+        val resourceNodeID = DATABASE.getReference("resource_instances/${request.resource_node_uid}/type").readAsync<String>()
+        val interval = State.resourceNode(resourceNodeID)
+                ?.suppliedItems
+                ?.get(request.resource_id)
+                ?.duration
+                ?: return Response("Invalid request", 400)
+        updateUser(request.user_id) {
+            if (setStatus(Status.GATHERING)) {
+                ResourceGatheringTask(interval, TimeUnit.SECONDS, request).run()
+            }
+        }
+        return Response(null, 200)
     }
 
-    override fun validateRequest(request: ResourceGatheringRequest): Boolean {
-        //TODO: Check (pseudo code) !"gathering".equals(user_state)
-
-        return true
-    }
-
-    override fun processRequest(request: ResourceGatheringRequest): Boolean {
-        val task = ResourceGatheringTask(1, TimeUnit.SECONDS, request)
-
-        task.run()
-
-        return true
-    }
-}
-
-private fun DataSnapshot.toResourceGatheringRequest(): ResourceGatheringRequest {
-    return this.getValue(ResourceGatheringRequest::class.java)
-            .also { it.id = this.key }
+    override fun requestType() = ResourceGatheringRequest::class.java
 }
