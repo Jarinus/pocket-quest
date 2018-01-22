@@ -2,8 +2,7 @@ package nl.pocketquest.pocketquest.utils
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 
 val AUTH get() = FirebaseAuth.getInstance()
@@ -18,4 +17,15 @@ fun whenLoggedIn(toExecute: (FirebaseUser) -> Unit) {
 
 fun whenNotLoggedIn(toExecute: () -> Unit) {
     AUTH.currentUser ?: toExecute()
+}
+
+inline fun <reified T> DatabaseReference.listen(crossinline consumer: (T) -> Unit) {
+    this.addValueEventListener(object : ValueEventListener {
+        override fun onCancelled(error: DatabaseError?) = Unit
+
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val value = snapshot.getValue(T::class.java) ?: return
+            consumer(value)
+        }
+    })
 }

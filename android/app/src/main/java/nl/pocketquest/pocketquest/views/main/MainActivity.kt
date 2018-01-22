@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import kotlinx.android.synthetic.main.activity_main2.*
+import kotlinx.android.synthetic.main.activity_main.*
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.views.main.inventory.InventoryFragment
 import nl.pocketquest.pocketquest.views.main.map.MapFragment
@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main2)
+        setContentView(R.layout.activity_main)
 
         setSupportActionBar(toolbar)
         // Create the adapter that will return a fragment for each of the three

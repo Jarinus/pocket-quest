@@ -7,6 +7,7 @@ import org.jetbrains.anko.AnkoLogger
 
 data class FBResourceGatherRequest(
         val resource_node_uid: String,
+        val resource_id: String,
         val requested_at: Map<String, String> = ServerValue.TIMESTAMP,
         val user_id: String
 )

@@ -78,7 +78,7 @@ class Inventory(ref: DatabaseReference) {
 
 class InventoryUpdater(val inventory: Inventory) : ChildEventListener {
 
-    fun childChangeOrAdd(snapshot: DataSnapshot) {
+    private fun childChangeOrAdd(snapshot: DataSnapshot) {
         val itemName = snapshot.key
         val itemCount = snapshot.getValue(Long::class.java) ?: 0
         inventory.setItem(itemName, itemCount)
