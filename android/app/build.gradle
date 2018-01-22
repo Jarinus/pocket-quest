@@ -46,7 +46,8 @@ dependencies {
     })
     compile 'com.uchuhimo:kotlinx-bimap:1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile "org.jetbrains.anko:anko:0.10.2"
+    compile "org.jetbrains.anko:anko:0.10.4"
+    compile "org.jetbrains.anko:anko-design:0.10.4"
     compile('com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.1.0') {
         exclude group: 'com.android.support'
         exclude group: 'android.arch.lifecycle'

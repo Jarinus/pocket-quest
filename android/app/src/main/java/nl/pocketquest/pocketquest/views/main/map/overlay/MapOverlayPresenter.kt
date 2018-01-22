@@ -46,9 +46,7 @@ class MapOverlayPresenter(mapOverlayView: MapOverlayContract.MapOverlayView) :
 
     override fun itemAdded(item: Item, prevCount: Long) {
         val addition = item.itemCount - prevCount
-        if (addition <= 0) {
-            return
-        }
+        if (addition <= 0) return
         async(CommonPool) {
             item.getItemProperties()?.name?.also {
                 view.displayNotification("$it +$addition")

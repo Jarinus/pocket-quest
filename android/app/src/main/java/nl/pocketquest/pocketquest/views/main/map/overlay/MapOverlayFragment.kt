@@ -11,13 +11,11 @@ import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.entities.FirebaseImageResolver
 import nl.pocketquest.pocketquest.game.entities.ImageResolver
 import nl.pocketquest.pocketquest.mvp.BaseFragment
+import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.ctx
 import org.jetbrains.anko.support.v4.onUiThread
 
-/**
- * Created by Laurens on 4-12-2017.
- */
 class MapOverlayFragment : BaseFragment(), MapOverlayContract.MapOverlayView {
 
     private val presenter: MapOverlayContract.MapOverlayPresenter = MapOverlayPresenter(this)
@@ -28,11 +26,8 @@ class MapOverlayFragment : BaseFragment(), MapOverlayContract.MapOverlayView {
         return inflater.inflate(R.layout.fragment_map_overlay, container, false)
     }
 
-    override fun displayNotification(text: String) {
-        ctx.runOnUiThread {
-            Snackbar.make(view!!, text, Snackbar.LENGTH_SHORT)
-                    .show()
-        }
+    override fun displayNotification(text: String) = ctx.runOnUiThread {
+        snackbar(view!!, text)
     }
 
     override fun setRightCornerImage(bitmap: Bitmap) = onUiThread {
