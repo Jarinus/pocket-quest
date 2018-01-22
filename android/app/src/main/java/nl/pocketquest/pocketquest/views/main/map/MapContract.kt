@@ -31,9 +31,6 @@ class MapContract {
          * @param gameObject The game object to remove
          */
         fun removeGameObject(gameObject: IGameObject)
-
-        fun displayNotification(text: String)
-
         fun getImageResolver(): ImageResolver
     }
 

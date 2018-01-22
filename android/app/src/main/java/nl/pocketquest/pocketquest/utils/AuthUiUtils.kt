@@ -1,4 +1,4 @@
-package nl.hanze.distanceswimming.extensions.firebase
+package nl.pocketquest.pocketquest.utils
 
 import android.content.Intent
 import com.firebase.ui.auth.AuthUI

@@ -29,9 +29,7 @@ class ResourceInstanceCreator : GameObjectCreator, AnkoLogger {
         info { "Loaded resource $resource" }
         val resourceNode = Entities.getResourceNodes()[resource.type] ?: return null
         info { "Loaded resourceNode $resourceNode" }
-        val image = imageResolver.resolveImage(resourceNode.icon)
-        info { "Loaded image $image" }
-        val gameObject = ClickableGameObject(location.toLatLng(), image)
+        val gameObject = ClickableGameObject(location.toLatLng(), ResourceInstance.EMPTY_ICON)
         return ResourceInstance(key, gameObject, resourceNode, imageResolver)
     }
 }
