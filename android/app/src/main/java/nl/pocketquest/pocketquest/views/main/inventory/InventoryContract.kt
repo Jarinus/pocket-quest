@@ -5,16 +5,14 @@ import nl.pocketquest.pocketquest.mvp.BasePresenter
 import nl.pocketquest.pocketquest.mvp.BaseView
 
 class InventoryContract {
-    interface InventoryView : BaseView{
+    interface InventoryView : BaseView {
         fun addItem(item: Item)
         fun removeItem(item: Item)
         fun onInventoryState(item: Item)
     }
 
-    abstract class InventoryPresenter(inventoryView: InventoryView) : BasePresenter<InventoryView>(inventoryView){
-        abstract fun itemClicked(item: Item) : Boolean
-        abstract fun newInventoryState(item: Item)
-        abstract fun itemAdded(item: Item, prevCount: Long)
-        abstract fun itemRemoved(item: Item)
+    abstract class InventoryPresenter(inventoryView: InventoryView) : BasePresenter<InventoryView>(inventoryView) {
+        abstract fun itemClicked(item: Item)
+        abstract fun attached()
     }
 }
