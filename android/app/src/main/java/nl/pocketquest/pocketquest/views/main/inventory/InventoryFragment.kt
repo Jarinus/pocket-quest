@@ -62,9 +62,8 @@ class InventoryFragment : BaseFragment(), InventoryContract.InventoryView, Adapt
                 ?.also(presenter::itemClicked)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mAdapter = InventoryItemAdapter(ctx)
-
         return UI {
             gridView {
                 lparams {

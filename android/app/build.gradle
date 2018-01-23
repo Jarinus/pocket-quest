@@ -4,14 +4,14 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.2'
     defaultConfig {
         applicationId "nl.pocketquest.pocketquest"
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -22,32 +22,56 @@ android {
     }
 }
 
+ext{
+    firebase_version = "11.8.0"
+    google_build_version = "27.0.2"
+    anko_version = "0.10.4"
+    google_services_version = "11.8.0"
+    glide_version = "4.5.0"
+    firebase_ui_version = "3.2.0"
+    android_arch_Version = "1.0.0"
+}
+
 dependencies {
-    implementation 'com.google.firebase:firebase-database:11.6.2'
-    compile 'com.github.bumptech.glide:glide:4.2.0'
-    kapt 'com.github.bumptech.glide:compiler:4.2.0'
-    compile 'com.firebaseui:firebase-ui-storage:3.1.0'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "android.arch.lifecycle:extensions:1.0.0-rc1"
-    implementation 'com.android.support:support-v4:26.1.0'
-    implementation 'com.google.firebase:firebase-auth:11.6.2'
-    implementation 'com.google.firebase:firebase-storage:11.6.2'
-    compile 'com.firebaseui:firebase-ui-auth:3.1.0'
-    compile 'com.google.android.gms:play-services-auth:11.6.2'
-    annotationProcessor "android.arch.lifecycle:compiler:1.0.0-rc1"
-    implementation "android.arch.lifecycle:common-java8:1.0.0-rc1"
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.google.android.gms:play-services-location:11.6.2'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.firebase:geofire-android:2.1.1'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.uchuhimo:kotlinx-bimap:1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile "org.jetbrains.anko:anko:0.10.4"
-    compile "org.jetbrains.anko:anko-design:0.10.4"
+    //---------------------------------- firebase ------------------------
+    //firebase    SDK
+    implementation "com.google.firebase:firebase-database:$firebase_version"
+    implementation "com.google.firebase:firebase-auth:$firebase_version"
+    implementation "com.google.firebase:firebase-storage:$firebase_version"
+    //firebase    UI
+    compile("com.firebaseui:firebase-ui-storage:$firebase_ui_version")
+    compile("com.firebaseui:firebase-ui-auth:$firebase_ui_version") { exclude module: 'lintchecks' }
+
+    //----------------------------------- google -----------------------------
+    //google services
+    implementation "com.google.android.gms:play-services-location:$google_services_version"
+    compile "com.google.android.gms:play-services-auth:$google_services_version"
+    //google build
+    implementation "com.android.support:support-v4:$google_build_version"
+    implementation "com.android.support:appcompat-v7:$google_build_version"
+    compile "com.android.support:design:$google_build_version"
+    //android arch
+    implementation "android.arch.lifecycle:extensions:$android_arch_Version"
+    annotationProcessor "android.arch.lifecycle:compiler:$android_arch_Version"
+    implementation "android.arch.lifecycle:common-java8:$android_arch_Version"
+
+    //-------------------------------------- libraries ----------------------
+
+    //glide
+    compile "com.github.bumptech.glide:glide:$glide_version"
+    kapt "com.github.bumptech.glide:compiler:$glide_version"
+
+
+    //anko
+    compile "org.jetbrains.anko:anko:$anko_version"
+    compile "org.jetbrains.anko:anko-design:$anko_version"
+
+    //other
+    compile 'com.uchuhimo:kotlinx-bimap:1.0'
+    compile 'com.firebase:geofire-android:2.1.1'
+    //mapbox
     compile('com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.1.0') {
         exclude group: 'com.android.support'
         exclude group: 'android.arch.lifecycle'
@@ -56,6 +80,13 @@ dependencies {
         transitive = true
         exclude group: 'com.android.support'
     }
+
+
+    //------------------------------------- test ----------------------------
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
 }
 repositories {
     maven {

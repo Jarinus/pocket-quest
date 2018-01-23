@@ -38,10 +38,9 @@ class MapFragment : BaseFragment(), MapContract.MapView {
         locationEngineWrapper = LocationEngineWrapper(ctx, presenter::onLocationChanged)
         lifecycle.addObserver(locationEngineWrapper)
         mapView?.onCreate(savedInstanceState)
-        fragmentManager.beginTransaction().also {
+        fragmentManager!!.beginTransaction().also {
             it.replace(R.id.mapOverlay, MapOverlayFragment())
-            it.commit()
-        }
+        }.commit()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
