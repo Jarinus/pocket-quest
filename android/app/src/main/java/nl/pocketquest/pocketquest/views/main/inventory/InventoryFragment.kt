@@ -1,8 +1,10 @@
 package nl.pocketquest.pocketquest.views.main.inventory
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +18,8 @@ import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.entities.load
 import nl.pocketquest.pocketquest.game.player.Item
 import nl.pocketquest.pocketquest.mvp.BaseFragment
+import nl.pocketquest.pocketquest.utils.squaredImageView
+import nl.pocketquest.pocketquest.utils.withSuffix
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.ctx
@@ -86,9 +90,6 @@ class InventoryItemAdapter(val context: Context) : BaseAdapter(), AnkoLogger {
     private val list = mutableListOf<String>()
     private fun write(update: () -> Unit) {
         update()
-        info { "map ${map.toList().joinToString()}" }
-        info { "map ${list.joinToString()}" }
-        info { "Get count = $count" }
         notifyDataSetChanged()
     }
 
@@ -114,11 +115,35 @@ class InventoryItemAdapter(val context: Context) : BaseAdapter(), AnkoLogger {
     override fun getCount() = map.size
 
     override fun getView(position: Int, view: View?, viewGroup: ViewGroup): View {
-        val contentView = view ?: context.layoutInflater.inflate(R.layout.individual_item_view, viewGroup, false)
+        val contentView = view ?: with(context) {
+            verticalLayout {
+                backgroundColor = Color.parseColor("#bbdefb")
+                squaredImageView {
+                    id = R.id.imgRss
+                }.lparams {
+                    width = matchParent
+                    padding = dip(8)
+                }
+                textView("0") {
+                    id = R.id.tvRss
+                    textSize = 20f
+                }.lparams {
+                    bottomPadding = dip(3)
+                    gravity = Gravity.CENTER
+                }
+                lparams {
+                    width = matchParent
+                    height = wrapContent
+                }
+            }
+        }
         val item = getItem(position)!!
-        contentView.find<TextView>(R.id.tvRss).text = "${item.count}"
-        contentView.find<ImageView>(R.id.imgRss).also {
-            it.load(context, "images/" + item.img)
+        contentView.find<ImageView>(R.id.imgRss).apply{
+            load(context, "images/" + item.img)
+        }
+
+        contentView.find<TextView>(R.id.tvRss).apply {
+            text = item.count.withSuffix()
         }
         return contentView
     }
