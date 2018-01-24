@@ -86,6 +86,8 @@ class InventoryItemAdapter(val context: Context) : BaseAdapter(), AnkoLogger {
     private val list = mutableListOf<String>()
     private fun write(update: () -> Unit) {
         update()
+        info { "map ${map.toList().joinToString()}" }
+        info { "map ${list.joinToString()}" }
         info { "Get count = $count" }
         notifyDataSetChanged()
     }
@@ -98,14 +100,12 @@ class InventoryItemAdapter(val context: Context) : BaseAdapter(), AnkoLogger {
     }
 
     fun add(item: InventoryItem) = write {
-        list.add(item.id)
+        if (item.id !in list) list.add(item.id)
         map[item.id] = item
     }
 
     fun update(item: InventoryItem) = write {
-        if (!list.contains(item.id)) {
-            add(item)
-        }
+        if (item.id !in list) add(item)
         map[item.id] = item
     }
 

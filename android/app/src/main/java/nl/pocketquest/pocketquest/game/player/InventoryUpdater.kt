@@ -5,13 +5,12 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import kotlinx.coroutines.experimental.runBlocking
 import nl.pocketquest.pocketquest.game.entities.Entities
 import nl.pocketquest.pocketquest.game.entities.FBItem
 import nl.pocketquest.pocketquest.utils.DATABASE
+import org.jetbrains.anko.AnkoLogger
 
 interface InventoryListener {
-
     fun newInventoryState(item: Item)
     fun itemAdded(item: Item, prevCount: Long)
     fun itemRemoved(item: Item)
@@ -20,7 +19,8 @@ interface InventoryListener {
 data class Item(val itemName: String, val itemCount: Long) {
     suspend fun getItemProperties(): FBItem? = Entities.getItem(itemName)
 }
-class Inventory(ref: DatabaseReference) {
+
+class Inventory(ref: DatabaseReference) : AnkoLogger {
     private val items = mutableMapOf<String, Long>()
     private val inventoryListeners = mutableListOf<InventoryListener>()
     private val inventoryUpdater = InventoryUpdater(this)
@@ -76,7 +76,7 @@ class Inventory(ref: DatabaseReference) {
     }
 }
 
-class InventoryUpdater(val inventory: Inventory) : ChildEventListener {
+class InventoryUpdater(val inventory: Inventory) : ChildEventListener, AnkoLogger {
 
     private fun childChangeOrAdd(snapshot: DataSnapshot) {
         val itemName = snapshot.key
@@ -92,5 +92,9 @@ class InventoryUpdater(val inventory: Inventory) : ChildEventListener {
 
     override fun onChildAdded(snapshot: DataSnapshot, oldKey: String?) = childChangeOrAdd(snapshot)
 
-    override fun onChildRemoved(snapshot: DataSnapshot) = childChangeOrAdd(snapshot)
+    
+    override fun onChildRemoved(snapshot: DataSnapshot) {
+        val itemName = snapshot.key
+        inventory.setItem(itemName, 0)
+    }
 }
