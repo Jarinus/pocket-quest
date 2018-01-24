@@ -3,24 +3,16 @@ package nl.pocketquest.server
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
-import com.google.firebase.database.FirebaseDatabase
-import kotlinx.coroutines.experimental.runBlocking
-import nl.pocketquest.server.request.handler.BaseHandler
-import nl.pocketquest.server.request.handler.RequestHandler
-import nl.pocketquest.server.request.handler.impl.ResourceGatheringRequestHandler
-import nl.pocketquest.server.state.State
-import nl.pocketquest.server.user.Status
-import nl.pocketquest.server.user.User
-import nl.pocketquest.server.utils.incrementBy
-import nl.pocketquest.server.utils.incrementByOrCreate
-import nl.pocketquest.server.utils.readAsync
+import nl.pocketquest.server.logic.request.handler.BaseHandler
+import nl.pocketquest.server.logic.request.handler.RequestHandler
+import nl.pocketquest.server.logic.request.handler.impl.ResourceGatheringRequestHandler
+import nl.pocketquest.server.api.state.State
+import nl.pocketquest.server.dataaccesslayer.DatabaseConfiguration
 import java.io.FileInputStream
-import java.io.InputStream
 
 fun main(args: Array<String>) {
     Server.init()
     Server.start()
-
     while (true) {
         Thread.sleep(10000)
     }
@@ -29,13 +21,14 @@ fun main(args: Array<String>) {
 object Server {
 
     private val requestHandlers = mutableListOf<RequestHandler<*>>(
-            ResourceGatheringRequestHandler
+            ResourceGatheringRequestHandler()
     )
     private val baseHandlers = requestHandlers.map { BaseHandler(it) }
 
     fun init() {
         val firebaseOptions = getFirebaseOptions()
         FirebaseApp.initializeApp(firebaseOptions)
+        DatabaseConfiguration.test = false
         State.init()
     }
 
