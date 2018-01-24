@@ -5,6 +5,7 @@ import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
+import nl.pocketquest.server.dataaccesslayer.TransactionResult
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.CoroutineContext
 import kotlin.coroutines.experimental.suspendCoroutine
@@ -47,24 +48,16 @@ inline suspend fun <T> suspendCoroutineW(crossinline block: (WrappedContinuation
             block(wd)
         }
 
-data class TransactionResult<T>(
-        val value: T?,
-        val abort: Boolean
-) {
-    companion object {
-        fun <T> abort() = TransactionResult<T>(null, true)
-        fun <T> success(value: T?) = TransactionResult<T>(value, false)
-    }
-}
 
 suspend inline fun <reified T> DatabaseReference.readAsync(): T = readFromDatabaseAsync(this)
-suspend inline fun <reified T> DatabaseReference.writeAsync(t: T) = writeToDatabaseAsync(this, t)
-suspend inline fun <reified T> DatabaseReference.transaction(crossinline transformer: (T?) -> TransactionResult<T>) = doTransaction(this, transformer)
-suspend inline fun <reified T> DatabaseReference.transactionNotNull(crossinline transformer: (T) -> TransactionResult<T>) = doTransaction<T>(this) {
+suspend fun <T> DatabaseReference.readAsync(expectedType: Class<T>): T = readFromDatabaseAsync(this, expectedType)
+suspend fun <T> DatabaseReference.writeAsync(t: T) = writeToDatabaseAsync(this, t)
+suspend fun <T> DatabaseReference.transaction(expectedType: Class<T>, transformer: (T?) -> TransactionResult<T>) = doTransaction(this, expectedType, transformer)
+suspend inline fun <reified T> DatabaseReference.transactionNotNull(crossinline transformer: (T) -> TransactionResult<T>) = doTransaction<T>(this, T::class.java) {
     it?.let(transformer) ?: TransactionResult.success(it)
 }
 
-suspend fun DatabaseReference.incrementByOrCreate(increment: Long, initialValue: Long): Boolean = doTransaction<Long>(this) {
+suspend fun DatabaseReference.incrementByOrCreate(increment: Long, initialValue: Long): Boolean = doTransaction<Long>(this, Long::class.java) {
     TransactionResult.success(when (it) {
         null -> initialValue
         else -> it + increment
@@ -85,7 +78,7 @@ suspend fun DatabaseReference.remove(): Boolean = suspendCoroutineW { d ->
     this.removeValue { error, ref -> d.resume(error == null) }
 }
 
-suspend inline fun <reified T> doTransaction(dbref: DatabaseReference, crossinline transformer: (T?) -> TransactionResult<T>): Boolean = suspendCoroutineW { d ->
+suspend fun <T> doTransaction(dbref: DatabaseReference, expectedType: Class<T>, transformer: (T?) -> TransactionResult<T>): Boolean = suspendCoroutineW { d ->
 
     dbref.runTransaction(object : Transaction.Handler {
         override fun onComplete(error: DatabaseError?, committed: Boolean, currentData: DataSnapshot?) {
@@ -93,7 +86,7 @@ suspend inline fun <reified T> doTransaction(dbref: DatabaseReference, crossinli
         }
 
         override fun doTransaction(currentData: MutableData): Transaction.Result {
-            val currentValue = currentData.getValue(T::class.java)
+            val currentValue = currentData.getValue(expectedType)
             val result = transformer(currentValue)
             return when (result.abort) {
                 true -> Transaction.abort()
@@ -107,7 +100,9 @@ suspend inline fun <reified T> doTransaction(dbref: DatabaseReference, crossinli
 
 }
 
-suspend inline fun <reified T> readFromDatabaseAsync(dbref: DatabaseReference): T = suspendCoroutineW { d ->
+suspend inline fun <reified T> readFromDatabaseAsync(dbref: DatabaseReference): T = readFromDatabaseAsync(dbref, T::class.java)
+
+suspend fun <T> readFromDatabaseAsync(dbref: DatabaseReference, expectedType: Class<T>): T = suspendCoroutineW { d ->
     dbref.addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onCancelled(e: DatabaseError?) {
             d.resumeWithException(e?.toException() ?: Exception("cancelled"))
@@ -115,7 +110,7 @@ suspend inline fun <reified T> readFromDatabaseAsync(dbref: DatabaseReference): 
 
         override fun onDataChange(snapshot: DataSnapshot) = try {
             val ti: GenericTypeIndicator<T> = object : GenericTypeIndicator<T>() {}
-            val data: T? = snapshot.getValue(ti)
+            val data: T? = snapshot.getValue(expectedType)
             if (data != null) {
                 d.resume(data)
             } else {
@@ -132,12 +127,13 @@ suspend inline fun <reified T> readFromDatabaseAsync(dbref: DatabaseReference): 
     })
 }
 
-suspend fun writeToDatabaseAsync(dbref: DatabaseReference, data: Any?): String = suspendCoroutineW { d ->
+suspend fun writeToDatabaseAsync(dbref: DatabaseReference, data: Any?): Boolean = suspendCoroutineW { d ->
     dbref.setValue(data, { databaseError, databaseReference ->
         if (databaseError != null) {
             d.resumeWithException(databaseError.toException())
+            d.resume(false)
         } else {
-            d.resume(databaseReference.key) //return the key that was written
+            d.resume(true)
         }
     })
 }
