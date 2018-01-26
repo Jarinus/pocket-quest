@@ -1,18 +1,21 @@
 package nl.pocketquest.server.logic.request.handler
 
+import com.github.salomonbrys.kodein.Kodein
+import com.github.salomonbrys.kodein.instance
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import nl.pocketquest.server.dataaccesslayer.ChildConsumer
 import nl.pocketquest.server.dataaccesslayer.DataSource
+import nl.pocketquest.server.dataaccesslayer.Database
 import nl.pocketquest.server.dataaccesslayer.DatabaseConfiguration
 import nl.pocketquest.server.logic.request.Request
 import nl.pocketquest.server.utils.getLogger
 
 
-class BaseHandler<T : Request>(private val handler: RequestHandler<T>) : ChildConsumer<T> {
+class BaseHandler<T : Request>(private val handler: RequestHandler<T>, private val kodein: Kodein) : ChildConsumer<T> {
 
     fun start() {
-        DatabaseConfiguration.database.parentDataSource(handler.route, this).start()
+        kodein.instance<Database>().parentDataSource(handler.route, this).start()
     }
 
     override fun consume(readOnlyData: T, dataSource: DataSource<T>) {
@@ -20,6 +23,7 @@ class BaseHandler<T : Request>(private val handler: RequestHandler<T>) : ChildCo
             try {
                 handler.handle(readOnlyData, dataSource)
                         .also { handleResponse(it) }
+                dataSource.delete()
             } catch (e: Exception) {
                 getLogger().error("Exception while handling request", e)
             }

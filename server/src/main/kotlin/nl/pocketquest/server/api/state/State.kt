@@ -1,9 +1,12 @@
 package nl.pocketquest.server.api.state
 
+import com.github.salomonbrys.kodein.Kodein
+import com.github.salomonbrys.kodein.instance
 import kotlinx.coroutines.experimental.runBlocking
 import nl.pocketquest.server.dataaccesslayer.DatabaseConfiguration
 import nl.pocketquest.server.dataaccesslayer.Findable
 import nl.pocketquest.server.api.entity.*
+import nl.pocketquest.server.dataaccesslayer.Database
 
 class EntitiesModel {
     lateinit var items: HashMap<String, ItemModel>
@@ -13,20 +16,26 @@ class EntitiesModel {
     lateinit var resource_node_supplied_items: HashMap<String, HashMap<String, ResourceNodeSuppliedItemModel>>
 }
 
+interface Entities {
+    fun item(identifier: String): Item?
+    fun resourceNode(identifier: String): ResourceNode?
+    fun resourceNodeFamily(identifier: String): ResourceNodeFamily?
+}
+
 class EntitesRoute : Findable<EntitiesModel> {
     override val route = listOf("entities")
     override val expectedType = EntitiesModel::class.java
 }
 
-object State {
+class State(private val database: Database) : Entities {
     private lateinit var items: Map<String, Item>
     private lateinit var resourceNodes: Map<String, ResourceNode>
     private lateinit var resourceNodeFamilies: Map<String, ResourceNodeFamily>
 
-    fun init() {
+    init {
         try {
             runBlocking {
-                val entities = DatabaseConfiguration.database.resolver.resolve(EntitesRoute()).readAsync()
+                val entities = database.resolver.resolve(EntitesRoute()).readAsync()
                         ?: throw IllegalStateException("Failed to load entities")
                 items = loadItems(entities)
                 resourceNodes = loadResourceNodes(entities)
@@ -37,11 +46,11 @@ object State {
         }
     }
 
-    fun item(identifier: String) = items[identifier]
+    override fun item(identifier: String) = items[identifier]
 
-    fun resourceNode(identifier: String) = resourceNodes[identifier]
+    override fun resourceNode(identifier: String) = resourceNodes[identifier]
 
-    fun resourceNodeFamily(identifier: String) = resourceNodeFamilies[identifier]
+    override fun resourceNodeFamily(identifier: String) = resourceNodeFamilies[identifier]
 
     private suspend fun loadItems(entitesModel: EntitiesModel): Map<String, Item> = entitesModel.items
             .mapValues { it.value.toItem(it.key) }

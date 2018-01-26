@@ -1,9 +1,8 @@
 package nl.pocketquest.server.api.item
 
-import nl.pocketquest.server.dataaccesslayer.DataSource
-import nl.pocketquest.server.dataaccesslayer.DatabaseConfiguration
-import nl.pocketquest.server.dataaccesslayer.Findable
-import nl.pocketquest.server.dataaccesslayer.TransactionResult
+import com.github.salomonbrys.kodein.Kodein
+import com.github.salomonbrys.kodein.instance
+import nl.pocketquest.server.dataaccesslayer.*
 
 data class ItemRoute(private val inventory: Inventory, private val name: String) : Findable<Long> {
     override val route = inventory.route() + name
@@ -34,8 +33,8 @@ class Item internal constructor(private val reference: DataSource<Long>) {
     suspend fun count() = reference.readAsync() ?: 0L
 
     companion object {
-        internal fun byName(inventory: Inventory, name: String) = Item(
-                DatabaseConfiguration.database.resolver.resolve(ItemRoute(inventory, name))
+        internal fun byName(inventory: Inventory, name: String, kodein: Kodein) = Item(
+                kodein.instance<Database>().resolver.resolve(ItemRoute(inventory, name))
         )
     }
 }

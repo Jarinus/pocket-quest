@@ -1,15 +1,27 @@
-package nl.pocketquest.server.api
+package nl.pocketquest.server.testhelpers
 
 import nl.pocketquest.server.dataaccesslayer.*
-import nl.pocketquest.server.utils.getLogger
 
-class TestDB(private val contents: Map<List<String>, DataSource<*>>) : Database {
+class TestDB(private val initialContents: Map<List<String>, DataSource<*>>) : Database {
+
+    private val contents = mutableMapOf<List<String>, DataSource<*>>()
+
+    init {
+        contents += initialContents
+    }
+
+    fun add(route: List<String>, dataSource: DataSource<*>) {
+        contents[route] = dataSource
+    }
+
+    fun clear() = contents.clear()
 
     override val resolver: DataResolver = object : DataResolver {
         @SuppressWarnings("unchecked")
         override fun <T> resolve(findable: Findable<T>): DataSource<T> {
-//            getLogger().info("{}", findable.route)
-//            getLogger().info("{}", contents[findable.route])
+            if (!contents.contains(findable.route)) {
+                contents[findable.route] = MockDataSource<T>(null)
+            }
             return contents[findable.route] as DataSource<T>
         }
     }

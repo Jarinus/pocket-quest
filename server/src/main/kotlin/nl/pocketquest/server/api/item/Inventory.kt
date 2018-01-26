@@ -1,13 +1,19 @@
 package nl.pocketquest.server.api.item
 
-class Inventory internal constructor(private val route: List<String>) {
+import com.github.salomonbrys.kodein.Kodein
 
-    fun item(name: String) = Item.byName(this, name)
+class Inventory internal constructor(private val route: List<String>, private val kodein: Kodein) {
+
+    fun item(name: String) = Item.byName(this, name, kodein)
 
     internal fun route() = route
 
-    suspend fun transferTo(name: String, count: Long, destination: Inventory) {
+    /**
+     * Tries to transfer items between inventories. Returns how much items have been transferred
+     */
+    suspend fun transferTo(name: String, count: Long, destination: Inventory): Long {
         val itemsTaken = item(name).take(count)
         destination.item(name).give(itemsTaken)
+        return itemsTaken
     }
 }

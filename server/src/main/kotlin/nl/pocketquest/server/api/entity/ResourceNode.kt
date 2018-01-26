@@ -1,5 +1,8 @@
 package nl.pocketquest.server.api.entity
 
+import com.github.salomonbrys.kodein.Kodein
+import com.github.salomonbrys.kodein.instance
+import nl.pocketquest.server.api.state.Entities
 import nl.pocketquest.server.api.state.State
 
 data class ResourceNode(
@@ -11,7 +14,6 @@ data class ResourceNode(
         val iconEmpty: String,
         val suppliedItems: Map<String, ResourceNodeSuppliedItem>
 ) {
-    fun family() = State.resourceNodeFamily(family)
 }
 
 data class ResourceNodeModel(
@@ -23,6 +25,6 @@ data class ResourceNodeModel(
         var suppliedItems: Map<String, ResourceNodeSuppliedItem> = mapOf()
 ) {
     fun toResourceNode(id: String): ResourceNode {
-        return ResourceNode(id, family, icon, name, tier,icon_empty, suppliedItems)
+        return ResourceNode(id, family, icon, name, tier, icon_empty, suppliedItems)
     }
 }

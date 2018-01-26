@@ -1,16 +1,15 @@
 package nl.pocketquest.server.api.user
 
-import nl.pocketquest.server.dataaccesslayer.DataSource
-import nl.pocketquest.server.dataaccesslayer.DatabaseConfiguration
-import nl.pocketquest.server.dataaccesslayer.Findable
-import nl.pocketquest.server.dataaccesslayer.TransactionResult
+import com.github.salomonbrys.kodein.Kodein
+import com.github.salomonbrys.kodein.instance
 import nl.pocketquest.server.api.item.Inventory
+import nl.pocketquest.server.dataaccesslayer.*
 
-suspend fun updateUser(id: String, update: suspend User.() -> Unit) {
-    User.byId(id).update()
+suspend fun updateUser(id: String, kodein: Kodein, update: suspend User.() -> Unit) {
+    User.byId(id, kodein).update()
 }
 
-class StatusRoute(id: String) : Findable<String> {
+class UserStatusRoute(id: String) : Findable<String> {
     override val route = listOf("users", id, "status")
     override val expectedType = String::class.java
 }
@@ -39,9 +38,9 @@ class User internal constructor(
     }
 
     companion object {
-        fun byId(id: String) = User(
-                DatabaseConfiguration.database.resolver.resolve(StatusRoute(id)),
-                Inventory(InventoryRoute(id).route)
+        fun byId(id: String, kodein: Kodein) = User(
+                kodein.instance<Database>().resolver.resolve(UserStatusRoute(id)),
+                Inventory(InventoryRoute(id).route, kodein)
         )
     }
 }
