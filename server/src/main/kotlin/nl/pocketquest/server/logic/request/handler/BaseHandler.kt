@@ -7,7 +7,6 @@ import kotlinx.coroutines.experimental.async
 import nl.pocketquest.server.dataaccesslayer.ChildConsumer
 import nl.pocketquest.server.dataaccesslayer.DataSource
 import nl.pocketquest.server.dataaccesslayer.Database
-import nl.pocketquest.server.dataaccesslayer.DatabaseConfiguration
 import nl.pocketquest.server.logic.request.Request
 import nl.pocketquest.server.utils.getLogger
 

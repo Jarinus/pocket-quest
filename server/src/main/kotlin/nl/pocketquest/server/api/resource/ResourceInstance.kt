@@ -3,11 +3,9 @@ package nl.pocketquest.server.api.resource
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
 import nl.pocketquest.server.dataaccesslayer.DataSource
-import nl.pocketquest.server.dataaccesslayer.DatabaseConfiguration
 import nl.pocketquest.server.dataaccesslayer.Findable
 import nl.pocketquest.server.api.item.Inventory
 import nl.pocketquest.server.api.state.Entities
-import nl.pocketquest.server.api.state.State
 import nl.pocketquest.server.dataaccesslayer.Database
 
 data class ResourceInventoryRoute(private val id: String) : Findable<Map<String, Long>> {

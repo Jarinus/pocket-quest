@@ -1,9 +1,6 @@
 package nl.pocketquest.server.api.state
 
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
 import kotlinx.coroutines.experimental.runBlocking
-import nl.pocketquest.server.dataaccesslayer.DatabaseConfiguration
 import nl.pocketquest.server.dataaccesslayer.Findable
 import nl.pocketquest.server.api.entity.*
 import nl.pocketquest.server.dataaccesslayer.Database
