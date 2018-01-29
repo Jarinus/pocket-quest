@@ -1,2 +1,7 @@
-node_modules/
-conf/
+/out
+/idea
+/.gradle
+/build
+/conf
+service-account.json
+*.iml
