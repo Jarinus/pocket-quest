@@ -20,5 +20,7 @@ class WorkOrderContract {
         abstract fun onAttached()
 
         abstract fun onCancelWorkOrder(workOrder: WorkOrder)
+
+        abstract fun onClaimWorkOrder(workOrder: WorkOrder)
     }
 }
