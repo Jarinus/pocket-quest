@@ -1,7 +1,6 @@
 package nl.pocketquest.pocketquest.views.main.recipe
 
 import nl.pocketquest.pocketquest.game.crafting.Recipe
-import nl.pocketquest.pocketquest.game.player.Item
 import nl.pocketquest.pocketquest.mvp.BasePresenter
 import nl.pocketquest.pocketquest.mvp.BaseView
 
@@ -11,8 +10,6 @@ class RecipeContract {
         fun display(recipeModels: List<RecipeModel>)
 
         fun setFilter(filterDescription: String)
-
-        fun setLoading(loading: Boolean)
     }
 
     abstract class RecipePresenter(recipeView: RecipeView)
