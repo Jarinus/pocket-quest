@@ -19,7 +19,7 @@ interface Entities {
     fun resourceNodeFamily(identifier: String): ResourceNodeFamily?
 }
 
-class EntitesRoute : Findable<EntitiesModel> {
+class EntitiesRoute : Findable<EntitiesModel> {
     override val route = listOf("entities")
     override val expectedType = EntitiesModel::class.java
 }
@@ -32,7 +32,9 @@ class State(private val database: Database) : Entities {
     init {
         try {
             runBlocking {
-                val entities = database.resolver.resolve(EntitesRoute()).readAsync()
+                val entities = database.resolver
+                        .resolve(EntitiesRoute())
+                        .readAsync()
                         ?: throw IllegalStateException("Failed to load entities")
                 items = loadItems(entities)
                 resourceNodes = loadResourceNodes(entities)
@@ -49,24 +51,24 @@ class State(private val database: Database) : Entities {
 
     override fun resourceNodeFamily(identifier: String) = resourceNodeFamilies[identifier]
 
-    private suspend fun loadItems(entitesModel: EntitiesModel): Map<String, Item> = entitesModel.items
+    private suspend fun loadItems(entitiesModel: EntitiesModel): Map<String, Item> = entitiesModel.items
             .mapValues { it.value.toItem(it.key) }
 
 
-    private suspend fun loadResourceNodes(entitesModel: EntitiesModel): Map<String, ResourceNode> {
-        val resourceNodes = entitesModel.resource_nodes
+    private suspend fun loadResourceNodes(entitiesModel: EntitiesModel): Map<String, ResourceNode> {
+        val resourceNodes = entitiesModel.resource_nodes
 
-        loadResourceSuppliedItems(entitesModel).forEach { resourceNodeId, suppliedItems ->
+        loadResourceSuppliedItems(entitiesModel).forEach { resourceNodeId, suppliedItems ->
             resourceNodes[resourceNodeId]?.suppliedItems = suppliedItems
         }
 
         return resourceNodes.mapValues { it.value.toResourceNode(it.key) }
     }
 
-    private suspend fun loadResourceNodeFamilies(entitesModel: EntitiesModel): Map<String, ResourceNodeFamily> {
-        val resourceNodeFamilyModels = entitesModel.resource_node_families
+    private suspend fun loadResourceNodeFamilies(entitiesModel: EntitiesModel): Map<String, ResourceNodeFamily> {
+        val resourceNodeFamilyModels = entitiesModel.resource_node_families
 
-        loadResourceNodeFamilyMembers(entitesModel)
+        loadResourceNodeFamilyMembers(entitiesModel)
                 .mapValues { it.value.mapNotNull(this::resourceNode) }
                 .forEach { key, value ->
                     resourceNodeFamilyModels[key]?.members = value
@@ -75,10 +77,10 @@ class State(private val database: Database) : Entities {
         return resourceNodeFamilyModels.mapValues { it.value.toResourceNodeFamily(it.key) }
     }
 
-    private suspend fun loadResourceNodeFamilyMembers(entitesModel: EntitiesModel): Map<String, Set<String>> = entitesModel.resource_node_resource_node_families
+    private suspend fun loadResourceNodeFamilyMembers(entitiesModel: EntitiesModel): Map<String, Set<String>> = entitiesModel.resource_node_resource_node_families
             .mapValues { it.value.keys }
 
 
-    private suspend fun loadResourceSuppliedItems(entitesModel: EntitiesModel): Map<String, Map<String, ResourceNodeSuppliedItem>> = entitesModel.resource_node_supplied_items
+    private suspend fun loadResourceSuppliedItems(entitiesModel: EntitiesModel): Map<String, Map<String, ResourceNodeSuppliedItem>> = entitiesModel.resource_node_supplied_items
             .mapValues { it.value.mapValues { it.value.toSuppliedItem(it.key) } }
 }

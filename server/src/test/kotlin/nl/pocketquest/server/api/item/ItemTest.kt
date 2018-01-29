@@ -10,7 +10,7 @@ import org.junit.Test
 class ItemTest {
 
     @Test
-    fun testTakingItems() {
+    fun shouldTakeItemsUntilEmpty() {
         val source = MockDataSource<Long>(75)
         val item = Item(source)
         runBlocking {
@@ -24,7 +24,7 @@ class ItemTest {
     }
 
     @Test
-    fun failingTransaction() {
+    fun shouldHandleFailingTransaction() {
         val source = FailingTransActionDataSource(44L)
         val item = Item(source)
         runBlocking {

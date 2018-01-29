@@ -4,9 +4,7 @@ import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.bind
 import com.github.salomonbrys.kodein.singleton
 import kotlinx.coroutines.experimental.runBlocking
-import nl.pocketquest.server.api.entity.Item
 import nl.pocketquest.server.api.entity.ResourceNode
-import nl.pocketquest.server.api.entity.ResourceNodeFamily
 import nl.pocketquest.server.api.entity.ResourceNodeSuppliedItem
 import nl.pocketquest.server.api.resource.ResourceTypeRoute
 import nl.pocketquest.server.api.state.Entities
@@ -60,7 +58,7 @@ class ResourceGatheringRequestHandlerTest {
     }
 
     @Test
-    fun happyFlowNoStatus() {
+    fun shouldGatherWithoutStatus() {
         db.add(treeType.route, MockDataSource("tree_1"))
         val request = ResourceGatheringRequest("1", "chocolate_bear", "chocolate_wood", 5000, "chocolate_tree")
         runBlocking {
@@ -77,8 +75,8 @@ class ResourceGatheringRequestHandlerTest {
     }
 
     @Test
-    fun happyFlowIdle() {
-        db.add(userStatus.route, MockDataSource(Status.IDLE.externalName))
+    fun shouldGatherWhileIdle() {
+        db.add(userStatus.route, MockDataSource(Status.IDLE.identifier))
         db.add(treeType.route, MockDataSource("tree_1"))
         val request = ResourceGatheringRequest("1", "chocolate_bear", "chocolate_wood", 5000, "chocolate_tree")
         runBlocking {
@@ -95,8 +93,8 @@ class ResourceGatheringRequestHandlerTest {
     }
 
     @Test
-    fun declineBecauseGathering() {
-        db.add(userStatus.route, MockDataSource(Status.GATHERING.externalName))
+    fun shouldDeclineBecauseGathering() {
+        db.add(userStatus.route, MockDataSource(Status.GATHERING.identifier))
         db.add(treeType.route, MockDataSource("tree_1"))
         val request = ResourceGatheringRequest("1", "chocolate_bear", "chocolate_wood", 5000, "chocolate_tree")
         runBlocking {
@@ -113,8 +111,8 @@ class ResourceGatheringRequestHandlerTest {
     }
 
     @Test
-    fun invalidRequest() {
-        db.add(userStatus.route, MockDataSource(Status.GATHERING.externalName))
+    fun shouldNotHandleInvalidRequest() {
+        db.add(userStatus.route, MockDataSource(Status.GATHERING.identifier))
         db.add(treeType.route, MockDataSource("type_is_wrong"))
         val request = ResourceGatheringRequest("1", "chocolate_bear", "chocolate_wood", 5000, "chocolate_tree")
         runBlocking {

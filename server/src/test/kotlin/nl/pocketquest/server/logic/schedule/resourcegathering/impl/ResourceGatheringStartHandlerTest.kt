@@ -48,7 +48,7 @@ class ResourceGatheringStartHandlerTest {
     }
 
     @Test
-    fun testGatheringOnEmptyTree() {
+    fun shouldNotGatherEmptyTree() {
         val status = MockDataSource("gathering")
         db.add(userStatus.route, status)
         db.add(treeResourceRoute.route, MockDataSource(0L))
@@ -62,12 +62,12 @@ class ResourceGatheringStartHandlerTest {
                             6000L
                     ))
             )
-            assertEquals(Status.IDLE.externalName, status.content)
+            assertEquals(Status.IDLE.identifier, status.content)
         }
     }
 
     @Test
-    fun testGatheringWithResources() {
+    fun shouldGatherTreeWithResources() {
         db.add(userStatus.route, MockDataSource("gathering"))
         db.add(treeResourceRoute.route, MockDataSource(1L))
         runBlocking {

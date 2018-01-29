@@ -49,7 +49,7 @@ class ResourceGatheringGainHandlerTest {
     }
 
     @Test
-    fun testGatheringWithResources() {
+    fun shouldGatherResources() {
         val treeWood = MockDataSource(6L)
         db.add(treeResourceRoute.route, treeWood)
         runBlocking {
@@ -64,7 +64,7 @@ class ResourceGatheringGainHandlerTest {
     }
 
     @Test
-    fun testGatheringWithoutResources() {
+    fun shouldNotGatherEmptyTree() {
         val treeWood = MockDataSource(0L)
         db.add(treeResourceRoute.route, treeWood)
         runBlocking {

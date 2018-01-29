@@ -11,17 +11,17 @@ import org.junit.Assert.*
 class UserTest {
 
     @Test
-    fun testSetStatus() {
-        val source = MockDataSource(Status.IDLE.externalName)
+    fun shouldSetStatus() {
+        val source = MockDataSource(Status.IDLE.identifier)
         val kodein = Kodein {}
         val user = User(source, Inventory(listOf("test", "user", "inventory"), kodein))
         runBlocking {
             assertTrue(user.setStatus(Status.GATHERING))
-            assertEquals(Status.GATHERING.externalName, source.content)
+            assertEquals(Status.GATHERING.identifier, source.content)
             assertFalse(user.setStatus(Status.GATHERING))
-            assertEquals(Status.GATHERING.externalName, source.content)
+            assertEquals(Status.GATHERING.identifier, source.content)
             assertTrue(user.setStatus(Status.IDLE))
-            assertEquals(Status.IDLE.externalName, source.content)
+            assertEquals(Status.IDLE.identifier, source.content)
         }
     }
 }

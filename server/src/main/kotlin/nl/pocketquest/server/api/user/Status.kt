@@ -1,7 +1,7 @@
 package nl.pocketquest.server.api.user
 
 enum class Status(
-        val externalName: String,
+        val identifier: String,
         val statusChangeValidator: (Status) -> Boolean
 ) {
 
@@ -14,6 +14,6 @@ enum class Status(
 
     companion object {
         fun fromExternalName(name: String) = Status.values()
-                .find { it.externalName == name }
+                .find { it.identifier == name }
     }
 }
