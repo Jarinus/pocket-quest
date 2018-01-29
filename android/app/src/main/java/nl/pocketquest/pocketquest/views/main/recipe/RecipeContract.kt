@@ -7,6 +7,7 @@ import nl.pocketquest.pocketquest.views.BaseView
 class RecipeContract {
 
     interface RecipeView : BaseView {
+
         fun display(recipeModels: List<RecipeModel>)
 
         fun setFilter(filterDescription: String)
@@ -14,6 +15,9 @@ class RecipeContract {
 
     abstract class RecipePresenter(recipeView: RecipeView)
         : BasePresenter<RecipeView>(recipeView) {
+
+        abstract fun onAttached()
+
         abstract fun onResetFilter()
 
         abstract fun onSelectRecipe(recipe: Recipe)
