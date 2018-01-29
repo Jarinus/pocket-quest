@@ -9,6 +9,8 @@ class WorkOrderContract {
     interface WorkOrderView : BaseView {
         fun initialize(workOrders: List<WorkOrder>)
 
+        fun setLoading(loading: Boolean)
+
         fun addWorkOrder(workOrder: WorkOrder)
 
         fun removeWorkOrder(workOrder: WorkOrder)
