@@ -5,9 +5,9 @@ data class Recipe(
         val type: RecipeType,
         val duration: Long,
         val requiredItems: Map<String, Int>,
-        val acquiredItem: Map<String, Int>
+        val acquiredItems: Map<String, Int>
 ) {
     fun requiresItem(itemName: String) = requiredItems.containsKey(itemName)
 
-    fun acquiresItem(itemName: String) = acquiredItem.containsKey(itemName)
+    fun acquiresItem(itemName: String) = acquiredItems.containsKey(itemName)
 }
