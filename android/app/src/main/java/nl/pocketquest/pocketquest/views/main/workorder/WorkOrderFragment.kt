@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
@@ -241,6 +242,9 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
             }
 
             fun handleFinishedWorkOrder(presenter: WorkOrderPresenter, workOrder: WorkOrder) {
+                workOrderCancelButton.visibility = GONE
+                workOrderClaimButton.visibility = VISIBLE
+
                 workOrderProgress.progress = 1
                 workOrderProgress.max = 1
 
@@ -251,7 +255,9 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
             }
 
             fun handleActiveWorkOrder(presenter: WorkOrderPresenter, workOrder: WorkOrder) {
-                //TODO: Implement correct progress
+                workOrderCancelButton.visibility = VISIBLE
+                workOrderClaimButton.visibility = GONE
+
                 workOrderProgress.progress = 1
                 workOrderProgress.max = 2
 
@@ -262,6 +268,9 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
             }
 
             fun handleSubmittedWorkOrder(presenter: WorkOrderPresenter, workOrder: WorkOrder) {
+                workOrderCancelButton.visibility = VISIBLE
+                workOrderClaimButton.visibility = GONE
+
                 workOrderProgress.progress = 0
                 workOrderProgress.max = 1
 

@@ -15,5 +15,4 @@
     <string name="title_location_permission">Grant location access</string>
     <string name="work_order_cancel_button">Cancel</string>
     <string name="work_order_claim_button">Claim</string>
-    >>>>>>> ADD: WorkOrderFragment base
 </resources>
