@@ -6,6 +6,7 @@ import nl.pocketquest.pocketquest.game.crafting.RecipeType
 import nl.pocketquest.pocketquest.utils.DATABASE
 import nl.pocketquest.pocketquest.utils.readAsync
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.wtf
 
 data class FBResourceGatherRequest(
         val resource_node_uid: String,
@@ -35,13 +36,12 @@ data class FBResourceNode(
 )
 
 data class FBRecipe(
-        val id: String = "",
         val type: String = "",
         val duration: Long = 0,
-        val requiredItems: HashMap<String, Int> = hashMapOf(),
+        val required_items: HashMap<String, Int> = hashMapOf(),
         val acquired_items: HashMap<String, Int> = hashMapOf()
 ){
-    fun toRecipe() = Recipe(id, RecipeType.valueOf(type), duration, requiredItems, acquired_items)
+    fun toRecipe(id: String) = Recipe(id, RecipeType.valueOf(type), duration, required_items, acquired_items)
 }
 
 object Entities : AnkoLogger {
@@ -62,6 +62,7 @@ object Entities : AnkoLogger {
 
     suspend fun getRecipes() = recipes ?: DATABASE.getReference("entities/recipes")
             .readAsync<HashMap<String, FBRecipe>>()
-            .mapValues { (_,fbRecipe)-> fbRecipe.toRecipe() }
+            .mapValues { (key,fbRecipe)-> fbRecipe.toRecipe(key) }
             .also { recipes = it }
+            .also { wtf("Recipes: $it") }
 }

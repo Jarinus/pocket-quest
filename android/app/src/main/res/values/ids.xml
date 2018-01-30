@@ -2,4 +2,5 @@
 <resources>
     <item name="imgRss" type="id" />
     <item name="tvRss" type="id" />
+    <item name="recipeTitleView" type="id" />
 </resources>
