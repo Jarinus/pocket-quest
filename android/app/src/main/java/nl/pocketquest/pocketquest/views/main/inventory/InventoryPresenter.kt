@@ -27,6 +27,7 @@ class InventoryPresenter(
         inventoryView.removeItem(item)
     }
 
+
     override fun itemClicked(item: Item) {
         info("item clicked: $item")
     }

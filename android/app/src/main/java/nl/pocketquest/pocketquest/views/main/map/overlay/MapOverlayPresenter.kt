@@ -13,9 +13,6 @@ import nl.pocketquest.pocketquest.utils.whenLoggedIn
 import org.jetbrains.anko.getStackTraceString
 import org.jetbrains.anko.wtf
 
-/**
- * Created by Laurens on 4-12-2017.
- */
 class MapOverlayPresenter(mapOverlayView: MapOverlayContract.MapOverlayView) :
         MapOverlayContract.MapOverlayPresenter(mapOverlayView), InventoryListener {
 
