@@ -2,4 +2,12 @@
 <resources>
     <item name="imgRss" type="id" />
     <item name="tvRss" type="id" />
+    <item name="workOrderLoadingSpinner" type="id" />
+    <item name="workOrderTitle" type="id" />
+    <item name="workOrderIcon" type="id" />
+    <item name="workOrderCount" type="id" />
+    <item name="workOrderCancelButton" type="id" />
+    <item name="workOrderClaimButton" type="id" />
+    <item name="workOrderProgress" type="id" />
+    <item name="workOrderOverviewContainer" type="id" />
 </resources>
