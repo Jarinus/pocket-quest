@@ -13,7 +13,7 @@ typealias Predicate<T> = (T) -> Boolean
 
 class RecipePresenter(
         val recipeView: RecipeContract.RecipeView,
-        val inventoryMap: InventoryMap
+        val inventoryMap: InventoryMap = InventoryMap()
 ) : RecipeContract.RecipePresenter(recipeView),
         InventoryListener by inventoryMap,
         CompleteInventoryListener {
@@ -73,7 +73,7 @@ class RecipePresenter(
     }
 
     override fun onSelectRecipe(recipe: Recipe) {
-        
+
     }
 
     override fun onSubmitFilter(predicate: (Recipe) -> Boolean) {
