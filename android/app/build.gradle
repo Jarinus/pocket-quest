@@ -68,6 +68,7 @@ dependencies {
     //anko
     compile "org.jetbrains.anko:anko:$anko_version"
     compile "org.jetbrains.anko:anko-design:$anko_version"
+    compile "org.jetbrains.anko:anko-recyclerview-v7:$anko_version"
 
     //other
     compile 'com.uchuhimo:kotlinx-bimap:1.0'
