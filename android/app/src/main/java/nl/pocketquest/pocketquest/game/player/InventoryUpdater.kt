@@ -16,6 +16,37 @@ interface InventoryListener {
     fun itemRemoved(item: Item)
 }
 
+interface CompleteInventoryListener{
+    fun onUpdate(map: Map<String, Long>)
+}
+
+class InventoryMap : InventoryListener{
+    private val map = mutableMapOf<String, Long>()
+
+    var observer: CompleteInventoryListener?=null
+    set(value){
+        field = value
+        value?.onUpdate(map)
+    }
+
+    private fun write(update: () -> Unit) {
+        update()
+        observer?.onUpdate(map)
+    }
+
+    override fun newInventoryState(item: Item) = write{
+        map[item.itemName] = item.itemCount
+    }
+
+    override fun itemAdded(item: Item, prevCount: Long) = write{
+        map[item.itemName] = item.itemCount
+    }
+
+    override fun itemRemoved(item: Item) = write{
+        map-=item.itemName
+    }
+}
+
 data class Item(val itemName: String, val itemCount: Long) {
     suspend fun getItemProperties(): FBItem? = Entities.getItem(itemName)
 }
@@ -38,7 +69,8 @@ class Inventory(val ref: DatabaseReference) : AnkoLogger {
 
     fun setItem(itemName: String, count: Long) {
         val item = Item(itemName, count)
-        if (count == 0L) {
+        if (count ==
+                0L) {
             removeItem(item)
             return
         }
