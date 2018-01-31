@@ -2,9 +2,11 @@ package nl.pocketquest.pocketquest.views.main.inventory
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Color.BLACK
+import android.graphics.Color.WHITE
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -68,17 +70,23 @@ class InventoryFragment : BaseFragment(), InventoryContract.InventoryView, Adapt
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mAdapter = InventoryItemAdapter(ctx)
+
         return UI {
             gridView {
+                adapter = mAdapter
+                numColumns = 4
+
+                onItemClickListener = this@InventoryFragment
+
+                padding = dip(8)
+
                 lparams {
                     width = matchParent
                     height = matchParent
+
+                    horizontalSpacing = dip(8)
+                    verticalSpacing = dip(8)
                 }
-                horizontalSpacing = dip(5)
-                verticalSpacing = dip(5)
-                numColumns = 3
-                adapter = mAdapter
-                onItemClickListener = this@InventoryFragment
             }
         }.view
     }
@@ -116,29 +124,36 @@ class InventoryItemAdapter(val context: Context) : BaseAdapter(), AnkoLogger {
 
     override fun getView(position: Int, view: View?, viewGroup: ViewGroup): View {
         val contentView = view ?: with(context) {
-            verticalLayout {
+            relativeLayout {
                 backgroundColor = Color.parseColor("#bbdefb")
+
                 squaredImageView {
                     id = R.id.imgRss
                 }.lparams {
                     width = matchParent
-                    padding = dip(8)
+                    height = matchParent
                 }
+
                 textView("0") {
                     id = R.id.tvRss
-                    textSize = 20f
+
+                    textSize = 16f
+                    textColor = WHITE
+                    typeface = Typeface.DEFAULT_BOLD
+
+                    setShadowLayer(4f, 0f, 0f, BLACK)
                 }.lparams {
-                    bottomPadding = dip(3)
-                    gravity = Gravity.CENTER
+                    alignParentBottom()
+                    alignParentRight()
                 }
+
                 lparams {
-                    width = matchParent
-                    height = wrapContent
+                    padding = dip(4)
                 }
             }
         }
         val item = getItem(position)!!
-        contentView.find<ImageView>(R.id.imgRss).apply{
+        contentView.find<ImageView>(R.id.imgRss).apply {
             load(context, item.img)
         }
 
