@@ -14,9 +14,15 @@ class WorkOrderPresenter(private val workOrderView: WorkOrderContract.WorkOrderV
 
         async(CommonPool) {
             //TODO: Implement Firebase functionality
+            val now = System.currentTimeMillis()
+
             workOrderView.initialize(listOf(
-                    WorkOrder("axe_1", 5, WorkOrderStatus.Active(12313231130, 12313231132)),
-                    WorkOrder("axe_1", 10, WorkOrderStatus.Submitted(12313231131))
+                    WorkOrder("axe_1", 2, WorkOrderStatus.Finished(now - 1000)),
+                    WorkOrder("axe_1", 1, WorkOrderStatus.Finished(now - 2000)),
+                    WorkOrder("axe_1", 4, WorkOrderStatus.Active(now - 1000, now + 13000)),
+                    WorkOrder("axe_1", 3, WorkOrderStatus.Active(now - 2000, now + 12000)),
+                    WorkOrder("axe_1", 6, WorkOrderStatus.Submitted(now - 1000)),
+                    WorkOrder("axe_1", 5, WorkOrderStatus.Submitted(now - 2000))
             ))
 
             workOrderView.setLoading(false)
