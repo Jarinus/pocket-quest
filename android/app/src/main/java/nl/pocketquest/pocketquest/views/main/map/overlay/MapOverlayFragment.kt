@@ -44,6 +44,6 @@ class MapOverlayFragment : BaseFragment(), MapOverlayContract.MapOverlayView {
 
     override fun getImageResolver() = object : ImageResolver {
         suspend override fun resolveImage(imageID: String) =
-                FirebaseImageResolver.resolveImage(ctx, "images/" + imageID)
+                FirebaseImageResolver.resolveImage(ctx, imageID)
     }
 }
