@@ -6,7 +6,7 @@
     <item name="workOrderTitle" type="id" />
     <item name="workOrderIcon" type="id" />
     <item name="workOrderCount" type="id" />
-    <item name="workOrderCancelButton" type="id" />
+    <item name="workOrderActionButton" type="id" />
     <item name="workOrderClaimButton" type="id" />
     <item name="workOrderProgress" type="id" />
     <item name="workOrderOverviewContainer" type="id" />
