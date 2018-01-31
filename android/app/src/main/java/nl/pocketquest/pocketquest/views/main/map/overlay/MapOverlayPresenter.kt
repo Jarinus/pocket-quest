@@ -13,9 +13,6 @@ import nl.pocketquest.pocketquest.utils.whenLoggedIn
 import org.jetbrains.anko.getStackTraceString
 import org.jetbrains.anko.wtf
 
-/**
- * Created by Laurens on 4-12-2017.
- */
 class MapOverlayPresenter(mapOverlayView: MapOverlayContract.MapOverlayView) :
         MapOverlayContract.MapOverlayPresenter(mapOverlayView), InventoryListener {
 
@@ -30,7 +27,7 @@ class MapOverlayPresenter(mapOverlayView: MapOverlayContract.MapOverlayView) :
         DATABASE.getReference("users/${it.uid}/status").listen(this::onUserStatusChange)
         async(CommonPool) {
             try {
-                view.setRightCornerImage(view.getImageResolver().resolveImage("axe.png"))
+                view.setRightCornerImage(view.getImageResolver().resolveImage("items/Hatchet_1.png"))
             } catch (e: Exception) {
                 wtf(e.getStackTraceString())
             }

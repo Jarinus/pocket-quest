@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.views.main.inventory.InventoryFragment
 import nl.pocketquest.pocketquest.views.main.map.MapFragment
+import nl.pocketquest.pocketquest.views.main.recipe.RecipeFragment
 import java.lang.IllegalArgumentException
 
 class MainActivity : AppCompatActivity() {
@@ -66,9 +67,10 @@ class MainActivity : AppCompatActivity() {
         override fun getItem(position: Int): Fragment = when (position) {
             0 -> MapFragment()
             1 -> InventoryFragment()
+            2 -> RecipeFragment()
             else -> throw IllegalArgumentException("Illegal index supplied")
         }
 
-        override fun getCount() = 2
+        override fun getCount() = 3
     }
 }

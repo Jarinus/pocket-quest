@@ -90,8 +90,8 @@ class MapFragment : BaseFragment(), MapContract.MapView {
     }
 
     override fun getImageResolver() = object : ImageResolver {
-        suspend override fun resolveImage(imageID: String) =
-                FirebaseImageResolver.resolveImage(ctx, "images/" + imageID)
+        override suspend fun resolveImage(imageID: String) =
+                FirebaseImageResolver.resolveImage(ctx, imageID)
     }
 
     override fun removeGameObject(gameObject: IGameObject) {
