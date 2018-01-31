@@ -26,7 +26,7 @@ object FirebaseImageResolver : AnkoLogger {
 
 private fun createImageRequest(context: Context, iconName: String): GlideRequest<Drawable> {
     try{
-        check(iconName.isNotBlank())
+        require(iconName.isNotBlank())
     } catch (e: Exception){
         Log.wtf("iconName cannot be blank", e)
     }
