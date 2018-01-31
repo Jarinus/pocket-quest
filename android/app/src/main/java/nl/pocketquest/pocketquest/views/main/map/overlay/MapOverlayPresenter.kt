@@ -27,7 +27,7 @@ class MapOverlayPresenter(mapOverlayView: MapOverlayContract.MapOverlayView) :
         DATABASE.getReference("users/${it.uid}/status").listen(this::onUserStatusChange)
         async(CommonPool) {
             try {
-                view.setRightCornerImage(view.getImageResolver().resolveImage("axe.png"))
+                view.setRightCornerImage(view.getImageResolver().resolveImage("items/Hatchet_1.png"))
             } catch (e: Exception) {
                 wtf(e.getStackTraceString())
             }
