@@ -139,7 +139,7 @@ class InventoryItemAdapter(val context: Context) : BaseAdapter(), AnkoLogger {
         }
         val item = getItem(position)!!
         contentView.find<ImageView>(R.id.imgRss).apply{
-            load(context, "images/" + item.img)
+            load(context, item.img)
         }
 
         contentView.find<TextView>(R.id.tvRss).apply {

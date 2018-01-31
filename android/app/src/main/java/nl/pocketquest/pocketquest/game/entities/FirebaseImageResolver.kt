@@ -2,6 +2,8 @@ package nl.pocketquest.pocketquest.game.entities
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.util.Log
 import android.widget.ImageView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import nl.pocketquest.pocketquest.utils.STORAGE
@@ -15,17 +17,24 @@ interface ImageResolver {
 object FirebaseImageResolver : AnkoLogger {
 
     suspend fun resolveImage(context: Context, iconName: String) =
-            GlideApp.with(context)
-                    .load(STORAGE.getReference(iconName))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+            createImageRequest(context, iconName)
                     .submit()
                     .get()
                     .toBitmap()
 }
 
-fun ImageView.load(context: Context, iconName: String) =
-        GlideApp.with(context)
-                .load(STORAGE.getReference(iconName))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+
+private fun createImageRequest(context: Context, iconName: String): GlideRequest<Drawable> {
+    try{
+        check(iconName.isNotBlank())
+    } catch (e: Exception){
+        Log.wtf("iconName cannot be blank", e)
+    }
+    return GlideApp.with(context)
+            .load(STORAGE.getReference("images/$iconName"))
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+}
+
+fun ImageView.load(context: Context, iconName: String) = createImageRequest(context, iconName)
                 .centerInside()
                 .into(this)
