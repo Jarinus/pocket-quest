@@ -48,6 +48,7 @@ class LocationPermissionActivity : BaseActivity(), PermissionsListener, Location
 
     override fun goToMainActivity() {
         startActivity<MainActivity>()
+        finish()
     }
 
     override fun setDisplayMessage(message: String) {
