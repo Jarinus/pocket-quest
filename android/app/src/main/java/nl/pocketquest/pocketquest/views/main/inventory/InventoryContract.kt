@@ -1,8 +1,8 @@
 package nl.pocketquest.pocketquest.views.main.inventory
 
 import nl.pocketquest.pocketquest.game.player.Item
-import nl.pocketquest.pocketquest.mvp.BasePresenter
-import nl.pocketquest.pocketquest.mvp.BaseView
+import nl.pocketquest.pocketquest.views.BasePresenter
+import nl.pocketquest.pocketquest.views.BaseView
 
 class InventoryContract {
     interface InventoryView : BaseView {

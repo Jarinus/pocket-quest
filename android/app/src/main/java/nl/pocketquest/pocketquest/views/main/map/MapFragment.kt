@@ -1,5 +1,6 @@
 package nl.pocketquest.pocketquest.views.main.map
 
+import android.graphics.Bitmap
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,9 +17,10 @@ import nl.pocketquest.pocketquest.game.IGameObject
 import nl.pocketquest.pocketquest.game.entities.FirebaseImageResolver
 import nl.pocketquest.pocketquest.game.entities.ImageResolver
 import nl.pocketquest.pocketquest.location.LocationEngineWrapper
-import nl.pocketquest.pocketquest.mvp.BaseFragment
+import nl.pocketquest.pocketquest.views.BaseFragment
 import nl.pocketquest.pocketquest.utils.IconCache
 import nl.pocketquest.pocketquest.utils.addMarker
+import nl.pocketquest.pocketquest.utils.decodeResource
 import nl.pocketquest.pocketquest.utils.setCameraPosition
 import nl.pocketquest.pocketquest.views.main.map.overlay.MapOverlayFragment
 import org.jetbrains.anko.info
@@ -26,12 +28,15 @@ import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.ctx
 
 class MapFragment : BaseFragment(), MapContract.MapView {
+
+
     private var map: MapboxMap? = null
     private val presenter: MapContract.MapPresenter = MapPresenter(this)
     private lateinit var locationEngineWrapper: LocationEngineWrapper
     private val gameObjectsMarkerBiMap = mutableBiMapOf<IGameObject, Marker>()
     private var mapView: MapView? = null
 
+    override fun decodeResource(resourceID: Int) : Bitmap = ctx.decodeResource(resourceID)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         info { "Starting onCreate" }

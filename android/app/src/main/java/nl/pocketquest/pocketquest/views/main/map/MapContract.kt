@@ -4,8 +4,8 @@ import android.graphics.Bitmap
 import android.location.Location
 import nl.pocketquest.pocketquest.game.IGameObject
 import nl.pocketquest.pocketquest.game.entities.ImageResolver
-import nl.pocketquest.pocketquest.mvp.BasePresenter
-import nl.pocketquest.pocketquest.mvp.BaseView
+import nl.pocketquest.pocketquest.views.BasePresenter
+import nl.pocketquest.pocketquest.views.BaseView
 
 class MapContract {
     interface MapView : BaseView {
@@ -32,6 +32,7 @@ class MapContract {
          */
         fun removeGameObject(gameObject: IGameObject)
         fun getImageResolver(): ImageResolver
+        fun decodeResource(resourceID: Int): Bitmap
     }
 
     abstract class MapPresenter(mapView: MapView) : BasePresenter<MapView>(mapView) {

@@ -1,8 +1,8 @@
 package nl.pocketquest.pocketquest.views.main.recipe
 
 import nl.pocketquest.pocketquest.game.crafting.Recipe
-import nl.pocketquest.pocketquest.mvp.BasePresenter
-import nl.pocketquest.pocketquest.mvp.BaseView
+import nl.pocketquest.pocketquest.views.BasePresenter
+import nl.pocketquest.pocketquest.views.BaseView
 
 class RecipeContract {
 

@@ -7,13 +7,16 @@ import com.firebase.ui.auth.IdpResponse
 import nl.pocketquest.pocketquest.utils.AUTH_UI
 import nl.pocketquest.pocketquest.utils.buildSignInIntent
 import nl.pocketquest.pocketquest.utils.setAvailableProviders
-import nl.pocketquest.pocketquest.mvp.BaseActivity
+import nl.pocketquest.pocketquest.views.BaseActivity
 import nl.pocketquest.pocketquest.views.locationpermission.LocationPermissionActivity
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 
 private const val RC_SIGN_IN = 1
 
 class LoginActivity : BaseActivity(), LoginContract.LoginView {
+    override fun displayToast(message: String) { toast(message) }
+
     private val presenter = LoginPresenter(this)
 
     override fun goToLocationPermissionActivity() {
