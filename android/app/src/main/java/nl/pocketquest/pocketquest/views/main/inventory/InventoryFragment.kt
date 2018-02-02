@@ -17,7 +17,7 @@ import kotlinx.coroutines.experimental.async
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.entities.load
 import nl.pocketquest.pocketquest.game.player.Item
-import nl.pocketquest.pocketquest.mvp.BaseFragment
+import nl.pocketquest.pocketquest.views.BaseFragment
 import nl.pocketquest.pocketquest.utils.squaredImageView
 import nl.pocketquest.pocketquest.utils.withSuffix
 import org.jetbrains.anko.*

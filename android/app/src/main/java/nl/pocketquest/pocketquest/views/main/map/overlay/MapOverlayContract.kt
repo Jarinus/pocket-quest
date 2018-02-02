@@ -2,8 +2,8 @@ package nl.pocketquest.pocketquest.views.main.map.overlay
 
 import android.graphics.Bitmap
 import nl.pocketquest.pocketquest.game.entities.ImageResolver
-import nl.pocketquest.pocketquest.mvp.BasePresenter
-import nl.pocketquest.pocketquest.mvp.BaseView
+import nl.pocketquest.pocketquest.views.BasePresenter
+import nl.pocketquest.pocketquest.views.BaseView
 
 class MapOverlayContract {
     interface MapOverlayView : BaseView {

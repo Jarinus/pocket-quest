@@ -2,7 +2,6 @@ package nl.pocketquest.pocketquest.views.main.map.overlay
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,7 @@ import kotlinx.android.synthetic.main.fragment_map_overlay.*
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.entities.FirebaseImageResolver
 import nl.pocketquest.pocketquest.game.entities.ImageResolver
-import nl.pocketquest.pocketquest.mvp.BaseFragment
+import nl.pocketquest.pocketquest.views.BaseFragment
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.ctx

@@ -32,4 +32,4 @@ class SquareImageView(
 }
 
 inline fun ViewManager.squaredImageView(theme : Int = 0, init: SquareImageView.()->Unit)
-        = ankoView({SquareImageView(it)}, theme = 0, init = init)
+        = ankoView({SquareImageView(it)}, theme = theme, init = init)

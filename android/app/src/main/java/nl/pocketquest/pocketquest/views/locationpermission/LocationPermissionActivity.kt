@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.widget.TextView
 import com.mapbox.services.android.telemetry.permissions.PermissionsListener
 import com.mapbox.services.android.telemetry.permissions.PermissionsManager
-import nl.pocketquest.pocketquest.mvp.BaseActivity
+import nl.pocketquest.pocketquest.views.BaseActivity
 import nl.pocketquest.pocketquest.views.locationpermission.LocationPermissionContract.LocationPermissionView
 import nl.pocketquest.pocketquest.views.main.MainActivity
 import org.jetbrains.anko.startActivity
