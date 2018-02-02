@@ -14,6 +14,5 @@ class LocationPermissionContract {
     abstract class LocationPermissionPresenter(locationPermissionView: LocationPermissionView)
         : BasePresenter<LocationPermissionView>(locationPermissionView) {
         abstract fun onPermissionGranted(granted: Boolean)
-        abstract fun onAttach()
     }
 }

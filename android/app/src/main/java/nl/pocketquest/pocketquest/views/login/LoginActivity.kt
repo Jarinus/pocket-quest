@@ -6,11 +6,9 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import nl.pocketquest.pocketquest.utils.AUTH_UI
 import nl.pocketquest.pocketquest.utils.buildSignInIntent
-import nl.pocketquest.pocketquest.utils.provider
 import nl.pocketquest.pocketquest.utils.setAvailableProviders
 import nl.pocketquest.pocketquest.mvp.BaseActivity
 import nl.pocketquest.pocketquest.views.locationpermission.LocationPermissionActivity
-import org.jetbrains.anko.info
 import org.jetbrains.anko.startActivity
 
 private const val RC_SIGN_IN = 1
@@ -20,19 +18,22 @@ class LoginActivity : BaseActivity(), LoginContract.LoginView {
 
     override fun goToLocationPermissionActivity() {
         startActivity<LocationPermissionActivity>()
-        info { "Going to next activity" }
+        presenter.onDetach()
         finish()
+    }
+
+    override fun startLoginAction(){
+        val intent = AUTH_UI.buildSignInIntent {
+            setAvailableProviders(
+                    AuthUI.IdpConfig.GoogleBuilder().build()
+            )
+        }
+        startActivityForResult(intent, RC_SIGN_IN)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        info { "Going to login" }
-        val intent = AUTH_UI.buildSignInIntent {
-            setAvailableProviders(
-                    provider(AuthUI.GOOGLE_PROVIDER)
-            )
-        }
-        startActivityForResult(intent, RC_SIGN_IN)
+        presenter.onAttach()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -40,6 +41,6 @@ class LoginActivity : BaseActivity(), LoginContract.LoginView {
         if (RC_SIGN_IN != requestCode) return
         val response = IdpResponse.fromResultIntent(data)
         val errorCode = response?.errorCode ?: return
-        presenter.handleAuthenticationResult(resultCode, errorCode)
+        presenter.onLoginActionResult(resultCode, errorCode)
     }
 }

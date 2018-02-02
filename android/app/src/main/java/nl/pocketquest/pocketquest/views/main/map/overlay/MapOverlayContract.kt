@@ -5,9 +5,6 @@ import nl.pocketquest.pocketquest.game.entities.ImageResolver
 import nl.pocketquest.pocketquest.mvp.BasePresenter
 import nl.pocketquest.pocketquest.mvp.BaseView
 
-/**
- * Created by Laurens on 4-12-2017.
- */
 class MapOverlayContract {
     interface MapOverlayView : BaseView {
         fun displayNotification(text: String)
@@ -19,7 +16,5 @@ class MapOverlayContract {
         fun getImageResolver(): ImageResolver
     }
 
-    abstract class MapOverlayPresenter(mapOverlayView: MapOverlayView) : BasePresenter<MapOverlayView>(mapOverlayView) {
-        abstract fun onAttach()
-    }
+    abstract class MapOverlayPresenter(mapOverlayView: MapOverlayView) : BasePresenter<MapOverlayView>(mapOverlayView)
 }

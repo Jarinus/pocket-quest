@@ -13,6 +13,5 @@ class InventoryContract {
 
     abstract class InventoryPresenter(inventoryView: InventoryView) : BasePresenter<InventoryView>(inventoryView) {
         abstract fun itemClicked(item: Item)
-        abstract fun attached()
     }
 }

@@ -13,15 +13,19 @@ import nl.pocketquest.pocketquest.utils.whenLoggedIn
 import org.jetbrains.anko.getStackTraceString
 import org.jetbrains.anko.wtf
 
-/**
- * Created by Laurens on 4-12-2017.
- */
 class MapOverlayPresenter(mapOverlayView: MapOverlayContract.MapOverlayView) :
         MapOverlayContract.MapOverlayPresenter(mapOverlayView), InventoryListener {
 
+    var userInventory : Inventory? = null
+    override fun onDetach() {
+        userInventory?.removeInventoryListener(this)
+    }
+
     override fun onAttach() {
         whenLoggedIn {
-            Inventory.getUserInventory(it.uid).addInventoryListener(this)
+            userInventory = Inventory.getUserInventory(it.uid).also {
+                it.addInventoryListener(this)
+            }
             initializeGatheringStatus(it)
         }
     }
