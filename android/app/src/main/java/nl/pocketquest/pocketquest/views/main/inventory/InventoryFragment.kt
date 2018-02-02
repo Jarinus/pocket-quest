@@ -57,7 +57,12 @@ class InventoryFragment : BaseFragment(), InventoryContract.InventoryView, Adapt
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.attached()
+        presenter.onAttach()
+    }
+
+    override fun onDestroy() {
+        presenter.onDetach()
+        super.onDestroy()
     }
 
     override fun onItemClick(adapterView: AdapterView<*>?, view: View?, position: Int, itemID: Long) {

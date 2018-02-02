@@ -20,14 +20,13 @@ data class Item(val itemName: String, val itemCount: Long) {
     suspend fun getItemProperties(): FBItem? = Entities.getItem(itemName)
 }
 
-class Inventory(ref: DatabaseReference) : AnkoLogger {
+class Inventory(val ref: DatabaseReference) : AnkoLogger {
     private val items = mutableMapOf<String, Long>()
     private val inventoryListeners = mutableListOf<InventoryListener>()
     private val inventoryUpdater = InventoryUpdater(this)
     private var initialLoad = false
 
     init {
-        ref.addChildEventListener(inventoryUpdater)
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError?) = Unit
 
@@ -65,8 +64,12 @@ class Inventory(ref: DatabaseReference) : AnkoLogger {
         items.forEach { (k, v) ->
             inventoryListener.newInventoryState(Item(k, v))
         }
+        if (inventoryListeners.size == 1) ref.addChildEventListener(inventoryUpdater)
     }
-
+    fun removeInventoryListener(inventoryListener: InventoryListener) {
+        inventoryListeners.remove(inventoryListener)
+        if (inventoryListeners.size == 0) ref.removeEventListener(inventoryUpdater)
+    }
     companion object {
         private var userInventory: Inventory? = null
         fun getUserInventory(uid: String): Inventory {

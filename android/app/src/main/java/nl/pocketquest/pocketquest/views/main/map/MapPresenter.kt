@@ -19,6 +19,9 @@ import org.jetbrains.anko.info
 const val ANIMATION_DURATION = 42
 
 class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapView), GameObjectAcceptor {
+    override fun onAttach() = Unit
+
+    override fun onDetach() = Unit
 
     private var cachedLocation: Location? = null
     private var ready = false

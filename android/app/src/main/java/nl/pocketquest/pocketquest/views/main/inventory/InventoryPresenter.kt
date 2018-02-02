@@ -9,9 +9,16 @@ import org.jetbrains.anko.info
 class InventoryPresenter(
         val inventoryView: InventoryContract.InventoryView
 ) : InventoryContract.InventoryPresenter(inventoryView), InventoryListener {
-    override fun attached() {
+    private var userInventory: Inventory? = null
+
+    override fun onDetach() {
+        userInventory?.removeInventoryListener(this)
+    }
+
+    override fun onAttach() {
         whenLoggedIn {
-            Inventory.getUserInventory(it.uid).addInventoryListener(this)
+            userInventory = Inventory.getUserInventory(it.uid)
+                    .also { it.addInventoryListener(this) }
         }
     }
 
