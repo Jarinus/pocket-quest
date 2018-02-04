@@ -4,7 +4,7 @@ import nl.pocketquest.server.dataaccesslayer.DataSource
 import nl.pocketquest.server.dataaccesslayer.TransactionResult
 
 
-open class MockDataSource<T>(inital: T?) : DataSource<T> {
+open class MockDataSource<T>(inital: T?, val copier: (T?) -> T? = { it }) : DataSource<T> {
 
     private val listeners = mutableListOf<(T?) -> Unit>()
     var content: T? = inital
@@ -23,9 +23,7 @@ open class MockDataSource<T>(inital: T?) : DataSource<T> {
     suspend override fun transaction(transformer: (T?) -> TransactionResult<T>): Boolean {
         transformer(null)
         transformer(null)
-        transformer(content)
-        transformer(content)
-        val result = transformer(content)
+        val result = transformer(copier(content))
         if (result.abort) {
             return false
         }

@@ -4,6 +4,7 @@ import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.bind
 import com.github.salomonbrys.kodein.singleton
 import kotlinx.coroutines.experimental.runBlocking
+import nl.pocketquest.server.api.entity.CraftingRecipe
 import nl.pocketquest.server.api.entity.ResourceNode
 import nl.pocketquest.server.api.entity.ResourceNodeSuppliedItem
 import nl.pocketquest.server.api.resource.ResourceTypeRoute
@@ -43,6 +44,7 @@ class ResourceGatheringRequestHandlerTest {
 
 
         override fun resourceNodeFamily(identifier: String) = null
+        override fun recipe(identifier: String) = null
     }
 
     private val kodein = Kodein {

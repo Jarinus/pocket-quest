@@ -7,6 +7,9 @@ import com.github.salomonbrys.kodein.singleton
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
+import kotlinx.coroutines.experimental.runBlocking
+import nl.pocketquest.server.api.entity.ResourceNode
+import nl.pocketquest.server.api.resource.ResourceInstance
 import nl.pocketquest.server.api.state.Entities
 import nl.pocketquest.server.logic.request.handler.BaseHandler
 import nl.pocketquest.server.logic.request.handler.RequestHandler
@@ -19,6 +22,10 @@ import nl.pocketquest.server.logic.events.EventHandler
 import nl.pocketquest.server.logic.events.EventPool
 import nl.pocketquest.server.logic.events.impl.DefaultEventDispatcher
 import nl.pocketquest.server.logic.events.impl.DefaultEventPool
+import nl.pocketquest.server.logic.request.handler.impl.WorkOrderCancelHandler
+import nl.pocketquest.server.logic.request.handler.impl.WorkOrderClaimHandler
+import nl.pocketquest.server.logic.request.handler.impl.WorkOrderRequestStartHandler
+import nl.pocketquest.server.logic.schedule.crafting.WorkOrderEventHandlers
 import nl.pocketquest.server.logic.schedule.resourcegathering.ResourceGatheringHandlers
 import java.io.FileInputStream
 
@@ -29,6 +36,7 @@ fun main(args: Array<String>) {
         bind<EventDispatcher>() with singleton { DefaultEventDispatcher() }
         bind<EventPool>() with singleton { DefaultEventPool(instance()) }
     }
+    initFirebase()
     val server = Server(kodeIn)
     server.init()
     server.start()
@@ -37,20 +45,37 @@ fun main(args: Array<String>) {
     }
 }
 
+private fun getFirebaseOptions(): FirebaseOptions {
+    return FirebaseOptions.Builder()
+            .setCredentials(GoogleCredentials.fromStream(loadServiceAccount()))
+            .setDatabaseUrl("https://pocket-quests.firebaseio.com")
+            .build()
+}
+
+private fun loadServiceAccount() = FileInputStream("service-account.json")
+
+
+private fun initFirebase() {
+    val firebaseOptions = getFirebaseOptions()
+    FirebaseApp.initializeApp(firebaseOptions)
+}
+
 class Server(private val kodein: Kodein) {
 
     private val requestHandlers = mutableListOf<RequestHandler<*>>(
-            ResourceGatheringRequestHandler(kodein)
+            ResourceGatheringRequestHandler(kodein),
+            WorkOrderRequestStartHandler(kodein),
+            WorkOrderCancelHandler(kodein),
+            WorkOrderClaimHandler(kodein)
     )
     private val eventHandlers = listOf<EventHandler<*, *>>(
 
-    ) + ResourceGatheringHandlers.handlers(kodein)
+    ) + ResourceGatheringHandlers.handlers(kodein) +
+            WorkOrderEventHandlers.handlers(kodein)
 
     private val baseHandlers = requestHandlers.map { BaseHandler(it, kodein) }
 
     fun init() {
-        val firebaseOptions = getFirebaseOptions()
-        FirebaseApp.initializeApp(firebaseOptions)
         val dispatcher = kodein.instance<EventDispatcher>()
         eventHandlers.forEach(dispatcher::register)
     }
@@ -60,14 +85,4 @@ class Server(private val kodein: Kodein) {
             it.start()
         }
     }
-
-    private fun getFirebaseOptions(): FirebaseOptions {
-        return FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(this.loadServiceAccount()))
-                .setDatabaseUrl("https://pocket-quests.firebaseio.com")
-                .build()
-    }
-
-    private fun loadServiceAccount() = FileInputStream("service-account.json")
-
 }

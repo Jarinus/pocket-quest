@@ -15,4 +15,6 @@ interface MutableEventPool : EventPool {
     fun remove(event: Event<*, *>): Boolean
 
     fun close()
+
+    fun empty() : Boolean
 }

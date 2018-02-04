@@ -7,6 +7,7 @@ import nl.pocketquest.server.dataaccesslayer.Database
 
 class EntitiesModel {
     lateinit var items: HashMap<String, ItemModel>
+    lateinit var recipes: HashMap<String, CraftingRecipeModel>
     lateinit var resource_nodes: HashMap<String, ResourceNodeModel>
     lateinit var resource_node_families: HashMap<String, ResourceNodeFamilyModel>
     lateinit var resource_node_resource_node_families: HashMap<String, HashMap<String, Boolean>>
@@ -16,6 +17,7 @@ class EntitiesModel {
 interface Entities {
     fun item(identifier: String): Item?
     fun resourceNode(identifier: String): ResourceNode?
+    fun recipe(identifier: String): CraftingRecipe?
     fun resourceNodeFamily(identifier: String): ResourceNodeFamily?
 }
 
@@ -28,6 +30,7 @@ class State(private val database: Database) : Entities {
     private lateinit var items: Map<String, Item>
     private lateinit var resourceNodes: Map<String, ResourceNode>
     private lateinit var resourceNodeFamilies: Map<String, ResourceNodeFamily>
+    private lateinit var recipes: Map<String, CraftingRecipe>
 
     init {
         try {
@@ -39,6 +42,7 @@ class State(private val database: Database) : Entities {
                 items = loadItems(entities)
                 resourceNodes = loadResourceNodes(entities)
                 resourceNodeFamilies = loadResourceNodeFamilies(entities)
+                recipes = loadRecipes(entities)
             }
         } catch (e: Exception) {
             throw e
@@ -50,6 +54,12 @@ class State(private val database: Database) : Entities {
     override fun resourceNode(identifier: String) = resourceNodes[identifier]
 
     override fun resourceNodeFamily(identifier: String) = resourceNodeFamilies[identifier]
+
+    override fun recipe(identifier: String) = recipes[identifier]
+
+    private suspend fun loadRecipes(entitiesModel: EntitiesModel) = entitiesModel
+            .recipes
+            .mapValues { it.value.toCraftingRecipe(it.key) }
 
     private suspend fun loadItems(entitiesModel: EntitiesModel): Map<String, Item> = entitiesModel.items
             .mapValues { it.value.toItem(it.key) }
