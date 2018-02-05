@@ -1,31 +1,57 @@
 package nl.pocketquest.pocketquest.views.main.workorder
 
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
 import nl.pocketquest.pocketquest.game.crafting.WorkOrder
-import nl.pocketquest.pocketquest.game.crafting.WorkOrderStatus
+import nl.pocketquest.pocketquest.game.player.WorkOrderList
+import nl.pocketquest.pocketquest.game.player.WorkOrderUpdateListener
+import nl.pocketquest.pocketquest.game.player.WorkOrdersInitializedListener
+import nl.pocketquest.pocketquest.utils.whenLoggedIn
 import org.jetbrains.anko.info
+import org.jetbrains.anko.wtf
 
-class WorkOrderPresenter(private val workOrderView: WorkOrderContract.WorkOrderView)
-    : WorkOrderContract.WorkOrderPresenter(workOrderView) {
+class WorkOrderPresenter(
+        private val workOrderView: WorkOrderContract.WorkOrderView
+) : WorkOrderContract.WorkOrderPresenter(workOrderView)
+        , WorkOrderUpdateListener
+        , WorkOrdersInitializedListener {
+    private var hasLoaded = false
+    private var workOrderList: WorkOrderList? = null
 
-    override fun onAttached() {
+
+    override fun onDetach() {
+        workOrderList?.removeWorkOrderListener(this)
+        workOrderList?.removeWorkOrderInitializedListeners(this)
+    }
+
+    override fun onAttach() {
         workOrderView.setLoading(true)
+        whenLoggedIn {
+            workOrderList = WorkOrderList.getUserWorkOrderList(it.uid).also {
+                it.addWorkOrderListener(this)
+                it.addWorkOrderInitializedListeners(this)
+            }
+        }
+    }
 
-        async(CommonPool) {
-            //TODO: Implement Firebase functionality
-            val now = System.currentTimeMillis()
 
-            workOrderView.initialize(listOf(
-                    WorkOrder("axe_1", 2, WorkOrderStatus.Finished(now - 1000)),
-                    WorkOrder("axe_1", 1, WorkOrderStatus.Finished(now - 2000)),
-                    WorkOrder("axe_1", 4, WorkOrderStatus.Active(now - 1000, now + 13000)),
-                    WorkOrder("axe_1", 3, WorkOrderStatus.Active(now - 2000, now + 12000)),
-                    WorkOrder("axe_1", 6, WorkOrderStatus.Submitted(now - 1000)),
-                    WorkOrder("axe_1", 5, WorkOrderStatus.Submitted(now - 2000))
-            ))
+    override fun initialized(workOrders: Collection<WorkOrder>) {
+        hasLoaded = true
+        wtf("initialize $workOrders")
+        workOrderView.initialize(workOrders)
+        workOrderView.setLoading(false)
+        workOrderList?.removeWorkOrderInitializedListeners(this)
+    }
 
-            workOrderView.setLoading(false)
+
+    override fun onUpdate(oldWorkOrder: WorkOrder?, newWorkOrder: WorkOrder?) {
+        if (hasLoaded) {
+
+            wtf("$oldWorkOrder->$newWorkOrder")
+            when {
+                oldWorkOrder == null && newWorkOrder != null -> workOrderView.addWorkOrder(newWorkOrder)
+                oldWorkOrder != null && newWorkOrder != null -> workOrderView.updateWorkOrder(oldWorkOrder, newWorkOrder)
+                oldWorkOrder != null && newWorkOrder == null -> workOrderView.removeWorkOrder(oldWorkOrder)
+                else -> wtf("what kind of an update is this?: $oldWorkOrder to $newWorkOrder")
+            }
         }
     }
 
