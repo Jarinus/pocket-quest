@@ -3,6 +3,7 @@ package nl.pocketquest.pocketquest.game.player
 import com.google.firebase.database.*
 import nl.pocketquest.pocketquest.game.crafting.WorkOrder
 import nl.pocketquest.pocketquest.game.crafting.WorkOrderStatus
+import nl.pocketquest.pocketquest.game.entities.WorkOrderRequester
 import nl.pocketquest.pocketquest.utils.DATABASE
 import nl.pocketquest.pocketquest.utils.getValue
 import org.jetbrains.anko.AnkoLogger
@@ -24,18 +25,23 @@ interface WorkOrdersInitializedListener {
 }
 
 class WorkOrderList(private val ref: DatabaseReference) : AnkoLogger {
-    private val workOrders = mutableMapOf<String, WorkOrder>()
+    private val workOrders = mutableMapOf<String, FBWorkOrderModel>()
+    private val simpleWorkOrders get() = workOrders.values.map { it.toWorkOrder() }
     private val workOrderUpdater = WorkOrderUpdater(this)
     private val workOrderListeners = mutableListOf<OnWorkOrderStateChanged>()
     private val workOrderUpdateListeners = mutableListOf<WorkOrderUpdateListener>()
     private val workOrderInitializedListener = mutableListOf<WorkOrdersInitializedListener>()
     private var initialLoad by observable(false) { _, _, new ->
         if (new) {
-            workOrderInitializedListener.forEach { it.initialized(workOrders.values) }
+            workOrderInitializedListener.forEach {
+                it.initialized(simpleWorkOrders)
+            }
             workOrderInitializedListener.clear()
             someOneListening = checkSomeoneIsListening()
         }
     }
+
+    fun getRichWorkOrder(workorder: WorkOrder) = workOrders[workorder.id]
 
     private var someOneListening by observable(false) { _, old, new ->
         if (old != new) {
@@ -72,7 +78,7 @@ class WorkOrderList(private val ref: DatabaseReference) : AnkoLogger {
     }
 
     fun addWorkOrderInitializedListeners(listener: WorkOrdersInitializedListener) {
-        if (initialLoad) listener.initialized(workOrders.values) else workOrderInitializedListener += listener
+        if (initialLoad) listener.initialized(simpleWorkOrders) else workOrderInitializedListener += listener
         someOneListening = true
     }
 
@@ -107,9 +113,9 @@ class WorkOrderList(private val ref: DatabaseReference) : AnkoLogger {
     fun updateWorkOrder(newWorkorder: FBWorkOrderModel) {
         val oldWorkOrder = workOrders[newWorkorder.id]
         if (oldWorkOrder?.status != newWorkorder.status) {
-            workOrderUpdateListeners.forEach { it.onUpdate(oldWorkOrder, newWorkorder.toWorkOrder()) }
+            workOrderUpdateListeners.forEach { it.onUpdate(oldWorkOrder?.toWorkOrder(), newWorkorder.toWorkOrder()) }
             workOrderListeners.notifyOf(newWorkorder.toWorkOrder())
-            workOrders[newWorkorder.id] = newWorkorder.toWorkOrder()
+            workOrders[newWorkorder.id] = newWorkorder
         }
     }
 
@@ -120,6 +126,7 @@ class WorkOrderList(private val ref: DatabaseReference) : AnkoLogger {
                     .also { userWorkOrderList = it }
         }
     }
+
 }
 
 data class FBWorkOrderModel(
