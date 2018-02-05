@@ -1,9 +1,8 @@
 package nl.pocketquest.pocketquest.views.main.workorder
 
 import nl.pocketquest.pocketquest.game.crafting.WorkOrder
-import nl.pocketquest.pocketquest.game.player.WorkOrderList
-import nl.pocketquest.pocketquest.game.player.WorkOrderUpdateListener
-import nl.pocketquest.pocketquest.game.player.WorkOrdersInitializedListener
+import nl.pocketquest.pocketquest.game.entities.WorkOrderRequester
+import nl.pocketquest.pocketquest.game.player.*
 import nl.pocketquest.pocketquest.utils.whenLoggedIn
 import org.jetbrains.anko.info
 import org.jetbrains.anko.wtf
@@ -57,13 +56,19 @@ class WorkOrderPresenter(
 
     override fun onCancelWorkOrder(workOrder: WorkOrder) {
         info { "Workorder cancelled: $workOrder" }
-
+        workOrder.performRequest { rich, uid ->  WorkOrderRequester.cancelWorkorder(uid, rich)}
         workOrderView.removeWorkOrder(workOrder)
     }
 
+    private fun WorkOrder.performRequest(action: (FBWorkOrderModel, uid: String)->Unit){
+        whenLoggedIn {user->
+            workOrderList?.getRichWorkOrder(this)
+                    ?.also { action(it, user.uid) }
+        }
+    }
     override fun onClaimWorkOrder(workOrder: WorkOrder) {
         info { "Workorder claimed: $workOrder" }
-
+        workOrder.performRequest { rich, uid ->  WorkOrderRequester.startWorkOrder(uid, rich)}
         workOrderView.removeWorkOrder(workOrder)
     }
 }
