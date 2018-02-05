@@ -10,6 +10,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.uchuhimo.collections.mutableBiMapOf
@@ -62,8 +63,9 @@ class MapFragment : BaseFragment(), MapContract.MapView {
 
     private fun initializeMap(googleMap: GoogleMap) {
         map = googleMap
+        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(context, R.raw.style_json))
         presenter.onMapReady()
-        locationEngineWrapper.lastLocation?.apply(presenter::onLocationChanged)
+        locationEngineWrapper.loadLastLocation()
         map.setOnMarkerClickListener {
             info { "little tap on a game object" }
             gameObjectsMarkerBiMap

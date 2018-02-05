@@ -1,6 +1,6 @@
 package nl.pocketquest.pocketquest.game.construction
 
-import com.mapbox.mapboxsdk.geometry.LatLng
+import com.google.android.gms.maps.model.LatLng
 import nl.pocketquest.pocketquest.game.IGameObject
 
 interface GameObjectAcceptor {

@@ -6,7 +6,7 @@ import com.firebase.geofire.GeoQuery
 import com.firebase.geofire.GeoQueryEventListener
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.mapbox.mapboxsdk.geometry.LatLng
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import nl.pocketquest.pocketquest.game.construction.GameObjectAcceptor

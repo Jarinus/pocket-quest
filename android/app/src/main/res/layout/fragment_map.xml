@@ -9,7 +9,12 @@
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        map:cameraZoom="20" />
+        map:cameraZoom="20"
+        map:uiRotateGestures="false"
+        map:uiScrollGestures="false"
+        map:uiTiltGestures="false"
+        map:uiZoomControls="false"
+        map:uiZoomGestures="false" />
 
     <FrameLayout
         android:id="@+id/mapOverlay"

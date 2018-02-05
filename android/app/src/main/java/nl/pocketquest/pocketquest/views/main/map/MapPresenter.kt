@@ -1,7 +1,7 @@
 package nl.pocketquest.pocketquest.views.main.map
 
 import android.location.Location
-import com.mapbox.mapboxsdk.geometry.LatLng
+import com.google.android.gms.maps.model.LatLng
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.Clickable
 import nl.pocketquest.pocketquest.game.FirebaseGameObjectInput
@@ -11,7 +11,7 @@ import nl.pocketquest.pocketquest.game.construction.GameObjectAcceptor
 import nl.pocketquest.pocketquest.sprites.GameObjectAnimator
 import nl.pocketquest.pocketquest.sprites.SpriteSheetCreator
 import nl.pocketquest.pocketquest.utils.latLong
-import nl.pocketquest.pocketquest.utils.toLatLng
+import nl.pocketquest.pocketquest.utils.toGoogleLatLng
 import nl.pocketquest.pocketquest.utils.xy
 import org.jetbrains.anko.info
 
@@ -59,16 +59,16 @@ class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapV
     }
 
     private fun setNewLocation(location: Location) {
-        player?.location = location.toLatLng()
+        player?.location = location.toGoogleLatLng()
         view.focusMapCenterOn(location)
         createOrUpdateGeoQuery(location)
     }
 
     private fun createOrUpdateGeoQuery(location: Location) {
         if (gameObjectInput == null) {
-            gameObjectInput = FirebaseGameObjectInput(location.toLatLng(), this, view.getImageResolver())
+            gameObjectInput = FirebaseGameObjectInput(location.toGoogleLatLng(), this, view.getImageResolver())
         } else {
-            gameObjectInput?.queryCenter = location.toLatLng()
+            gameObjectInput?.queryCenter = location.toGoogleLatLng()
         }
     }
 

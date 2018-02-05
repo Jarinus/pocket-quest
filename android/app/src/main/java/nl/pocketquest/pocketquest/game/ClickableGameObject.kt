@@ -1,7 +1,7 @@
 package nl.pocketquest.pocketquest.game
 
 import android.graphics.Bitmap
-import com.mapbox.mapboxsdk.geometry.LatLng
+import com.google.android.gms.maps.model.LatLng
 
 interface Clickable<out T> {
     fun onClick(consumer: Consumer<T>): Boolean

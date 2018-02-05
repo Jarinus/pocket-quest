@@ -10,7 +10,6 @@ import android.graphics.drawable.Drawable
 import android.support.annotation.DrawableRes
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
-import com.mapbox.mapboxsdk.annotations.IconFactory
 
 fun Bitmap.dimensions() = width xy height
 fun Drawable.toBitmap(): Bitmap = (this as? BitmapDrawable)?.bitmap ?: drawBitmap()
@@ -24,7 +23,6 @@ private fun Drawable.drawBitmap(): Bitmap {
     return bitmap
 }
 
-fun Activity.loadImage(@DrawableRes image: Int) = IconFactory.getInstance(this).fromResource(image)
 fun Context.decodeResource(@DrawableRes rss: Int): Bitmap = BitmapFactory.decodeResource(resources, rss)
 
 fun FragmentManager.doTransaction(transaction: FragmentTransaction.() -> Unit)
