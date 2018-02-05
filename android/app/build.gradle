@@ -22,7 +22,7 @@ android {
     }
 }
 
-ext{
+ext {
     firebase_version = "11.8.0"
     google_build_version = "27.0.2"
     anko_version = "0.10.4"
@@ -41,6 +41,8 @@ dependencies {
     implementation "com.google.firebase:firebase-auth:$firebase_version"
     implementation "com.google.firebase:firebase-storage:$firebase_version"
     //firebase    UI
+    implementation 'com.google.android.gms:play-services-maps:11.8.0'
+    implementation 'com.android.support:appcompat-v7:27.0.2'
     compile("com.firebaseui:firebase-ui-storage:$firebase_ui_version")
     compile("com.firebaseui:firebase-ui-auth:$firebase_ui_version") { exclude module: 'lintchecks' }
 
@@ -63,7 +65,6 @@ dependencies {
     compile "com.github.bumptech.glide:glide:$glide_version"
     kapt "com.github.bumptech.glide:compiler:$glide_version"
 
-
     //anko
     compile "org.jetbrains.anko:anko:$anko_version"
     compile "org.jetbrains.anko:anko-design:$anko_version"
@@ -71,16 +72,6 @@ dependencies {
     //other
     compile 'com.uchuhimo:kotlinx-bimap:1.0'
     compile 'com.firebase:geofire-android:2.1.1'
-    //mapbox
-    compile('com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.1.0') {
-        exclude group: 'com.android.support'
-        exclude group: 'android.arch.lifecycle'
-    }
-    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:5.2.0-beta.1@aar') {
-        transitive = true
-        exclude group: 'com.android.support'
-    }
-
 
     //------------------------------------- test ----------------------------
     testImplementation 'junit:junit:4.12'

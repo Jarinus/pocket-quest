@@ -1,7 +1,7 @@
 package nl.pocketquest.pocketquest.game
 
 import android.graphics.Bitmap
-import com.mapbox.mapboxsdk.geometry.LatLng
+import com.google.android.gms.maps.model.LatLng
 import kotlin.properties.Delegates.observable
 
 typealias Consumer<T> = (T) -> Unit

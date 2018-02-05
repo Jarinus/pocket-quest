@@ -1,16 +1,12 @@
 package nl.pocketquest.pocketquest
 
-import android.content.Context
-import com.mapbox.services.android.location.LostLocationEngine
-import com.mapbox.services.android.telemetry.location.LocationEngine
-import com.mapbox.services.android.telemetry.location.LocationEnginePriority
+import com.google.android.gms.location.LocationRequest
 
 object SETTINGS {
     object LOCATION_ENGINE {
-        const val DEFAULT_FASTEST_INTERVAL = 1000
-        const val DEFAULT_INTERVAL = 2000
-        const val ACCURACY_MODE = LocationEnginePriority.HIGH_ACCURACY
-        val LOCATION_PROVIDER: (Context) -> LocationEngine = LostLocationEngine::getLocationEngine
+        const val DEFAULT_FASTEST_INTERVAL = 2000L
+        const val DEFAULT_INTERVAL = 3000L
+        const val ACCURACY_MODE = LocationRequest.PRIORITY_HIGH_ACCURACY
     }
 
     object MAPBOX_MAP {

@@ -7,9 +7,8 @@ import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.OnLifecycleEvent
 import android.content.Context
 import android.location.Location
-import com.mapbox.services.android.telemetry.location.LocationEngine
-import com.mapbox.services.android.telemetry.location.LocationEngineListener
-import com.mapbox.services.android.telemetry.permissions.PermissionsManager
+import android.os.Looper
+import com.google.android.gms.location.*
 import nl.pocketquest.pocketquest.SETTINGS
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
@@ -18,46 +17,54 @@ import org.jetbrains.anko.info
 class LocationEngineWrapper(
         private val context: Context,
         private var locationListener: (Location) -> Unit
-) : LocationEngineListener, AnkoLogger, LifecycleObserver {
+) : AnkoLogger, LocationCallback(), LifecycleObserver {
 
-    private lateinit var locationEngine: LocationEngine
-
-    val lastLocation get() = locationEngine.lastLocation
+    fun loadLastLocation() {
+        LocationServices.getFusedLocationProviderClient(context)
+                .lastLocation
+                .addOnSuccessListener {
+                    onNewLocation(it)
+                }
+    }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate(owner: LifecycleOwner) {
-        locationEngine = SETTINGS.LOCATION_ENGINE.LOCATION_PROVIDER(context).also {
-            it.fastestInterval = SETTINGS.LOCATION_ENGINE.DEFAULT_FASTEST_INTERVAL
-            it.interval = SETTINGS.LOCATION_ENGINE.DEFAULT_INTERVAL
+        val locationRequest = LocationRequest().also {
             it.priority = SETTINGS.LOCATION_ENGINE.ACCURACY_MODE
-            it.addLocationEngineListener(this)
+            it.interval = SETTINGS.LOCATION_ENGINE.DEFAULT_INTERVAL
+            it.fastestInterval = SETTINGS.LOCATION_ENGINE.DEFAULT_FASTEST_INTERVAL
         }
+        val locationSettingsRequest = LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest)
+                .build()
+        LocationServices.getSettingsClient(context)
+                .checkLocationSettings(locationSettingsRequest)
+        LocationServices.getFusedLocationProviderClient(context)
+                .requestLocationUpdates(locationRequest, this, Looper.myLooper())
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart(owner: LifecycleOwner) {
         info { "Requesting updates from onStart" }
-        locationEngine.requestLocationUpdates()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onResume(owner: LifecycleOwner) = locationEngine.activate()
+    fun onResume(owner: LifecycleOwner) = Unit
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun onStop(owner: LifecycleOwner) = locationEngine.removeLocationUpdates()
+    fun onStop(owner: LifecycleOwner) = Unit
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun onDestroy(owner: LifecycleOwner) = locationEngine.deactivate()
+    fun onDestroy(owner: LifecycleOwner) = Unit
 
-    override fun onConnected() {
-        info { "Connected to engine." }
-        locationEngine.requestLocationUpdates()
+    override fun onLocationResult(locationResult: LocationResult) {
+        locationResult.lastLocation?.also {
+            onNewLocation(it)
+        }
     }
 
-    override fun onLocationChanged(location: Location?) {
-        location?.also {
-            info { "New location received: $location." }
-            locationListener(it)
-        }
+    private fun onNewLocation(newLocation: Location) {
+        info { "New location received: $newLocation." }
+        locationListener(newLocation)
     }
 }
