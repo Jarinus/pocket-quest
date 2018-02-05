@@ -24,10 +24,6 @@ class InventoryMap : InventoryListener{
     private val map = mutableMapOf<String, Long>()
 
     var observer: CompleteInventoryListener?=null
-    set(value){
-        field = value
-        value?.onUpdate(map)
-    }
 
     private fun write(update: () -> Unit) {
         update()
