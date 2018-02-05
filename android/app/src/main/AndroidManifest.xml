@@ -33,10 +33,14 @@
         </activity>
         <activity android:name=".views.locationpermission.LocationPermissionActivity" />
         <activity
-            android:screenOrientation="userPortrait"
             android:name=".views.main.MainActivity"
             android:label="@string/title_activity_main2"
+            android:screenOrientation="userPortrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyD8Afh44stozA0_sXMAOamXo8SXvlCPzto" />
+
     </application>
 
 </manifest>

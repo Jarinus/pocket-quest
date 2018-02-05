@@ -12,7 +12,9 @@ import com.mapbox.mapboxsdk.maps.MapboxMapOptions
 import nl.pocketquest.pocketquest.SETTINGS.MAPBOX_MAP.CAMERA_ZOOM
 
 fun Location.toLatLng() = LatLng(this)
+fun Location.toGoogleLatLng() = com.google.android.gms.maps.model.LatLng(latitude, longitude)
 fun LatLng.toGeoLocation() = GeoLocation(latitude, longitude)
+fun LatLng.toGoogleLatLng() = com.google.android.gms.maps.model.LatLng(latitude, longitude)
 fun GeoLocation.toLatLng() = LatLng(latitude, longitude)
 operator fun LatLng.plus(other: LatLng) = LatLng(latitude + other.latitude, longitude + other.longitude)
 

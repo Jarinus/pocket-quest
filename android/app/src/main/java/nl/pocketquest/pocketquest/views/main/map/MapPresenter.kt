@@ -10,7 +10,6 @@ import nl.pocketquest.pocketquest.game.IGameObject
 import nl.pocketquest.pocketquest.game.construction.GameObjectAcceptor
 import nl.pocketquest.pocketquest.sprites.GameObjectAnimator
 import nl.pocketquest.pocketquest.sprites.SpriteSheetCreator
-import nl.pocketquest.pocketquest.sprites.padded
 import nl.pocketquest.pocketquest.utils.latLong
 import nl.pocketquest.pocketquest.utils.toLatLng
 import nl.pocketquest.pocketquest.utils.xy
@@ -32,8 +31,6 @@ class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapV
     private fun createPlayerMarker(): IGameObject {
         val frames = SpriteSheetCreator(view.decodeResource(R.drawable.santasprite), 4 xy 4)
                 .frames
-                .map { it.padded(1.1 xy 1.7) }
-
         return GameObject(0 latLong 0, frames.first()).also {
             GameObjectAnimator(it, frames, ANIMATION_DURATION).start()
         }

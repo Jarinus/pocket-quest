@@ -1,31 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".views.main.map.MapFragment">
 
-    <com.mapbox.mapboxsdk.maps.MapView
+    <com.google.android.gms.maps.MapView xmlns:map="http://schemas.android.com/apk/res-auto"
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:mapbox_cameraTilt="50.25"
-        app:mapbox_cameraZoom="11"
-        app:mapbox_cameraZoomMax="18.0"
-        app:mapbox_cameraZoomMin="18.0"
-        app:mapbox_styleUrl="@string/mapbox_custom_style"
-        app:mapbox_uiAttribution="false"
-        app:mapbox_uiDoubleTapGestures="false"
-        app:mapbox_uiLogo="false"
-        app:mapbox_uiRotateGestures="false"
-        app:mapbox_uiScrollGestures="false"
-        app:mapbox_uiTiltGestures="false"
-        app:mapbox_uiZoomGestures="false" />
+        map:cameraZoom="20" />
 
     <FrameLayout
         android:id="@+id/mapOverlay"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
+        android:layout_height="match_parent" />
 </FrameLayout>
