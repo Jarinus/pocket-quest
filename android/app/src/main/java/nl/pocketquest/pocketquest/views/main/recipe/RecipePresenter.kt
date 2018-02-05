@@ -19,7 +19,7 @@ class RecipePresenter(
         CompleteInventoryListener {
 
     companion object {
-        private val returnTrue: Predicate<RecipeContract.RecipeModel> = { true }
+        private val returnTrue: Predicate<Recipe> = { true }
     }
 
     private var predicate by observable(returnTrue) { _, _, _ -> updateView() }
@@ -61,9 +61,9 @@ class RecipePresenter(
             )
 
     private fun updateView() {
-        recipes.map { (_, recipe) -> recipe.withIngredientAmounts(inventory) }
+        recipes.filterValues(predicate)
+                .map { (_, recipe) -> recipe.withIngredientAmounts(inventory) }
                 .map { (recipe, ingredientAmounts) -> createRecipeModel(recipe, ingredientAmounts) }
-                .filter(predicate)
                 .also { recipeView.display(it) }
     }
 
@@ -82,6 +82,6 @@ class RecipePresenter(
     }
 
     override fun onSubmitFilter(predicate: (Recipe) -> Boolean) {
-
+        this.predicate = predicate
     }
 }
