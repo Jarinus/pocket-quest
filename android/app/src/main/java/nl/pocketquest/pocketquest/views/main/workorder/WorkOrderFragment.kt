@@ -45,9 +45,7 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
 
     override fun initialize(workOrders: Collection<WorkOrder>) {
         this.workOrders += workOrders
-        this.workOrders.sortWith(Comparator { first, second ->
-            second.status.compare(first.status)
-        })
+        this.workOrders.sortBy(WorkOrder::status)
 
         mAdapter.notifyItemRangeChanged(0, workOrders.size)
     }
@@ -73,19 +71,10 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
      * Adds [workOrder] to [workOrders], returning its position
      * @return The position where [workOrder] was placed, or null
      */
-    private fun addWorkOrderOrdered(workOrder: WorkOrder): Int {
-        workOrders.forEachIndexed { index, thisWorkOrder ->
-            when (workOrder.status.compare(thisWorkOrder.status)) {
-                -1 -> {
-                    workOrders.add(index, workOrder)
-
-                    return index
-                }
-            }
-        }
-
-        return workOrders.size
-    }
+    private fun addWorkOrderOrdered(workOrder: WorkOrder) = workOrders
+            .indexOfFirst { workOrder.status < it.status }
+            .let {maxOf(0,it) }
+            .also { workOrders.add(it, workOrder) }
 
     override fun removeWorkOrder(workOrder: WorkOrder) {
         workOrders.indexOf(workOrder).also {
@@ -131,8 +120,6 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
                         id = R.id.workOrderOverviewContainer
                         layoutManager = LinearLayoutManager(context, VERTICAL, false)
                         adapter = mAdapter
-
-                        setHasFixedSize(true)
 
                         lparams {
                             height = matchParent
