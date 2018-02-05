@@ -65,10 +65,9 @@ class MainActivity : AppCompatActivity() {
         override fun getItem(position: Int): Fragment = when (position) {
             0 -> MapFragment()
             1 -> InventoryFragment()
-            2 -> InventoryFragment()
             else -> throw IllegalArgumentException("Illegal index supplied")
         }
 
-        override fun getCount() = 3
+        override fun getCount() = 2
     }
 }
