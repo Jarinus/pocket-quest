@@ -19,8 +19,8 @@ import android.widget.TextView
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.crafting.WorkOrder
 import nl.pocketquest.pocketquest.game.crafting.WorkOrderStatus
+import nl.pocketquest.pocketquest.mvp.BaseFragment
 import nl.pocketquest.pocketquest.utils.showOrHide
-import nl.pocketquest.pocketquest.views.BaseFragment
 import nl.pocketquest.pocketquest.views.main.workorder.WorkOrderFragment.WorkOrderAdapter.WorkOrderViewHolder.Companion.ROW_HEIGHT
 import nl.pocketquest.pocketquest.views.main.workorder.WorkOrderFragment.WorkOrderAdapter.WorkOrderViewHolder.Companion.SPACE_BETWEEN_ELEMENTS
 import org.jetbrains.anko.*
@@ -40,10 +40,10 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        presenter.onAttach()
+        presenter.onAttached()
     }
 
-    override fun initialize(workOrders: Collection<WorkOrder>) {
+    override fun initialize(workOrders: List<WorkOrder>) {
         this.workOrders += workOrders
         this.workOrders.sortWith(Comparator { first, second ->
             second.status.compare(first.status)
@@ -128,16 +128,15 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
                     }
 
                     recyclerView {
-                        lparams {
-                            height = matchParent
-                            width = matchParent
-                        }
-
                         id = R.id.workOrderOverviewContainer
                         layoutManager = LinearLayoutManager(context, VERTICAL, false)
                         adapter = mAdapter
 
-//                        setHasFixedSize(true)
+                        setHasFixedSize(true)
+
+                        lparams {
+                            height = matchParent
+                        }
                     }
                 }
             }.view
