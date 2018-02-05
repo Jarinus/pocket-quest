@@ -2,6 +2,7 @@ package nl.pocketquest.pocketquest.game
 
 import android.graphics.Bitmap
 import com.google.android.gms.maps.model.LatLng
+import nl.pocketquest.pocketquest.sprites.GameObjectAnimator
 import kotlin.properties.Delegates.observable
 
 typealias Consumer<T> = (T) -> Unit
@@ -9,6 +10,7 @@ interface IGameObject {
     var location: LatLng
     var image: Bitmap
     fun onChange(consumer: Consumer<GameObject>): Boolean
+    fun close()
 }
 
 /**
@@ -28,5 +30,20 @@ open class GameObject(location: LatLng, image: Bitmap) : IGameObject {
 
     protected fun notifyListeners(listeners: List<Consumer<GameObject>>) = listeners.forEach {
         it(this)
+    }
+
+    override fun close() {
+        image.recycle()
+    }
+}
+
+class AnimatedGameObject(location: LatLng, image: Bitmap, private val animator: GameObjectAnimator) : GameObject(location, image) {
+
+    init {
+        animator.gameObject = this
+    }
+
+    override fun close() {
+        animator.close()
     }
 }

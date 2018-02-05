@@ -30,11 +30,12 @@ import org.jetbrains.anko.support.v4.ctx
 
 class MapFragment : BaseFragment(), MapContract.MapView {
 
-    private lateinit var map: GoogleMap
+    private var map: GoogleMap? = null
 
     private val presenter: MapContract.MapPresenter = MapPresenter(this)
     private lateinit var locationEngineWrapper: LocationEngineWrapper
     private val gameObjectsMarkerBiMap = mutableBiMapOf<IGameObject, Marker>()
+    private val gameObjects = mutableListOf<IGameObject>()
     private var mapView: MapView? = null
 
     override fun decodeResource(resourceID: Int): Bitmap = ctx.decodeResource(resourceID)
@@ -50,23 +51,26 @@ class MapFragment : BaseFragment(), MapContract.MapView {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        info { "onCreateView" }
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.fragment_map, container, false)
         val mapView = view.mapView
         mapView.onCreate(savedInstanceState)
         mapView.onResume()
-
         mapView.getMapAsync(this::initializeMap)
         this.mapView = mapView
         return view
     }
 
     private fun initializeMap(googleMap: GoogleMap) {
+        info { "Initialize map" }
+        map?.clear()
         map = googleMap
-        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(context, R.raw.style_json))
+        gameObjects.forEach(this::addGameObjectToMapView)
+        map?.setMapStyle(MapStyleOptions.loadRawResourceStyle(context, R.raw.style_json))
         presenter.onMapReady()
         locationEngineWrapper.loadLastLocation()
-        map.setOnMarkerClickListener {
+        map?.setOnMarkerClickListener {
             info { "little tap on a game object" }
             gameObjectsMarkerBiMap
                     .inverse[it]
@@ -77,24 +81,31 @@ class MapFragment : BaseFragment(), MapContract.MapView {
 
     override fun focusMapCenterOn(location: Location) {
         ctx.runOnUiThread {
-            map.moveCamera(CameraUpdateFactory.newLatLng(location.toGoogleLatLng()))
+            map?.moveCamera(CameraUpdateFactory.newLatLng(location.toGoogleLatLng()))
         }
     }
 
     override fun addGameObject(gameObject: IGameObject) {
+        gameObjects.add(gameObject)
+        addGameObjectToMapView(gameObject)
+    }
+
+    private fun addGameObjectToMapView(gameObject: IGameObject) {
         ctx.runOnUiThread {
-            val marker = map.addMarker(
+            val marker = map?.addMarker(
                     MarkerOptions()
                             .icon(BitmapDescriptorFactory.fromBitmap(gameObject.image))
                             .position(gameObject.location.toGoogleLatLng())
-            )
+            ) ?: return@runOnUiThread
+            gameObjectsMarkerBiMap[gameObject] = marker
             gameObject.onChange {
-                runOnUiThread {
-                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(it.image))
-                    marker.position = it.location.toGoogleLatLng()
+                gameObjectsMarkerBiMap[gameObject]?.also { foundMarker ->
+                    runOnUiThread {
+                        foundMarker.setIcon(BitmapDescriptorFactory.fromBitmap(it.image))
+                        foundMarker.position = it.location.toGoogleLatLng()
+                    }
                 }
             }
-            gameObjectsMarkerBiMap[gameObject] = marker
         }
     }
 
@@ -110,36 +121,51 @@ class MapFragment : BaseFragment(), MapContract.MapView {
     }
 
     override fun onStart() {
+        info { "onStart" }
         super.onStart()
         mapView?.onStart()
     }
 
     override fun onResume() {
+        info { "onResume" }
         super.onResume()
         mapView?.onResume()
     }
 
     override fun onPause() {
+        info { "onPause" }
         super.onPause()
         mapView?.onPause()
     }
 
     override fun onStop() {
+        info { "onStop" }
         super.onStop()
+        gameObjectsMarkerBiMap.clear()
         mapView?.onStop()
     }
 
+    private fun cleanUp() {
+        gameObjectsMarkerBiMap.keys.forEach {
+            it.close()
+        }
+    }
+
     override fun onLowMemory() {
+        info { "onLowMemory" }
         super.onLowMemory()
         mapView?.onLowMemory()
     }
 
     override fun onDestroy() {
+        info { "onDestroy" }
         super.onDestroy()
+        cleanUp()
         mapView?.onDestroy()
     }
 
     override fun onSaveInstanceState(outstate: Bundle) {
+        info { "onSaveInstanceState" }
         super.onSaveInstanceState(outstate)
         mapView?.onSaveInstanceState(outstate)
     }

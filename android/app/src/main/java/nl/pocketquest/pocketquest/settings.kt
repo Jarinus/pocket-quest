@@ -5,7 +5,7 @@ import com.google.android.gms.location.LocationRequest
 object SETTINGS {
     object LOCATION_ENGINE {
         const val DEFAULT_FASTEST_INTERVAL = 2000L
-        const val DEFAULT_INTERVAL = 3000L
+        const val DEFAULT_INTERVAL = 10_000L
         const val ACCURACY_MODE = LocationRequest.PRIORITY_HIGH_ACCURACY
     }
 
