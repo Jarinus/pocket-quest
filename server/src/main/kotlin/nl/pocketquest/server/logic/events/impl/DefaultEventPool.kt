@@ -27,4 +27,6 @@ class DefaultEventPool(private val eventDispatcher: EventDispatcher) : MutableEv
     fun clear() = events.clear()
 
     fun events(): Set<Event<*, *>> = events
+
+    override fun empty() = events.isEmpty()
 }
