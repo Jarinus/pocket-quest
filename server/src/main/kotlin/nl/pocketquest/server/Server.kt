@@ -39,6 +39,7 @@ fun main(args: Array<String>) {
     initFirebase()
     val server = Server(kodeIn)
     server.init()
+
     server.start()
     while (true) {
         Thread.sleep(10000)

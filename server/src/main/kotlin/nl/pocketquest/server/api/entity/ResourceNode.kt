@@ -7,7 +7,7 @@ import nl.pocketquest.server.api.state.State
 
 data class ResourceNode(
         val id: String,
-        private val family: String,
+        val family: String,
         val icon: String,
         val name: String,
         val tier: String,

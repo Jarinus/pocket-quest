@@ -34,7 +34,7 @@ class ResourceGatheringStartHandler(kodein: Kodein) : ResourceGatheringEventHand
     override suspend fun handle(event: Event<ResourceGatheringStatus, ResourceGatheringData>) {
         val resource = ResourceInstance.byId(event.data.resourceInstanceId, kodein)
         if (resource.inventory.item(event.data.resourceID).count() > 0) {
-            val millisecondsInterval = TimeUnit.SECONDS.toMillis(event.data.interval.toLong())
+            val millisecondsInterval = event.data.interval.toLong()
             kodein.instance<EventPool>().submit(
                     Event.of(
                             ResourceGatheringStatus.GAINS_RESOURCE,

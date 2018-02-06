@@ -4,6 +4,7 @@ data class ResourceGatheringData(
         val userID: String,
         val resourceInstanceId: String,
         val resourceID: String,
+        val toolID: String,
         val interval: Int
 )
 

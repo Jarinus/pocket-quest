@@ -1,5 +1,6 @@
 package nl.pocketquest.server.api.state
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import kotlinx.coroutines.experimental.runBlocking
 import nl.pocketquest.server.dataaccesslayer.Findable
 import nl.pocketquest.server.api.entity.*
@@ -11,6 +12,7 @@ class EntitiesModel {
     lateinit var resource_nodes: HashMap<String, ResourceNodeModel>
     lateinit var resource_node_families: HashMap<String, ResourceNodeFamilyModel>
     lateinit var resource_node_resource_node_families: HashMap<String, HashMap<String, Boolean>>
+    lateinit var gathering_tool_families: HashMap<String, GatheringToolFamilyModel>
     lateinit var resource_node_supplied_items: HashMap<String, HashMap<String, ResourceNodeSuppliedItemModel>>
 }
 
@@ -19,6 +21,7 @@ interface Entities {
     fun resourceNode(identifier: String): ResourceNode?
     fun recipe(identifier: String): CraftingRecipe?
     fun resourceNodeFamily(identifier: String): ResourceNodeFamily?
+    fun gatheringToolFamily(identifier: String): GatheringToolFamily?
 }
 
 class EntitiesRoute : Findable<EntitiesModel> {
@@ -31,6 +34,7 @@ class State(private val database: Database) : Entities {
     private lateinit var resourceNodes: Map<String, ResourceNode>
     private lateinit var resourceNodeFamilies: Map<String, ResourceNodeFamily>
     private lateinit var recipes: Map<String, CraftingRecipe>
+    private lateinit var gatheringToolFamilies: Map<String, GatheringToolFamily>
 
     init {
         try {
@@ -43,6 +47,7 @@ class State(private val database: Database) : Entities {
                 resourceNodes = loadResourceNodes(entities)
                 resourceNodeFamilies = loadResourceNodeFamilies(entities)
                 recipes = loadRecipes(entities)
+                gatheringToolFamilies = loadGatheringToolFamilies(entities)
             }
         } catch (e: Exception) {
             throw e
@@ -60,6 +65,7 @@ class State(private val database: Database) : Entities {
     private suspend fun loadRecipes(entitiesModel: EntitiesModel) = entitiesModel
             .recipes
             .mapValues { it.value.toCraftingRecipe(it.key) }
+    override fun gatheringToolFamily(identifier: String) = gatheringToolFamilies[identifier]
 
     private suspend fun loadItems(entitiesModel: EntitiesModel): Map<String, Item> = entitiesModel.items
             .mapValues { it.value.toItem(it.key) }
@@ -87,9 +93,12 @@ class State(private val database: Database) : Entities {
         return resourceNodeFamilyModels.mapValues { it.value.toResourceNodeFamily(it.key) }
     }
 
+    private suspend fun loadGatheringToolFamilies(entitiesModel: EntitiesModel): Map<String, GatheringToolFamily> {
+        return entitiesModel.gathering_tool_families.mapValues { it.value.toGatheringToolFamily(it.key) }
+    }
+
     private suspend fun loadResourceNodeFamilyMembers(entitiesModel: EntitiesModel): Map<String, Set<String>> = entitiesModel.resource_node_resource_node_families
             .mapValues { it.value.keys }
-
 
     private suspend fun loadResourceSuppliedItems(entitiesModel: EntitiesModel): Map<String, Map<String, ResourceNodeSuppliedItem>> = entitiesModel.resource_node_supplied_items
             .mapValues { it.value.mapValues { it.value.toSuppliedItem(it.key) } }
