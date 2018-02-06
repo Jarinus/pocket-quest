@@ -1,5 +1,6 @@
 package nl.pocketquest.pocketquest.views.main.recipe
 
+import com.google.firebase.database.ServerValue
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -10,6 +11,7 @@ import nl.pocketquest.pocketquest.game.player.CompleteInventoryListener
 import nl.pocketquest.pocketquest.game.player.Inventory
 import nl.pocketquest.pocketquest.game.player.InventoryListener
 import nl.pocketquest.pocketquest.game.player.InventoryMap
+import nl.pocketquest.pocketquest.utils.DATABASE
 import nl.pocketquest.pocketquest.utils.mapKeysNotNull
 import nl.pocketquest.pocketquest.utils.whenLoggedIn
 import org.jetbrains.anko.info
@@ -123,9 +125,33 @@ class RecipePresenter(
     }
 
     override fun onSelectRecipe(recipeId: String, count: Int) {
+        async(CommonPool) {
+            whenLoggedIn {
+                DATABASE.getReference("requests/crafting_start")
+                        .push()
+                        .setValue(
+                                CraftingStartRequest(
+                                        it.uid,
+                                        recipeId,
+                                        count.toLong()
+                                )
+                        )
+
+            }
+        }
     }
 
     override fun onSubmitFilter(predicate: (Recipe) -> Boolean) {
         this.predicate = predicate
     }
 }
+
+data class CraftingStartRequest(
+        val user_id: String,
+        /**
+         * Id of a specific crafting recipe: axe_1_recipe for instance
+         */
+        val recipe_id: String,
+        val count: Long,
+        val submitted_at: Map<String, String> = ServerValue.TIMESTAMP
+)
