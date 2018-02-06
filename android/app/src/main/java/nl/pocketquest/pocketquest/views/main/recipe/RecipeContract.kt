@@ -19,7 +19,7 @@ class RecipeContract {
 
         abstract fun onResetFilter()
 
-        abstract fun onSelectRecipe(recipe: Recipe)
+        abstract fun onSelectRecipe(recipeId: String, count: Int)
 
         abstract fun onSubmitFilter(predicate: (Recipe) -> Boolean)
     }

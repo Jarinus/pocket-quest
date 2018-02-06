@@ -95,7 +95,12 @@ class RecipePresenter(
                     .also { info { "Recipe models filtered $it" } }
                     .also {
                         async(UI) {
-                            recipeView.display(it)
+                            recipeView.display(
+                                    it.sortedWith(compareBy(
+                                            { it.acquiredItems.keys.first().tier },
+                                            { it.type.ordinal },
+                                            { it.acquiredItems.keys.first().name }
+                                    )))
                         }
                     }
         }
@@ -117,7 +122,7 @@ class RecipePresenter(
         predicate = returnTrue
     }
 
-    override fun onSelectRecipe(recipe: Recipe) {
+    override fun onSelectRecipe(recipeId: String, count: Int) {
     }
 
     override fun onSubmitFilter(predicate: (Recipe) -> Boolean) {
