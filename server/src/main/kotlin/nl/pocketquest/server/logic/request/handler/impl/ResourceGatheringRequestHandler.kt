@@ -33,20 +33,13 @@ class ResourceGatheringRequestHandler internal constructor(
 
     suspend override fun handle(request: ResourceGatheringRequest, requestReference: DataSource<ResourceGatheringRequest>): Response {
         val resourceNode = ResourceInstance.byId(request.resource_node_uid, kodein).resourceNode()
-        //Haal de family op
         val family = resourceNode?.family ?: return Response("404 family not found", 404)
-        //Haal alle gathering tool types op
         val gatheringToolType = kodein.instance<Entities>().resourceNodeFamily(family)?.gatheringToolTypes
-        //Haal alle entities op
         val entities = kodein.instance<Entities>()
-        //Haal alle op deze node bruikbare tool types op
         val allUsableTools = gatheringToolType?.flatMap {
             entities.gatheringToolFamily(it)?.members ?: emptySet()
         } ?: emptySet<String>()
-        //Haal de huidige user op
         val inventory = User.byId(request.user_id, kodein).inventory
-        //Check of er een tools in de inventory zit met een tier die hoog genoeg en het hoogst is
-
         val bestTool = allUsableTools.asSequence()
                 .mapNotNull { entities.item(it) }
                 .filter { Tier(it.tier) >= Tier(resourceNode.tier) }
