@@ -19,7 +19,7 @@ import nl.pocketquest.pocketquest.views.main.recipe.RecipeFragment.Companion.PAD
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
-class RecipeModelAdapter(val presenter: RecipeContract.RecipePresenter) : RecyclerView.Adapter<RecipeModelAdapter.ViewHolder>() {
+class RecipeModelAdapter(private val presenter: RecipeContract.RecipePresenter) : RecyclerView.Adapter<RecipeModelAdapter.ViewHolder>() {
     private var recipeModels: List<RecipeContract.RecipeModel> = listOf()
     private var openedRecipeContainer: LinearLayout? = null
     private var openedRecipeExpansionIndicator: ImageView? = null
