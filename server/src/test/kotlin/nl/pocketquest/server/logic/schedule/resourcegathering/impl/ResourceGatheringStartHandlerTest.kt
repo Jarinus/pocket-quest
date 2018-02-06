@@ -38,6 +38,7 @@ class ResourceGatheringStartHandlerTest {
             "chocolate_bear",
             "chocolate_tree",
             "chocolate_wood",
+            "chocolate_hatchet",
             5
     )
 
@@ -77,7 +78,7 @@ class ResourceGatheringStartHandlerTest {
                     eventPool.contains(Event.of(
                             ResourceGatheringStatus.GAINS_RESOURCE,
                             eventData,
-                            6000L
+                            1005L
                     ))
             )
         }

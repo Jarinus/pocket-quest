@@ -39,6 +39,8 @@ fun main(args: Array<String>) {
     initFirebase()
     val server = Server(kodeIn)
     server.init()
+    kodeIn.instance<Entities>().gatheringToolFamily("hatchet")?.also { println(it) }
+
     server.start()
     while (true) {
         Thread.sleep(10000)

@@ -39,6 +39,7 @@ class ResourceGatheringGainHandlerTest {
             "chocolate_bear",
             "chocolate_tree",
             "chocolate_wood",
+            "chocolate_hatchet",
             5
     )
 
