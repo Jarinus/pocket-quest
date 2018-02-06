@@ -1,7 +1,6 @@
 package nl.pocketquest.pocketquest.views.main.map
 
 import android.location.Location
-import com.google.android.gms.maps.model.LatLng
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.AnimatedGameObject
 import nl.pocketquest.pocketquest.game.Clickable
