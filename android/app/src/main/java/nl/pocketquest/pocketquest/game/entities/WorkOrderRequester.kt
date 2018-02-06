@@ -20,8 +20,7 @@ data class CraftingCancelRequest(
          * Id of a workorder being executed by a user
          */
         val workorder_id: String,
-        val submitted_at: Long
-
+        val submitted_at: MutableMap<String, String>
 )
 
 data class CraftingClaimRequest(
@@ -30,28 +29,28 @@ data class CraftingClaimRequest(
          * Id of a workorder being executed by a user
          */
         val workorder_id: String,
-        val submitted_at: Long
+        val submitted_at: MutableMap<String, String>
 )
 
 object WorkOrderRequester {
-    fun claimWorkorder(user_id: String, workorder: FBWorkOrderModel) {
+    fun claimWorkorder(user_id: String, workorderId: String) {
         DATABASE.getReference("requests/crafting_claim").push()
                 .setValue(
                         CraftingClaimRequest(
                                 user_id = user_id,
-                                workorder_id = workorder.id,
-                                submitted_at = workorder.submitted_at
+                                workorder_id = workorderId,
+                                submitted_at = ServerValue.TIMESTAMP
                         )
                 )
     }
 
-    fun cancelWorkorder(user_id: String, workOrder: FBWorkOrderModel) {
+    fun cancelWorkorder(user_id: String, workOrderId: String) {
         DATABASE.getReference("requests/crafting_cancel").push()
                 .setValue(
                         CraftingCancelRequest(
                                 user_id = user_id,
-                                workorder_id = workOrder.id,
-                                submitted_at = workOrder.submitted_at
+                                workorder_id = workOrderId,
+                                submitted_at = ServerValue.TIMESTAMP
                         )
                 )
     }

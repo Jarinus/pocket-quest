@@ -7,6 +7,7 @@ import nl.pocketquest.pocketquest.game.entities.WorkOrderRequester
 import nl.pocketquest.pocketquest.utils.DATABASE
 import nl.pocketquest.pocketquest.utils.getValue
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.wtf
 import kotlin.properties.Delegates.observable
 
 interface OnWorkOrderStateChanged {
@@ -41,7 +42,9 @@ class WorkOrderList(private val ref: DatabaseReference) : AnkoLogger {
         }
     }
 
-    fun getRichWorkOrder(workorder: WorkOrder) = workOrders[workorder.id]
+    fun getRichWorkOrder(workorder: WorkOrder) = workOrders[workorder.id].also {
+        wtf("$it in $workOrders")
+    }
 
     private var someOneListening by observable(false) { _, old, new ->
         if (old != new) {
@@ -66,13 +69,13 @@ class WorkOrderList(private val ref: DatabaseReference) : AnkoLogger {
         initialLoad = false
     }
 
-
     fun addWorkOrderListener(listener: OnWorkOrderStateChanged) {
         workOrderListeners += listener
         someOneListening = true
     }
 
     fun addWorkOrderListener(listener: WorkOrderUpdateListener) {
+        wtf("added")
         workOrderUpdateListeners += listener
         someOneListening = true
     }
@@ -82,13 +85,14 @@ class WorkOrderList(private val ref: DatabaseReference) : AnkoLogger {
         someOneListening = true
     }
 
-    fun checkSomeoneIsListening() = workOrderListeners.size + workOrderUpdateListeners.size + workOrderInitializedListener.size == 0
+    fun checkSomeoneIsListening() = (workOrderListeners.size + workOrderUpdateListeners.size + workOrderInitializedListener.size) != 0
     fun removeWorkOrderListener(listener: OnWorkOrderStateChanged) {
         workOrderListeners -= listener
         someOneListening = checkSomeoneIsListening()
     }
 
     fun removeWorkOrderListener(listener: WorkOrderUpdateListener) {
+        wtf("removed!!!")
         workOrderUpdateListeners -= listener
         someOneListening = checkSomeoneIsListening()
     }

@@ -17,6 +17,7 @@ class WorkOrderPresenter(
 
 
     override fun onDetach() {
+        wtf("detach")
         workOrderList?.removeWorkOrderListener(this)
         workOrderList?.removeWorkOrderInitializedListeners(this)
     }
@@ -56,19 +57,17 @@ class WorkOrderPresenter(
 
     override fun onCancelWorkOrder(workOrder: WorkOrder) {
         info { "Workorder cancelled: $workOrder" }
-        workOrder.performRequest { rich, uid ->  WorkOrderRequester.cancelWorkorder(uid, rich)}
+        whenLoggedIn {
+            WorkOrderRequester.cancelWorkorder(it.uid, workOrder.id)
+        }
         workOrderView.removeWorkOrder(workOrder)
     }
 
-    private fun WorkOrder.performRequest(action: (FBWorkOrderModel, uid: String)->Unit){
-        whenLoggedIn {user->
-            workOrderList?.getRichWorkOrder(this)
-                    ?.also { action(it, user.uid) }
-        }
-    }
     override fun onClaimWorkOrder(workOrder: WorkOrder) {
         info { "Workorder claimed: $workOrder" }
-        workOrder.performRequest { rich, uid ->  WorkOrderRequester.startWorkOrder(uid, rich)}
+        whenLoggedIn {
+            WorkOrderRequester.claimWorkorder(it.uid, workOrder.id)
+        }
         workOrderView.removeWorkOrder(workOrder)
     }
 }
