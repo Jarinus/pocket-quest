@@ -73,27 +73,24 @@ class InventoryFragment : BaseFragment(), InventoryContract.InventoryView, Adapt
                 ?.also(presenter::itemClicked)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = UI {
+        gridView {
+            adapter = mAdapter
+            numColumns = 4
 
-        return UI {
-            gridView {
-                adapter = mAdapter
-                numColumns = 4
+            onItemClickListener = this@InventoryFragment
 
-                onItemClickListener = this@InventoryFragment
+            padding = dip(8)
 
-                padding = dip(8)
+            lparams {
+                width = matchParent
+                height = matchParent
 
-                lparams {
-                    width = matchParent
-                    height = matchParent
-
-                    horizontalSpacing = dip(8)
-                    verticalSpacing = dip(8)
-                }
+                horizontalSpacing = dip(8)
+                verticalSpacing = dip(8)
             }
-        }.view
-    }
+        }
+    }.view
 }
 
 class InventoryItemAdapter(val context: Context) : BaseAdapter(), AnkoLogger {
