@@ -5,9 +5,13 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import nl.pocketquest.pocketquest.game.crafting.Recipe
 import nl.pocketquest.pocketquest.game.entities.Entities
+import nl.pocketquest.pocketquest.game.entities.FBItem
 import nl.pocketquest.pocketquest.game.player.CompleteInventoryListener
+import nl.pocketquest.pocketquest.game.player.Inventory
 import nl.pocketquest.pocketquest.game.player.InventoryListener
 import nl.pocketquest.pocketquest.game.player.InventoryMap
+import nl.pocketquest.pocketquest.utils.mapKeysNotNull
+import nl.pocketquest.pocketquest.utils.whenLoggedIn
 import org.jetbrains.anko.info
 import kotlin.properties.Delegates.observable
 
@@ -26,9 +30,14 @@ class RecipePresenter(
     private var predicate by observable(returnTrue) { _, _, _ -> updateView() }
     private var recipes by observable(mapOf<String, Recipe>()) { _, _, _ -> updateView() }
     private var inventory by observable(mapOf<String, Long>()) { _, _, _ -> updateView() }
+    private lateinit var userInventory: Inventory
 
     init {
         inventoryMap.observer = this
+        whenLoggedIn {
+            userInventory = Inventory.getUserInventory(it.uid)
+            userInventory.addInventoryListener(this)
+        }
     }
 
     override/*@InventoryListener*/ fun onUpdate(map: Map<String, Long>) {
@@ -52,29 +61,44 @@ class RecipePresenter(
                 )
             }
 
-    private fun createRecipeModel(recipe: Recipe, ingredientAmounts: Collection<IngredientAmounts>) =
-            RecipeContract.RecipeModel(
-                    recipe = recipe,
-                    availabilityRange = 0 to (ingredientAmounts.map(IngredientAmounts::times).min()
-                            ?: 0),
-                    currentResources = ingredientAmounts.map { it.ingredient to it.having }.toMap()
-            )
+    private suspend fun createRecipeModel(recipe: Recipe, ingredientAmounts: Collection<IngredientAmounts>): RecipeContract.RecipeModel {
+        val items: Map<String, FBItem> = Entities.getItems()
+        return RecipeContract.RecipeModel(
+                id = recipe.id,
+                availabilityRange = 0 to (ingredientAmounts.map(IngredientAmounts::times).min()
+                        ?: 0),
+                type = recipe.type,
+                duration = recipe.duration,
+                currentResources = ingredientAmounts.mapNotNull {
+                    val item = items[it.ingredient]
+                    when (item) {
+                        null -> null
+                        else -> item to it.having
+                    }
+                }.toMap(),
+                requiredItems = recipe.requiredItems.mapKeysNotNull { items[it.key] },
+
+                acquiredItems = recipe.acquiredItems.mapKeysNotNull { items[it.key] }
+        )
+    }
 
     private fun updateView() {
         info { "Updating view with recipes with $recipes" }
         info { "Updating view with recipes current inventory = $inventory" }
-        recipes.filterValues(predicate)
-                .map { (_, recipe) -> recipe.withIngredientAmounts(inventory) }
-                .also { info { "Recipes with ingredientAmounts $it" } }
-                .map { (recipe, ingredientAmounts) -> createRecipeModel(recipe, ingredientAmounts) }
-                .also { info { "Recipe models $it" } }
-//                .filter { it.availabilityRange.second != 0 }
-                .also { info { "Recipe models filtered $it" } }
-                .also {
-                    async(UI) {
-                        recipeView.display(it)
+        async(CommonPool) {
+            recipes.filterValues(predicate)
+                    .map { (_, recipe) -> recipe.withIngredientAmounts(inventory) }
+                    .also { info { "Recipes with ingredientAmounts $it" } }
+                    .map { (recipe, ingredientAmounts) -> createRecipeModel(recipe, ingredientAmounts) }
+                    .also { info { "Recipe models $it" } }
+                    .filter { it.availabilityRange.second != 0 }
+                    .also { info { "Recipe models filtered $it" } }
+                    .also {
+                        async(UI) {
+                            recipeView.display(it)
+                        }
                     }
-                }
+        }
     }
 
     override fun onAttach() {
@@ -86,6 +110,7 @@ class RecipePresenter(
     }
 
     override fun onDetach() {
+        userInventory.removeInventoryListener(this)
     }
 
     override fun onResetFilter() {

@@ -1,6 +1,8 @@
 package nl.pocketquest.pocketquest.views.main.recipe
 
 import nl.pocketquest.pocketquest.game.crafting.Recipe
+import nl.pocketquest.pocketquest.game.crafting.RecipeType
+import nl.pocketquest.pocketquest.game.entities.FBItem
 import nl.pocketquest.pocketquest.views.BasePresenter
 import nl.pocketquest.pocketquest.views.BaseView
 
@@ -27,8 +29,12 @@ class RecipeContract {
      * items
      */
     data class RecipeModel(
-            val recipe: Recipe,
+            val id: String,
+            val requiredItems: Map<FBItem, Int>,
+            val acquiredItems: Map<FBItem, Int>,
+            val type: RecipeType,
+            val duration: Long,
             val availabilityRange: Pair<Int, Int>,
-            val currentResources: Map<String, Int>
+            val currentResources: Map<FBItem, Int>
     )
 }

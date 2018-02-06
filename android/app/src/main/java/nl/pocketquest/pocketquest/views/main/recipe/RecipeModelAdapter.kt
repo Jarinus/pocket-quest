@@ -9,7 +9,7 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
 
-class RecipeModelAdapter: RecyclerView.Adapter<RecipeModelAdapter.ViewHolder>() {
+class RecipeModelAdapter : RecyclerView.Adapter<RecipeModelAdapter.ViewHolder>() {
     private var recipeModels: List<RecipeContract.RecipeModel> = listOf()
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -36,6 +36,6 @@ class RecipeModelAdapter: RecyclerView.Adapter<RecipeModelAdapter.ViewHolder>() 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val recipeModel = recipeModels[position]
 
-        holder.recipeNameView.text = recipeModel.recipe.id
+        holder.recipeNameView.text = recipeModel.id
     }
 }

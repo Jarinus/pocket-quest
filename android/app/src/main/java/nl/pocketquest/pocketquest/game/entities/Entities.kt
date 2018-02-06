@@ -38,10 +38,10 @@ data class FBResourceNode(
 data class FBRecipe(
         val type: String = "",
         val duration: Long = 0,
-        val required_items: HashMap<String, Int> = hashMapOf(),
-        val acquired_items: HashMap<String, Int> = hashMapOf()
+        val required_resources: HashMap<String, Int> = hashMapOf(),
+        val acquired_resources: HashMap<String, Int> = hashMapOf()
 ){
-    fun toRecipe(id: String) = Recipe(id, RecipeType.valueOf(type), duration, required_items, acquired_items)
+    fun toRecipe(id: String) = Recipe(id, RecipeType.valueOf(type), duration, required_resources, acquired_resources)
 }
 
 object Entities : AnkoLogger {
