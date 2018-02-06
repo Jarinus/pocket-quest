@@ -17,7 +17,6 @@ class RecipePresenter(
 ) : RecipeContract.RecipePresenter(recipeView),
         InventoryListener by inventoryMap,
         CompleteInventoryListener {
-
     companion object {
         private val returnTrue: Predicate<Recipe> = { true }
     }
@@ -67,10 +66,14 @@ class RecipePresenter(
                 .also { recipeView.display(it) }
     }
 
-    override fun onAttached() {
+    override fun onAttach() {
         async(CommonPool) {
             recipes = Entities.getRecipes()
         }
+    }
+
+    override fun onDetach() {
+
     }
 
     override fun onResetFilter() {

@@ -27,7 +27,7 @@ class RecipeFragment : BaseFragment(), RecipeContract.RecipeView {
         super.onCreate(savedInstanceState)
 
         presenter = RecipePresenter(this)
-                .also(RecipePresenter::onAttached)
+                .also(RecipePresenter::onAttach)
     }
 
     override fun onCreateView(
