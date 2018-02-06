@@ -7,5 +7,5 @@
     <item name="recipeRequiredItemIconView" type="id" />
     <item name="recipeRequiredItemNameView" type="id" />
     <item name="recipeRequiredItemsContainer" type="id" />
-    <item name="recipeButton" type="id" />
+    <item name="recipeExpansionIndicator" type="id" />
 </resources>

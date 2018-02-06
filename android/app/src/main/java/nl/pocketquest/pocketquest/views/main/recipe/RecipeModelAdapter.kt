@@ -9,7 +9,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.GridView
 import android.widget.ImageView
 import android.widget.TextView
@@ -23,12 +22,12 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
 class RecipeModelAdapter : RecyclerView.Adapter<RecipeModelAdapter.ViewHolder>() {
     private var recipeModels: List<RecipeContract.RecipeModel> = listOf()
     private var openedRecipeContainer: GridView? = null
-    private var openedRecipeContainerButton: Button? = null
+    private var openedRecipeExpansionIndicator: ImageView? = null
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val recipeNameView: TextView = view.find(R.id.recipeNameView)
         val recipeIconView: ImageView = view.find(R.id.recipeIconView)
-        val recipeButton: Button = view.find(R.id.recipeButton)
+        val recipeExpansionIndicator: ImageView = view.find(R.id.recipeExpansionIndicator)
         val recipeRequiredItemsContainer: GridView = view.find(R.id.recipeRequiredItemsContainer)
     }
 
@@ -68,10 +67,11 @@ class RecipeModelAdapter : RecyclerView.Adapter<RecipeModelAdapter.ViewHolder>()
                             weight = 1f
                         }
 
-                        button {
-                            id = R.id.recipeButton
+                        imageView {
+                            id = R.id.recipeExpansionIndicator
 
-                            backgroundResource = R.drawable.ic_arrow_drop_down_white_36dp
+                            imageResource = R.drawable.ic_arrow_drop_down_white_36dp
+                            isClickable = true
                         }.lparams {
                             height = dip(TITLE_ROW_HEIGHT)
                             width = dip(TITLE_ROW_HEIGHT)
@@ -120,8 +120,8 @@ class RecipeModelAdapter : RecyclerView.Adapter<RecipeModelAdapter.ViewHolder>()
         holder.recipeIconView.apply {
             load(context, acquiredItem.icon)
         }
-        holder.recipeButton.visibility = if (recipeModel.requiredItems.isEmpty()) GONE else VISIBLE
-        holder.recipeButton.onClick {
+        holder.recipeExpansionIndicator.visibility = if (recipeModel.requiredItems.isEmpty()) GONE else VISIBLE
+        holder.recipeExpansionIndicator.onClick {
             toggleVisibility(holder)
         }
 
@@ -131,18 +131,18 @@ class RecipeModelAdapter : RecyclerView.Adapter<RecipeModelAdapter.ViewHolder>()
 
     private fun toggleVisibility(holder: ViewHolder) {
         openedRecipeContainer?.visibility = GONE
-        openedRecipeContainerButton?.backgroundResource = R.drawable.ic_arrow_drop_down_white_36dp
+        openedRecipeExpansionIndicator?.imageResource = R.drawable.ic_arrow_drop_down_white_36dp
 
         when (openedRecipeContainer) {
             holder.recipeRequiredItemsContainer -> {
                 openedRecipeContainer = null
-                openedRecipeContainerButton = null
+                openedRecipeExpansionIndicator = null
             }
             else -> {
                 openedRecipeContainer = holder.recipeRequiredItemsContainer
                         .also { it.visibility = VISIBLE }
-                openedRecipeContainerButton = holder.recipeButton
-                        .also { it.backgroundResource = R.drawable.ic_arrow_drop_up_white_36dp }
+                openedRecipeExpansionIndicator = holder.recipeExpansionIndicator
+                        .also { it.imageResource = R.drawable.ic_arrow_drop_up_white_36dp }
             }
         }
     }
