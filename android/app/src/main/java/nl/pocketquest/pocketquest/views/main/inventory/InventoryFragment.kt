@@ -76,7 +76,7 @@ class InventoryFragment : BaseFragment(), InventoryContract.InventoryView, Adapt
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = UI {
         gridView {
             adapter = mAdapter
-            numColumns = 4
+            numColumns = 6
 
             onItemClickListener = this@InventoryFragment
 
