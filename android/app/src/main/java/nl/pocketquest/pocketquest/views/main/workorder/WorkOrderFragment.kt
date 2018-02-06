@@ -204,7 +204,7 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
             holder.update(presenter, workOrders[position])
         }
 
-        private class WorkOrderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private class WorkOrderViewHolder(view: View) : RecyclerView.ViewHolder(view), AnkoLogger {
             val workOrderTitle: TextView = view.find(R.id.workOrderTitle)
             val workOrderIcon: ImageView = view.find(R.id.workOrderIcon)
             val workOrderCount: TextView = view.find(R.id.workOrderCount)
@@ -233,6 +233,7 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
 
                 workOrderActionButton.textResource = R.string.work_order_claim_button
                 workOrderActionButton.onClick {
+                    wtf("claim $workOrder")
                     presenter.onClaimWorkOrder(workOrder)
                 }
             }
@@ -244,6 +245,7 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
 
                 workOrderActionButton.textResource = R.string.work_order_cancel_button
                 workOrderActionButton.onClick {
+                    wtf("cancel $workOrder")
                     presenter.onCancelWorkOrder(workOrder)
                 }
             }
@@ -254,6 +256,7 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
 
                 workOrderActionButton.textResource = R.string.work_order_cancel_button
                 workOrderActionButton.onClick {
+                    wtf("cancel $workOrder")
                     presenter.onCancelWorkOrder(workOrder)
                 }
             }

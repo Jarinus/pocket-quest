@@ -81,23 +81,23 @@ suspend inline fun <reified T> readFromDatabaseAsync(dbref: DatabaseReference): 
 }
 
 suspend fun writeToDatabaseAsync(dbref: DatabaseReference, data: Any?): String = suspendCoroutineW { d ->
-    dbref.setValue(data, DatabaseReference.CompletionListener { databaseError, databaseReference ->
+    dbref.setValue(data) { databaseError, databaseReference ->
         if (databaseError != null) {
             d.resumeWithException(databaseError.toException())
         } else {
             d.resume(databaseReference.key) //return the key that was written
         }
-    })
+    }
 }
 
 suspend fun writeMultiToDatabaseAsync(dbref: DatabaseReference, data: Map<String, Any?>): String = suspendCoroutineW { d ->
-    dbref.updateChildren(data, DatabaseReference.CompletionListener { databaseError, databaseReference ->
+    dbref.updateChildren(data) { databaseError, databaseReference ->
         if (databaseError != null) {
             d.resumeWithException(databaseError.toException())
         } else {
             d.resume(databaseReference.key ?: "")
         }
-    })
+    }
 }
 
 suspend fun uploadFileToStorageAsync(dest_sref: StorageReference,
