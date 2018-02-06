@@ -6,7 +6,7 @@ import kotlin.math.roundToInt
 
 class Tier (val tierTool: String) : Comparable<Tier> {
 
-    private val numeric = Double.parseDouble(tierTool)
+    private val numeric = tierTool.toDouble()
 
     override fun compareTo(other: Tier) = numeric.compareTo(other.numeric)
 }

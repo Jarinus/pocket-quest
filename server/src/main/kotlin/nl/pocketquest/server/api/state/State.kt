@@ -94,10 +94,7 @@ class State(private val database: Database) : Entities {
     }
 
     private suspend fun loadGatheringToolFamilies(entitiesModel: EntitiesModel): Map<String, GatheringToolFamily> {
-        val gatheringToolFamilies = entitiesModel.gathering_tool_families
-
-
-        return gatheringToolFamilies.mapValues { it.value.toGatheringToolFamily(it.key) }
+        return entitiesModel.gathering_tool_families.mapValues { it.value.toGatheringToolFamily(it.key) }
     }
 
     private suspend fun loadResourceNodeFamilyMembers(entitiesModel: EntitiesModel): Map<String, Set<String>> = entitiesModel.resource_node_resource_node_families

@@ -1,6 +1,6 @@
 package nl.pocketquest.server.api.entity
 
-class GatheringToolFamily(
+data class GatheringToolFamily(
         val id: String,
         val members: Collection<String>
 ) {
