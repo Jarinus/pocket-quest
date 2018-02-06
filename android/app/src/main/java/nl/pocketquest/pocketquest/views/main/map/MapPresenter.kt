@@ -3,9 +3,9 @@ package nl.pocketquest.pocketquest.views.main.map
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 import nl.pocketquest.pocketquest.R
+import nl.pocketquest.pocketquest.game.AnimatedGameObject
 import nl.pocketquest.pocketquest.game.Clickable
 import nl.pocketquest.pocketquest.game.FirebaseGameObjectInput
-import nl.pocketquest.pocketquest.game.GameObject
 import nl.pocketquest.pocketquest.game.IGameObject
 import nl.pocketquest.pocketquest.game.construction.GameObjectAcceptor
 import nl.pocketquest.pocketquest.sprites.GameObjectAnimator
@@ -31,9 +31,11 @@ class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapV
     private fun createPlayerMarker(): IGameObject {
         val frames = SpriteSheetCreator(view.decodeResource(R.drawable.santasprite), 4 xy 4)
                 .frames
-        return GameObject(0 latLong 0, frames.first()).also {
-            GameObjectAnimator(it, frames, ANIMATION_DURATION).start()
-        }
+
+        val animator = GameObjectAnimator(frames, ANIMATION_DURATION)
+        val player = AnimatedGameObject(0 latLong 0, frames.first(), animator)
+        animator.start()
+        return player
     }
 
     override fun onGameObjectClicked(gameObject: IGameObject): Boolean {
@@ -46,6 +48,7 @@ class MapPresenter(mapView: MapContract.MapView) : MapContract.MapPresenter(mapV
     }
 
     override fun onMapReady() {
+        if (ready) return
         ready = true
         cachedLocation?.also { setNewLocation(it) }
         player = createPlayerMarker()
