@@ -8,4 +8,5 @@
     <item name="recipeRequiredItemNameView" type="id" />
     <item name="recipeRequiredItemsContainer" type="id" />
     <item name="recipeExpansionIndicator" type="id" />
+    <item name="recipeTitleContainer" type="id" />
 </resources>

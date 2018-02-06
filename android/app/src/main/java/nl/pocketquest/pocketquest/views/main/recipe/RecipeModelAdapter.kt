@@ -11,6 +11,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.GridView
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.entities.load
@@ -25,6 +26,7 @@ class RecipeModelAdapter : RecyclerView.Adapter<RecipeModelAdapter.ViewHolder>()
     private var openedRecipeExpansionIndicator: ImageView? = null
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val recipeTitleContainer: LinearLayout = view.find(R.id.recipeTitleContainer)
         val recipeNameView: TextView = view.find(R.id.recipeNameView)
         val recipeIconView: ImageView = view.find(R.id.recipeIconView)
         val recipeExpansionIndicator: ImageView = view.find(R.id.recipeExpansionIndicator)
@@ -40,6 +42,10 @@ class RecipeModelAdapter : RecyclerView.Adapter<RecipeModelAdapter.ViewHolder>()
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder =
             with(parent!!.context) {
                 verticalLayout {
+                    id = R.id.recipeTitleContainer
+
+                    isClickable = true
+
                     linearLayout {
                         backgroundResource = R.color.colorPrimary
 
@@ -71,7 +77,6 @@ class RecipeModelAdapter : RecyclerView.Adapter<RecipeModelAdapter.ViewHolder>()
                             id = R.id.recipeExpansionIndicator
 
                             imageResource = R.drawable.ic_arrow_drop_down_white_36dp
-                            isClickable = true
                         }.lparams {
                             height = dip(TITLE_ROW_HEIGHT)
                             width = dip(TITLE_ROW_HEIGHT)
@@ -121,7 +126,7 @@ class RecipeModelAdapter : RecyclerView.Adapter<RecipeModelAdapter.ViewHolder>()
             load(context, acquiredItem.icon)
         }
         holder.recipeExpansionIndicator.visibility = if (recipeModel.requiredItems.isEmpty()) GONE else VISIBLE
-        holder.recipeExpansionIndicator.onClick {
+        holder.recipeTitleContainer.onClick {
             toggleVisibility(holder)
         }
 
