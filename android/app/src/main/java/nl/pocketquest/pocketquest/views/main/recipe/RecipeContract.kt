@@ -8,11 +8,7 @@ class RecipeContract {
 
     interface RecipeView : BaseView {
 
-        fun addRecipeModel(recipeModel: RecipeModel)
-
-        fun updateRecipeModel(recipeModel: RecipeModel, newRecipeModel: RecipeModel)
-
-        fun removeRecipeModel(recipeModel: RecipeModel)
+        fun display(recipeModels: List<RecipeModel>)
 
         fun setFilter(filterDescription: String)
     }
