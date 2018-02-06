@@ -12,7 +12,20 @@ import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.UI
 
 class RecipeFragment : BaseFragment(), RecipeContract.RecipeView {
+    private val presenter: RecipeContract.RecipePresenter = RecipePresenter(this)
     private val recipeModelAdapter: RecipeModelAdapter = RecipeModelAdapter()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        presenter.onAttach()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        presenter.onDetach()
+    }
 
     override fun display(recipeModels: List<RecipeContract.RecipeModel>) =
             recipeModelAdapter.newValues(recipeModels)

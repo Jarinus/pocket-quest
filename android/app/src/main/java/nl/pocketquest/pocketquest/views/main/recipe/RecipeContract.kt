@@ -13,8 +13,7 @@ class RecipeContract {
         fun setFilter(filterDescription: String)
     }
 
-    abstract class RecipePresenter(recipeView: RecipeView)
-        : BasePresenter<RecipeView>(recipeView) {
+    abstract class RecipePresenter(recipeView: RecipeView) : BasePresenter<RecipeView>(recipeView) {
 
         abstract fun onResetFilter()
 
