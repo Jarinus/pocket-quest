@@ -88,7 +88,7 @@ class LocationEngineWrapper(
             // A new location is always better than no location
             return true
         }
-        
+
 
         // Check whether the new location fix is newer or older
         val timeDelta = location.time - currentBestLocation.time

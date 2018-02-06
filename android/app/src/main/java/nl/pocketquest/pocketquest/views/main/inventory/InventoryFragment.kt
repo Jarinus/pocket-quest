@@ -19,9 +19,9 @@ import kotlinx.coroutines.experimental.async
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.entities.load
 import nl.pocketquest.pocketquest.game.player.Item
-import nl.pocketquest.pocketquest.views.BaseFragment
 import nl.pocketquest.pocketquest.utils.squaredImageView
 import nl.pocketquest.pocketquest.utils.withSuffix
+import nl.pocketquest.pocketquest.views.BaseFragment
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.ctx
@@ -44,7 +44,7 @@ private fun InventoryItem.toItem() = Item(name, count)
 
 class InventoryFragment : BaseFragment(), InventoryContract.InventoryView, AdapterView.OnItemClickListener {
     private val presenter: InventoryContract.InventoryPresenter = InventoryPresenter(this)
-    private lateinit var mAdapter: InventoryItemAdapter
+    private val mAdapter by lazy { InventoryItemAdapter(ctx) }
     override fun addItem(item: Item) = item.toInventoryItem {
         mAdapter.add(it)
     }
@@ -74,7 +74,6 @@ class InventoryFragment : BaseFragment(), InventoryContract.InventoryView, Adapt
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mAdapter = InventoryItemAdapter(ctx)
 
         return UI {
             gridView {
