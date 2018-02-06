@@ -10,7 +10,7 @@ import android.widget.TextView
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.entities.FBItem
 import nl.pocketquest.pocketquest.game.entities.load
-import nl.pocketquest.pocketquest.views.main.recipe.RecipeModelAdapter.Companion.REQUIRED_ITEMS_PADDING
+import nl.pocketquest.pocketquest.views.main.recipe.RecipeModelAdapter.Companion.INTERNAL_PADDING
 import nl.pocketquest.pocketquest.views.main.recipe.RecipeModelAdapter.Companion.TITLE_ROW_FONT_SIZE
 import nl.pocketquest.pocketquest.views.main.recipe.RecipeModelAdapter.Companion.TITLE_ROW_HEIGHT
 import org.jetbrains.anko.*
@@ -29,7 +29,7 @@ class RecipeRequiredItemAdapter : BaseAdapter() {
                     width = dip(TITLE_ROW_HEIGHT)
                     height = dip(TITLE_ROW_HEIGHT)
 
-                    rightMargin = dip(REQUIRED_ITEMS_PADDING)
+                    rightMargin = dip(INTERNAL_PADDING)
                 }
 
                 textView {

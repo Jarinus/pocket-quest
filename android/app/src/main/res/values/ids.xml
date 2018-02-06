@@ -9,4 +9,7 @@
     <item name="recipeRequiredItemsContainer" type="id" />
     <item name="recipeExpansionIndicator" type="id" />
     <item name="recipeTitleContainer" type="id" />
+    <item name="recipeExpansionContainer" type="id" />
+    <item name="recipeSelectAmountBar" type="id" />
+    <item name="recipeCraftButton" type="id" />
 </resources>
