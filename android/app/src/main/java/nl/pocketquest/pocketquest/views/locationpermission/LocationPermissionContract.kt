@@ -3,7 +3,6 @@ package nl.pocketquest.pocketquest.views.locationpermission
 import nl.pocketquest.pocketquest.views.BasePresenter
 import nl.pocketquest.pocketquest.views.BaseView
 
-
 class LocationPermissionContract {
 
     interface LocationPermissionView : BaseView {

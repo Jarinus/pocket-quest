@@ -186,7 +186,10 @@ class RecipeModelAdapter(private val presenter: RecipeContract.RecipePresenter) 
         holder.recipeCraftButton.text = craftButtonText(1, availableToCraft)
 
         holder.recipeCraftButton.onClick {
-            val amount = holder.recipeSelectAmountBar.progress + 1
+            val amount = when (availableToCraft) {
+                1 -> 1
+                else -> holder.recipeSelectAmountBar.progress + 1
+            }
 
             if (amount > availableToCraft) {
                 error { "Invalid amount to craft: $amount > $availableToCraft" }
@@ -203,7 +206,7 @@ class RecipeModelAdapter(private val presenter: RecipeContract.RecipePresenter) 
         adapter?.newValues(recipeModel.requiredItems)
     }
 
-    private fun craftButtonText(progress:Int, max:Int): String = "CRAFT $progress/$max"
+    private fun craftButtonText(progress: Int, max: Int): String = "CRAFT $progress/$max"
 
     private fun toggleVisibility(holder: ViewHolder) {
         openedRecipeContainer?.visibility = GONE

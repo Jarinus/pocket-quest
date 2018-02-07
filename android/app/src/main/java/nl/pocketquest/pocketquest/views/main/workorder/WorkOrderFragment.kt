@@ -71,7 +71,6 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
         view?.find<View>(R.id.workOrderOverviewContainer)
                 ?.showOrHide(!loading)
 
-
         info { "Loading: $loading" }
     }
 
