@@ -15,6 +15,8 @@ fun whenLoggedIn(toExecute: (FirebaseUser) -> Unit) {
     AUTH.currentUser?.also(toExecute)
 }
 
+suspend fun getTimeOfset() = DATABASE.getReference(".info/serverTimeOffset").readAsync<Double>()
+
 fun whenNotLoggedIn(toExecute: () -> Unit) {
     AUTH.currentUser ?: toExecute()
 }

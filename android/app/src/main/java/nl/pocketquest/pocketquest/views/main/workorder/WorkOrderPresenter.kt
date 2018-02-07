@@ -1,9 +1,13 @@
 package nl.pocketquest.pocketquest.views.main.workorder
 
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
 import nl.pocketquest.pocketquest.game.crafting.WorkOrder
 import nl.pocketquest.pocketquest.game.entities.WorkOrderRequester
 import nl.pocketquest.pocketquest.game.player.*
+import nl.pocketquest.pocketquest.utils.getTimeOfset
 import nl.pocketquest.pocketquest.utils.whenLoggedIn
+import org.jetbrains.anko.custom.async
 import org.jetbrains.anko.info
 import org.jetbrains.anko.wtf
 
@@ -17,6 +21,10 @@ class WorkOrderPresenter(
 
 
     override fun onDetach() {
+
+        async(CommonPool){
+            workOrderView.setTimeOffset(getTimeOfset())
+        }
         wtf("detach")
         workOrderList?.removeWorkOrderListener(this)
         workOrderList?.removeWorkOrderInitializedListeners(this)
@@ -24,6 +32,7 @@ class WorkOrderPresenter(
 
     override fun onAttach() {
         workOrderView.setLoading(true)
+
         whenLoggedIn {
             workOrderList = WorkOrderList.getUserWorkOrderList(it.uid).also {
                 it.addWorkOrderListener(this)
@@ -60,7 +69,7 @@ class WorkOrderPresenter(
         whenLoggedIn {
             WorkOrderRequester.cancelWorkorder(it.uid, workOrder.id)
         }
-        workOrderView.removeWorkOrder(workOrder)
+//        workOrderView.removeWorkOrder(workOrder)
     }
 
     override fun onClaimWorkOrder(workOrder: WorkOrder) {
