@@ -22,7 +22,7 @@ class WorkOrderDeactivatedEventHandlerTest : WorkOrderBaseTest() {
             WorkOrderDeactivatedEventHandler(kodein).handle(
                     Event.of(
                             WorkorderStatus.WORK_ORDER_DEACTIVATED,
-                            WorkOrderData("chocolate_bear", workOrderId),
+                            WorkOrderDeactivationData("chocolate_bear", workOrderId),
                             1000L
                     )
             )

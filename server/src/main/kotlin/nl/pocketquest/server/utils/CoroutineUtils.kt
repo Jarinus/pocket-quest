@@ -49,8 +49,8 @@ inline suspend fun <T> suspendCoroutineW(crossinline block: (WrappedContinuation
         }
 
 
-suspend inline fun <reified T> DatabaseReference.readAsync(): T = readFromDatabaseAsync(this)
-suspend fun <T> DatabaseReference.readAsync(expectedType: Class<T>): T = readFromDatabaseAsync(this, expectedType)
+suspend inline fun <reified T> DatabaseReference.readAsync(): T? = readFromDatabaseAsync(this)
+suspend fun <T> DatabaseReference.readAsync(expectedType: Class<T>): T? = readFromDatabaseAsync(this, expectedType)
 suspend fun <T> DatabaseReference.writeAsync(t: T) = writeToDatabaseAsync(this, t)
 suspend fun <T> DatabaseReference.transaction(expectedType: Class<T>, transformer: (T?) -> TransactionResult<T>) = doTransaction(this, expectedType, transformer)
 suspend inline fun <reified T> DatabaseReference.transactionNotNull(crossinline transformer: (T) -> TransactionResult<T>) = doTransaction<T>(this, T::class.java) {
@@ -100,29 +100,23 @@ suspend fun <T> doTransaction(dbref: DatabaseReference, expectedType: Class<T>, 
 
 }
 
-suspend inline fun <reified T> readFromDatabaseAsync(dbref: DatabaseReference): T = readFromDatabaseAsync(dbref, T::class.java)
+suspend inline fun <reified T> readFromDatabaseAsync(dbref: DatabaseReference): T? = readFromDatabaseAsync(dbref, T::class.java)
 
-suspend fun <T> readFromDatabaseAsync(dbref: DatabaseReference, expectedType: Class<T>): T = suspendCoroutineW { d ->
+suspend fun <T> readFromDatabaseAsync(dbref: DatabaseReference, expectedType: Class<T>): T? = suspendCoroutineW { d ->
     dbref.addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onCancelled(e: DatabaseError?) {
+            getLogger().error("Database exception")
             d.resumeWithException(e?.toException() ?: Exception("cancelled"))
         }
 
-        override fun onDataChange(snapshot: DataSnapshot) = try {
-            val ti: GenericTypeIndicator<T> = object : GenericTypeIndicator<T>() {}
-            val data: T? = snapshot.getValue(expectedType)
-            if (data != null) {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val data: T?
+            try {
+                data = snapshot.getValue(expectedType)
                 d.resume(data)
-            } else {
-                val errmsg =
-                        if (snapshot.value == null)
-                            "data missing"
-                        else
-                            "invalid read data format"
-                d.resumeWithException(Exception(errmsg))
+            } catch (e: Exception) {
+                d.resumeWithException(e)
             }
-        } catch (e: Exception) {
-            d.resumeWithException(e)
         }
     })
 }

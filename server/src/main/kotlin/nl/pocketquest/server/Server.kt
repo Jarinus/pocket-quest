@@ -8,6 +8,7 @@ import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import kotlinx.coroutines.experimental.runBlocking
+import nl.pocketquest.server.api.crafting.WorkOrder
 import nl.pocketquest.server.api.entity.ResourceNode
 import nl.pocketquest.server.api.resource.ResourceInstance
 import nl.pocketquest.server.api.state.Entities
@@ -41,6 +42,11 @@ fun main(args: Array<String>) {
     server.init()
 
     server.start()
+    runBlocking {
+        WorkOrder.byId("z3GJTGEvrCc8lgZ3Ck3q4LqYi3n1", "-L4fgTgUzVjSl-0qVW1E", kodeIn)
+                .also { println("Workorder ${it.recipe()}") }
+    }
+    kodeIn.instance<Entities>().recipe("plank_1")?.also { println("Recipe for plank_1 = $it") }
     while (true) {
         Thread.sleep(10000)
     }

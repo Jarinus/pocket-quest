@@ -41,10 +41,9 @@ class WorkOrderCancelledEventHandler(kodein: Kodein) : WorkOrderEventHandler<Wor
     suspend override fun handle(event: Event<WorkorderStatus, WorkOrderData>) {
         kodein.instance<EventPool>().also {
             it.submit(
-                    Event.of(WorkorderStatus.WORK_ORDER_CLAIMED, event.data, event.scheduledFor)
-            )
-            it.submit(
-                    Event.of(WorkorderStatus.WORK_ORDER_DEACTIVATED, event.data, event.scheduledFor)
+                    Event.of(WorkorderStatus.WORK_ORDER_DEACTIVATED,
+                            WorkOrderDeactivationData(event.data.userID, event.data.workOrderID, true)
+                            , event.scheduledFor)
             )
         }
     }
@@ -55,7 +54,13 @@ class WorkOrderClaimedEventHandler(kodein: Kodein) : WorkOrderEventHandler<WorkO
     override fun isRelevant(type: WorkorderStatus) = type == WorkorderStatus.WORK_ORDER_CLAIMED
 
     suspend override fun handle(event: Event<WorkorderStatus, WorkOrderData>) {
+        getLogger().info("Handling event: {}", event.data)
+        getLogger()
         val workOrder = WorkOrder.byId(event.data.userID, event.data.workOrderID, kodein)
+        getLogger().info("Trying to get recipe {} ", workOrder.recipe())
+        workOrder.recipe()
+        workOrder.recipe()
+        workOrder.recipe()
         val recipeID = workOrder.recipe() ?: throw IllegalStateException("No recipe found for workOrder")
         val craftingRecipe = kodein.instance<Entities>().recipe(recipeID) ?: throw IllegalStateException("No recipe found for workOrder")
         val completed = workOrder.completed() ?: 0L
@@ -92,11 +97,13 @@ class WorkOrderScheduledEventHandler(kodein: Kodein) : WorkOrderEventHandler<Wor
     }
 
     private suspend fun scheduleWorkOrderCompletion(workOrder: WorkOrder, event: Event<WorkorderStatus, WorkOrderData>, interval: Long) {
-        workOrder.setActive(true)
-        workOrder.setStartTime(event.scheduledFor)
         val intervalMs = TimeUnit.SECONDS.toMillis(interval)
         val workOrderCount = workOrder.count() ?: return
-        workOrder.setFinishedAt(workOrderCount * intervalMs + event.scheduledFor)
+        workOrder.updateObject(
+                active = true,
+                startedAt = event.scheduledFor,
+                finishedAt = workOrderCount * intervalMs + event.scheduledFor
+        )
         kodein.instance<EventPool>()
                 .submit(
                         Event.of(
@@ -130,7 +137,7 @@ class WorkOrderOneCompletedEventHandler(kodein: Kodein) : WorkOrderEventHandler<
             kodein.instance<EventPool>()
                     .submit(
                             Event.of(WorkorderStatus.WORK_ORDER_DEACTIVATED,
-                                    WorkOrderData(
+                                    WorkOrderDeactivationData(
                                             event.data.userID,
                                             event.data.workOrderID
                                     ),
@@ -140,14 +147,16 @@ class WorkOrderOneCompletedEventHandler(kodein: Kodein) : WorkOrderEventHandler<
     }
 }
 
-class WorkOrderDeactivatedEventHandler(kodein: Kodein) : WorkOrderEventHandler<WorkOrderData>(kodein) {
-    override val dataClass = WorkOrderData::class.java
+class WorkOrderDeactivatedEventHandler(kodein: Kodein) : WorkOrderEventHandler<WorkOrderDeactivationData>(kodein) {
+    override val dataClass = WorkOrderDeactivationData::class.java
     override fun isRelevant(type: WorkorderStatus) = type == WorkorderStatus.WORK_ORDER_DEACTIVATED
 
-    suspend override fun handle(event: Event<WorkorderStatus, WorkOrderData>) {
+    suspend override fun handle(event: Event<WorkorderStatus, WorkOrderDeactivationData>) {
         val workOrder = WorkOrder.byId(event.data.userID, event.data.workOrderID, kodein)
-        workOrder.setActive(false)
-        workOrder.setFinished(true)
+        workOrder.updateObject(
+                active = false,
+                finished = true
+        )
         updateUser(event.data.userID, kodein) {
             decrementCraftingCount()
         }
@@ -159,6 +168,14 @@ class WorkOrderDeactivatedEventHandler(kodein: Kodein) : WorkOrderEventHandler<W
                         WorkOrderUserData(event.data.userID),
                         event.scheduledFor)
         )
+        if (event.data.claim) {
+            kodein.instance<EventPool>().submit(
+                    Event.of(WorkorderStatus.WORK_ORDER_CLAIMED, WorkOrderData(
+                            event.data.userID,
+                            event.data.workOrderID
+                    ), event.scheduledFor)
+            )
+        }
     }
 }
 

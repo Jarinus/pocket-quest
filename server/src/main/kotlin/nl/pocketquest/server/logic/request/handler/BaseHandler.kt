@@ -14,12 +14,14 @@ import nl.pocketquest.server.utils.getLogger
 class BaseHandler<T : Request>(private val handler: RequestHandler<T>, private val kodein: Kodein) : ChildConsumer<T> {
 
     fun start() {
+        getLogger().info("Starting base handler")
         kodein.instance<Database>()
                 .parentDataSource(handler.route, this)
                 .start()
     }
 
     override fun consume(readOnlyData: T, dataSource: DataSource<T>) {
+        getLogger().info("Handling event")
         async(CommonPool) {
             try {
                 handler.handle(readOnlyData, dataSource)

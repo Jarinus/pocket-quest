@@ -24,7 +24,7 @@ class WorkOrderClaimHandler(private val kodein: Kodein) : RequestHandler<Craftin
         kodein.instance<EventPool>().submit(
                 Event.of(
                         WorkorderStatus.WORK_ORDER_CLAIMED,
-                        WorkOrderData(request.workorder_id, request.workorder_id),
+                        WorkOrderData(request.user_id, request.workorder_id),
                         request.submitted_at
                 )
         )

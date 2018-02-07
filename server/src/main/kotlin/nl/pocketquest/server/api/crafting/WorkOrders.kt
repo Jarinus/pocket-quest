@@ -66,20 +66,17 @@ class WorkOrder internal constructor(val model: DataSource<WorkOrderModel>) {
         TransactionResult.success(current)
     }
 
-    suspend fun setStartTime(startedAt: Long) = updateObject {
-        it.started_at = startedAt
-    }
+    suspend fun updateObject(
+            active: Boolean? = null,
+            finished: Boolean? = null,
+            startedAt: Long? = null,
+            finishedAt: Long? = null
+    ) = updateObject {
+        active?.apply { it.active = this }
+        finished?.apply { it.finished = this }
+        startedAt?.apply { it.started_at = this }
+        finishedAt?.apply { it.finished_at = this }
 
-    suspend fun setActive(active: Boolean) = updateObject {
-        it.active = active
-    }
-
-    suspend fun setFinished(finished: Boolean) = updateObject {
-        it.finished = finished
-    }
-
-    suspend fun setFinishedAt(finishedAt: Long) = updateObject {
-        it.finished_at = finishedAt
     }
 
     companion object {

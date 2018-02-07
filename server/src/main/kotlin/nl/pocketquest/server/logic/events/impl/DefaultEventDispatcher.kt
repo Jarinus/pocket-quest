@@ -6,6 +6,7 @@ import nl.pocketquest.server.logic.events.Event
 import nl.pocketquest.server.logic.events.EventDispatcher
 import nl.pocketquest.server.logic.events.EventHandler
 import nl.pocketquest.server.logic.events.MutableEventPool
+import nl.pocketquest.server.utils.getLogger
 import java.util.*
 import kotlin.concurrent.timerTask
 
@@ -42,7 +43,11 @@ class DefaultEventDispatcher : EventDispatcher {
         async(CommonPool) {
             capableHandlers.forEach {
                 if (it.isRelevant(event.type)) {
-                    it.handle(event)
+                    try {
+                        it.handle(event)
+                    } catch (exception: Exception) {
+                        getLogger().error("Handle method threw exception: Event was {}", event, exception)
+                    }
                 }
             }
         }
