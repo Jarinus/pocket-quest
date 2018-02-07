@@ -2,6 +2,7 @@
 <resources>
     <item name="imgRss" type="id" />
     <item name="tvRss" type="id" />
+
     <item name="workOrderLoadingSpinner" type="id" />
     <item name="workOrderTitle" type="id" />
     <item name="workOrderIcon" type="id" />
@@ -10,4 +11,16 @@
     <item name="workOrderClaimButton" type="id" />
     <item name="workOrderProgress" type="id" />
     <item name="workOrderOverviewContainer" type="id" />
+
+    <item name="recipeCraftButton" type="id" />
+    <item name="recipeExpansionContainer" type="id" />
+    <item name="recipeExpansionIndicator" type="id" />
+    <item name="recipeIconView" type="id" />
+    <item name="recipeNameView" type="id" />
+    <item name="recipeRequiredItemCountView" type="id" />
+    <item name="recipeRequiredItemIconView" type="id" />
+    <item name="recipeRequiredItemNameView" type="id" />
+    <item name="recipeRequiredItemsContainer" type="id" />
+    <item name="recipeSelectAmountBar" type="id" />
+    <item name="recipeTitleContainer" type="id" />
 </resources>

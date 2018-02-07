@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.views.main.inventory.InventoryFragment
 import nl.pocketquest.pocketquest.views.main.map.MapFragment
+import nl.pocketquest.pocketquest.views.main.recipe.RecipeFragment
 import nl.pocketquest.pocketquest.views.main.workorder.WorkOrderFragment
 import java.lang.IllegalArgumentException
 
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         // Set up the ViewPager with the sections adapter.
         container.adapter = mSectionsPagerAdapter
 
-        container.offscreenPageLimit = 2
+        container.offscreenPageLimit = 3
         container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
     }
@@ -67,9 +68,10 @@ class MainActivity : AppCompatActivity() {
             0 -> MapFragment()
             1 -> InventoryFragment()
             2 -> WorkOrderFragment()
+            3 -> RecipeFragment()
             else -> throw IllegalArgumentException("Illegal index supplied")
         }
 
-        override fun getCount() = 3
+        override fun getCount() = 4
     }
 }
