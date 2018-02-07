@@ -259,13 +259,13 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
                 fun executePerMilisecond(lambda : suspend ()->Boolean){
                     async(UI){
                         while (isActive) {
-                            if (!lambda()) return@async
+                            if (lambda()) return@async
                             else delay(100)
                         }
                     }
                 }
                 executePerMilisecond{
-                    val serverTime = System.currentTimeMillis()
+                    val serverTime = (System.currentTimeMillis() - serverOffset).roundToLong()
                     val elapsedTime = (serverTime - active.startedAt)/100
                     val progress =  minOf(duration, elapsedTime)
                     wtf("duration:$duration startedAt: ${active.startedAt}; finishedAt: ${active.finishesAt}; serverTime: $serverTime; elapsedTime: $elapsedTime; progress: $progress")
