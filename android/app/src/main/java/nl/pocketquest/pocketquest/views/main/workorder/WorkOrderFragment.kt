@@ -23,7 +23,10 @@ import kotlinx.coroutines.experimental.delay
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.crafting.WorkOrder
 import nl.pocketquest.pocketquest.game.crafting.WorkOrderStatus
+import nl.pocketquest.pocketquest.game.entities.Entities
+import nl.pocketquest.pocketquest.game.entities.load
 import nl.pocketquest.pocketquest.utils.showOrHide
+import nl.pocketquest.pocketquest.utils.squaredImageView
 import nl.pocketquest.pocketquest.views.BaseFragment
 import nl.pocketquest.pocketquest.views.main.workorder.WorkOrderFragment.WorkOrderAdapter.WorkOrderViewHolder.Companion.ROW_HEIGHT
 import nl.pocketquest.pocketquest.views.main.workorder.WorkOrderFragment.WorkOrderAdapter.WorkOrderViewHolder.Companion.SPACE_BETWEEN_ELEMENTS
@@ -159,9 +162,11 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
 
                         linearLayout {
                             relativeLayout {
-                                imageView {
+                                squaredImageView {
                                     id = R.id.workOrderIcon
-                                    imageResource = R.drawable.knight // TODO: Replace
+                                }.lparams {
+                                    width = matchParent
+                                    height = matchParent
                                 }
 
                                 textView {
@@ -220,7 +225,7 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
             holder.update(presenter, workOrders[position])
         }
 
-        private class WorkOrderViewHolder(view: View) : RecyclerView.ViewHolder(view), AnkoLogger {
+        private class WorkOrderViewHolder(val view: View) : RecyclerView.ViewHolder(view), AnkoLogger {
             val workOrderTitle: TextView = view.find(R.id.workOrderTitle)
             val workOrderIcon: ImageView = view.find(R.id.workOrderIcon)
             val workOrderCount: TextView = view.find(R.id.workOrderCount)
@@ -228,8 +233,21 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
             val workOrderActionButton: Button = view.find(R.id.workOrderActionButton)
 
             fun update(presenter: WorkOrderPresenter, workOrder: WorkOrder) {
-
-                workOrderTitle.text = "WorkOrder" //TODO: Get first acquired item's name and put here
+                async(CommonPool) {
+                    val item = (Entities.getRecipes()[workOrder.recipeId]
+                            ?.acquiredItems
+                            ?.keys
+                            ?.firstOrNull()
+                            ?.let {
+                                Entities.getItems()[it]
+                            }
+                            ?: return@async)
+                    async(UI) {
+                        workOrderTitle.text = item.name
+                        workOrderIcon.load(view.context, item.icon)
+                    }
+                }
+//                workOrderTitle.text = "WorkOrder" //TODO: Get first acquired item's name and put here
                 //TODO: Uncomment and implement
 //                workOrderIcon.imageBitmap = null
                 workOrderCount.text = workOrder.count.toString()
