@@ -10,7 +10,7 @@ import android.widget.TextView
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.entities.FBItem
 import nl.pocketquest.pocketquest.game.entities.load
-import nl.pocketquest.pocketquest.views.main.recipe.RecipeModelAdapter.Companion.INTERNAL_PADDING
+import nl.pocketquest.pocketquest.views.main.recipe.RecipeModelAdapter.Companion.INNER_PADDING
 import nl.pocketquest.pocketquest.views.main.recipe.RecipeModelAdapter.Companion.TITLE_ROW_FONT_SIZE
 import nl.pocketquest.pocketquest.views.main.recipe.RecipeModelAdapter.Companion.TITLE_ROW_HEIGHT
 import org.jetbrains.anko.*
@@ -29,7 +29,7 @@ class RecipeRequiredItemAdapter : BaseAdapter() {
                     width = dip(TITLE_ROW_HEIGHT)
                     height = dip(TITLE_ROW_HEIGHT)
 
-                    rightMargin = dip(INTERNAL_PADDING)
+                    rightMargin = dip(INNER_PADDING)
                 }
 
                 textView {
@@ -44,6 +44,19 @@ class RecipeRequiredItemAdapter : BaseAdapter() {
                     weight = 1f
                 }
 
+                textView {
+                    id = R.id.recipeRequiredItemCountView
+
+                    textSize = TITLE_ROW_FONT_SIZE
+                    typeface = Typeface.DEFAULT_BOLD
+
+                    gravity = CENTER_VERTICAL
+                }.lparams {
+                    height = dip(TITLE_ROW_HEIGHT)
+
+                    rightMargin = dip(INNER_PADDING)
+                }
+
                 lparams {
                     width = matchParent
                 }
@@ -51,13 +64,15 @@ class RecipeRequiredItemAdapter : BaseAdapter() {
         }
 
         val (requiredItem, requiredAmount) = getItem(position)
-        val recipeRequiredItemNameView: TextView = view.find(R.id.recipeRequiredItemNameView)
         val recipeRequiredIconView: ImageView = view.find(R.id.recipeRequiredItemIconView)
+        val recipeRequiredItemNameView: TextView = view.find(R.id.recipeRequiredItemNameView)
+        val recipeRequiredItemCountView: TextView = view.find(R.id.recipeRequiredItemCountView)
 
-        recipeRequiredItemNameView.text = "${requiredAmount}x ${requiredItem.name}"
         recipeRequiredIconView.apply {
             load(context, requiredItem.icon)
         }
+        recipeRequiredItemNameView.text = requiredItem.name
+        recipeRequiredItemCountView.text = requiredAmount.toString()
 
         return view
     }

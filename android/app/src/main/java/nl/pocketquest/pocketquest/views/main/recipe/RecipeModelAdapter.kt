@@ -91,7 +91,7 @@ class RecipeModelAdapter(private val presenter: RecipeContract.RecipePresenter) 
                             width = matchParent
 
                             topMargin = dip(PADDING)
-                            padding = dip(INTERNAL_PADDING)
+                            padding = dip(INNER_PADDING)
                         }
                     }
 
@@ -104,15 +104,15 @@ class RecipeModelAdapter(private val presenter: RecipeContract.RecipePresenter) 
 
                             backgroundColor = Color.LTGRAY
 
-                            verticalSpacing = dip(INTERNAL_PADDING)
+                            verticalSpacing = dip(INNER_PADDING)
                             adapter = RecipeRequiredItemAdapter()
 
                             lparams {
-                                padding = dip(INTERNAL_PADDING)
+                                padding = dip(INNER_PADDING)
                             }
                         }.lparams {
-                            leftMargin = dip(INTERNAL_PADDING)
-                            rightMargin = dip(INTERNAL_PADDING)
+                            leftMargin = dip(INNER_PADDING)
+                            rightMargin = dip(INNER_PADDING)
                         }
 
                         linearLayout {
@@ -136,14 +136,14 @@ class RecipeModelAdapter(private val presenter: RecipeContract.RecipePresenter) 
                             }.lparams {
                                 height = dip(TITLE_ROW_HEIGHT)
 
-                                leftMargin = dip(INTERNAL_PADDING)
-                                rightMargin = dip(INTERNAL_PADDING)
+                                leftMargin = dip(INNER_PADDING)
+                                rightMargin = dip(INNER_PADDING)
                             }
 
                             lparams {
                                 width = matchParent
 
-                                padding = dip(INTERNAL_PADDING)
+                                padding = dip(INNER_PADDING)
                             }
                         }
                     }
@@ -226,6 +226,6 @@ class RecipeModelAdapter(private val presenter: RecipeContract.RecipePresenter) 
     companion object {
         const val TITLE_ROW_HEIGHT = 36
         const val TITLE_ROW_FONT_SIZE = 16f
-        const val INTERNAL_PADDING = 6
+        const val INNER_PADDING = 6
     }
 }
