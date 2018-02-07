@@ -54,13 +54,7 @@ class WorkOrderClaimedEventHandler(kodein: Kodein) : WorkOrderEventHandler<WorkO
     override fun isRelevant(type: WorkorderStatus) = type == WorkorderStatus.WORK_ORDER_CLAIMED
 
     suspend override fun handle(event: Event<WorkorderStatus, WorkOrderData>) {
-        getLogger().info("Handling event: {}", event.data)
-        getLogger()
         val workOrder = WorkOrder.byId(event.data.userID, event.data.workOrderID, kodein)
-        getLogger().info("Trying to get recipe {} ", workOrder.recipe())
-        workOrder.recipe()
-        workOrder.recipe()
-        workOrder.recipe()
         val recipeID = workOrder.recipe() ?: throw IllegalStateException("No recipe found for workOrder")
         val craftingRecipe = kodein.instance<Entities>().recipe(recipeID) ?: throw IllegalStateException("No recipe found for workOrder")
         val completed = workOrder.completed() ?: 0L
