@@ -3,7 +3,6 @@ package nl.pocketquest.pocketquest.game.player
 import com.google.firebase.database.*
 import nl.pocketquest.pocketquest.game.crafting.WorkOrder
 import nl.pocketquest.pocketquest.game.crafting.WorkOrderStatus
-import nl.pocketquest.pocketquest.game.entities.WorkOrderRequester
 import nl.pocketquest.pocketquest.utils.DATABASE
 import nl.pocketquest.pocketquest.utils.getValue
 import org.jetbrains.anko.AnkoLogger
@@ -131,7 +130,6 @@ class WorkOrderList(private val ref: DatabaseReference) : AnkoLogger {
                     .also { userWorkOrderList = it }
         }
     }
-
 }
 
 data class FBWorkOrderModel(
@@ -145,11 +143,12 @@ data class FBWorkOrderModel(
         var submitted_at: Long = 0,
         var finished: Boolean = false
 ) {
-    val status get() = when {
-        finished -> WorkOrderStatus.Finished(finished_at)
-        active -> WorkOrderStatus.Active(started_at, finished_at)
-        else -> WorkOrderStatus.Submitted(submitted_at)
-    }
+    val status
+        get() = when {
+            finished -> WorkOrderStatus.Finished(finished_at)
+            active -> WorkOrderStatus.Active(started_at, finished_at)
+            else -> WorkOrderStatus.Submitted(submitted_at)
+        }
 
     fun toWorkOrder() = WorkOrder(id, recipe, count, status)
 }

@@ -65,7 +65,6 @@ class WorkOrderPresenter(
     }
 
     override fun onCancelWorkOrder(workOrder: WorkOrder) {
-        info { "Workorder cancelled: $workOrder" }
         whenLoggedIn {
             WorkOrderRequester.cancelWorkorder(it.uid, workOrder.id)
         }

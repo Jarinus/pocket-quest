@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout.VERTICAL
 import android.widget.ProgressBar
 import android.widget.TextView
+import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
@@ -227,6 +228,7 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
             val workOrderActionButton: Button = view.find(R.id.workOrderActionButton)
 
             fun update(presenter: WorkOrderPresenter, workOrder: WorkOrder) {
+
                 workOrderTitle.text = "WorkOrder" //TODO: Get first acquired item's name and put here
                 //TODO: Uncomment and implement
 //                workOrderIcon.imageBitmap = null
@@ -254,25 +256,20 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
             }
 
             fun handleActiveWorkOrder(active: WorkOrderStatus.Active, presenter: WorkOrderPresenter, workOrder: WorkOrder) {
-                val duration = (active.finishesAt - active.startedAt) / 100 //400
-                wtf("max: $duration")
-                workOrderProgress.max = duration.toInt()
-
-                fun executePerMilisecond(lambda: suspend () -> Boolean) {
-                    async(UI) {
-                        while (isActive) {
-                            if (lambda()) return@async
-                            else delay(100)
+                async(CommonPool) {
+                    val duration = (active.finishesAt - active.startedAt) / 100 //400
+                    var progress = 0L
+                    workOrderProgress.max = duration.toInt()
+                    while (duration != progress) {
+                        val serverTime = (System.currentTimeMillis() - serverOffset).roundToLong()
+                        val elapsedTime = (serverTime - active.startedAt) / 100
+                        progress = minOf(duration, elapsedTime)
+                        async(UI) {
+                            workOrderProgress.progress = progress.toInt()
                         }
+                        progress == duration
+                        delay(500)
                     }
-                }
-                executePerMilisecond {
-                    val serverTime = (System.currentTimeMillis() - serverOffset).roundToLong()
-                    val elapsedTime = (serverTime - active.startedAt) / 100
-                    val progress = minOf(duration, elapsedTime)
-                    wtf("duration:$duration startedAt: ${active.startedAt}; finishedAt: ${active.finishesAt}; serverTime: $serverTime; elapsedTime: $elapsedTime; progress: $progress")
-                    workOrderProgress.progress = progress.toInt()
-                    progress == duration
                 }
 
                 workOrderActionButton.textResource = R.string.work_order_cancel_button
