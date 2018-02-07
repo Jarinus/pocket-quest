@@ -10,6 +10,12 @@ enum class WorkorderStatus {
     WORK_ORDER_CANCELLED,
 }
 
+data class WorkOrderDeactivationData(
+        val userID: String,
+        val workOrderID: String,
+        val claim: Boolean = false
+)
+
 data class WorkOrderData(
         val userID: String,
         val workOrderID: String

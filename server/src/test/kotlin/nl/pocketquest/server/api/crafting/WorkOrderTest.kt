@@ -53,9 +53,9 @@ class WorkOrderTest {
         val workOrder = WorkOrder(data)
         data.content!!.active = false
         runBlocking {
-            workOrder.setActive(true)
+            workOrder.updateObject(active = true)
             assertEquals(true, data.content!!.active)
-            workOrder.setActive(false)
+            workOrder.updateObject(active = false)
             assertEquals(false, data.content!!.active)
         }
     }

@@ -20,7 +20,7 @@ class WorkOrderCancelHandler(private val kodein: Kodein) : RequestHandler<Crafti
         kodein.instance<EventPool>().submit(
                 Event.of(
                         WorkorderStatus.WORK_ORDER_CANCELLED,
-                        WorkOrderData(request.workorder_id, request.workorder_id),
+                        WorkOrderData(request.user_id, request.workorder_id),
                         request.submitted_at
                 )
         )

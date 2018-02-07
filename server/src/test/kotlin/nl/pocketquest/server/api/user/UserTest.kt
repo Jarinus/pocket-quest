@@ -52,6 +52,18 @@ class UserTest {
     }
 
     @Test
+    fun shouldHandleAbsentMaxCraftingCountAbsentNormalCraftingCount() {
+        maxCraftingCountSource.content = null
+        craftingCountSource.content = null
+        runBlocking {
+            assertTrue(user.incrementCraftingCount())
+            assertEquals(1L, craftingCountSource.content!!)
+            assertFalse(user.incrementCraftingCount())
+            assertEquals(1L, craftingCountSource.content!!)
+        }
+    }
+
+    @Test
     fun shouldDecrementCraftingCount() {
         craftingCountSource.content = 1L
         runBlocking {

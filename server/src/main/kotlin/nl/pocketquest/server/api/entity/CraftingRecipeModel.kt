@@ -8,14 +8,15 @@ data class CraftingRecipe(
 )
 
 data class CraftingRecipeModel(
-        val required_items: Map<String, Long> = mapOf(),
-        val acquired_items: Map<String, Long> = mapOf(),
+        val required_resources: Map<String, Long> = mapOf(),
+        val acquired_resources: Map<String, Long> = mapOf(),
+        val type: String = "",
         val duration: Long = 0L
 ) {
     fun toCraftingRecipe(key: String) = CraftingRecipe(
             key,
-            required_items,
-            acquired_items,
+            required_resources,
+            acquired_resources,
             duration
     )
 }
