@@ -69,7 +69,6 @@ class WorkOrderPresenter(
         whenLoggedIn {
             WorkOrderRequester.cancelWorkorder(it.uid, workOrder.id)
         }
-//        workOrderView.removeWorkOrder(workOrder)
     }
 
     override fun onClaimWorkOrder(workOrder: WorkOrder) {
@@ -77,6 +76,5 @@ class WorkOrderPresenter(
         whenLoggedIn {
             WorkOrderRequester.claimWorkorder(it.uid, workOrder.id)
         }
-        workOrderView.removeWorkOrder(workOrder)
     }
 }
