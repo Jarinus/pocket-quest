@@ -23,7 +23,6 @@ object FirebaseImageResolver : AnkoLogger {
                     .toBitmap()
 }
 
-
 private fun createImageRequest(context: Context, iconName: String): GlideRequest<Drawable> {
     try{
         require(iconName.isNotBlank())

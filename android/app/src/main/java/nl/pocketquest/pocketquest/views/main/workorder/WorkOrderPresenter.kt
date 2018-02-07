@@ -19,9 +19,7 @@ class WorkOrderPresenter(
     private var hasLoaded = false
     private var workOrderList: WorkOrderList? = null
 
-
     override fun onDetach() {
-
         async(CommonPool){
             workOrderView.setTimeOffset(getTimeOfset())
         }
@@ -41,7 +39,6 @@ class WorkOrderPresenter(
         }
     }
 
-
     override fun initialized(workOrders: Collection<WorkOrder>) {
         hasLoaded = true
         wtf("initialize $workOrders")
@@ -49,7 +46,6 @@ class WorkOrderPresenter(
         workOrderView.setLoading(false)
         workOrderList?.removeWorkOrderInitializedListeners(this)
     }
-
 
     override fun onUpdate(oldWorkOrder: WorkOrder?, newWorkOrder: WorkOrder?) {
         if (hasLoaded) {

@@ -2,7 +2,6 @@ package nl.pocketquest.pocketquest.utils
 
 import kotlin.math.pow
 
-
 fun Long.withSuffix() = when {
     this < 1000 -> "$this"
     else -> {
