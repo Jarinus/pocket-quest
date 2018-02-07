@@ -30,12 +30,11 @@ import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.support.v4.UI
-import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
-private var serverOffset : Double = 0.0
-class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
+private var serverOffset: Double = 0.0
 
+class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
 
     /**
      * Note that this list is reversed (as a workaround for the RecyclerView centering, instead of
@@ -49,7 +48,6 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
         super.onCreate(savedInstanceState)
         presenter.onAttach()
     }
-
 
     override fun setTimeOffset(offset: Double) {
         serverOffset = offset
@@ -243,7 +241,6 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
                             handleSubmittedWorkOrder(it, presenter, workOrder)
                     }
                 }
-
             }
 
             fun handleFinishedWorkOrder(finished: WorkOrderStatus.Finished, presenter: WorkOrderPresenter, workOrder: WorkOrder) {
@@ -261,18 +258,18 @@ class WorkOrderFragment : BaseFragment(), WorkOrderContract.WorkOrderView {
                 wtf("max: $duration")
                 workOrderProgress.max = duration.toInt()
 
-                fun executePerMilisecond(lambda : suspend ()->Boolean){
-                    async(UI){
+                fun executePerMilisecond(lambda: suspend () -> Boolean) {
+                    async(UI) {
                         while (isActive) {
                             if (lambda()) return@async
                             else delay(100)
                         }
                     }
                 }
-                executePerMilisecond{
+                executePerMilisecond {
                     val serverTime = (System.currentTimeMillis() - serverOffset).roundToLong()
-                    val elapsedTime = (serverTime - active.startedAt)/100
-                    val progress =  minOf(duration, elapsedTime)
+                    val elapsedTime = (serverTime - active.startedAt) / 100
+                    val progress = minOf(duration, elapsedTime)
                     wtf("duration:$duration startedAt: ${active.startedAt}; finishedAt: ${active.finishesAt}; serverTime: $serverTime; elapsedTime: $elapsedTime; progress: $progress")
                     workOrderProgress.progress = progress.toInt()
                     progress == duration
