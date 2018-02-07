@@ -7,6 +7,8 @@ import nl.pocketquest.pocketquest.views.BaseView
 class WorkOrderContract {
 
     interface WorkOrderView : BaseView {
+        fun setTimeOffset(offset: Double)
+
         fun initialize(workOrders: Collection<WorkOrder>)
 
         fun setLoading(loading: Boolean)

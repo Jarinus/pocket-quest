@@ -116,6 +116,7 @@ class WorkOrderList(private val ref: DatabaseReference) : AnkoLogger {
 
     fun updateWorkOrder(newWorkorder: FBWorkOrderModel) {
         val oldWorkOrder = workOrders[newWorkorder.id]
+        wtf("$oldWorkOrder:${oldWorkOrder?.status}->$${newWorkorder.status}")
         if (oldWorkOrder?.status != newWorkorder.status) {
             workOrderUpdateListeners.forEach { it.onUpdate(oldWorkOrder?.toWorkOrder(), newWorkorder.toWorkOrder()) }
             workOrderListeners.notifyOf(newWorkorder.toWorkOrder())
@@ -140,12 +141,13 @@ data class FBWorkOrderModel(
         var recipe: String = "",
         var active: Boolean = false,
         var started_at: Long = 0,
+        var finished_at: Long = 0,
         var submitted_at: Long = 0,
         var finished: Boolean = false
 ) {
-    val status = when {
-        finished -> WorkOrderStatus.Finished(0)
-        active -> WorkOrderStatus.Active(started_at, started_at)
+    val status get() = when {
+        finished -> WorkOrderStatus.Finished(finished_at)
+        active -> WorkOrderStatus.Active(started_at, finished_at)
         else -> WorkOrderStatus.Submitted(submitted_at)
     }
 
