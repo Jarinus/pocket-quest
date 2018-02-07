@@ -16,7 +16,7 @@ import org.jetbrains.anko.wtf
 class MapOverlayPresenter(mapOverlayView: MapOverlayContract.MapOverlayView) :
         MapOverlayContract.MapOverlayPresenter(mapOverlayView), InventoryListener {
 
-    var userInventory : Inventory? = null
+    var userInventory: Inventory? = null
     override fun onDetach() {
         userInventory?.removeInventoryListener(this)
     }

@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_map_overlay.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.game.entities.FirebaseImageResolver
 import nl.pocketquest.pocketquest.game.entities.ImageResolver
@@ -13,7 +15,6 @@ import nl.pocketquest.pocketquest.views.BaseFragment
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.support.v4.ctx
-import org.jetbrains.anko.support.v4.onUiThread
 
 class MapOverlayFragment : BaseFragment(), MapOverlayContract.MapOverlayView {
 
@@ -29,15 +30,19 @@ class MapOverlayFragment : BaseFragment(), MapOverlayContract.MapOverlayView {
         snackbar(view!!, text)
     }
 
-    override fun setRightCornerImage(bitmap: Bitmap) = onUiThread {
-        imageIcon.setImageBitmap(bitmap)
-        imageIcon.invalidate()
+    override fun setRightCornerImage(bitmap: Bitmap) {
+        async(UI) {
+            imageIcon.setImageBitmap(bitmap)
+            imageIcon.invalidate()
+        }
     }
 
-    override fun setRightCornerImageVisibility(visible: Boolean) = onUiThread {
-        imageIcon.visibility = when (visible) {
-            true -> View.VISIBLE
-            false -> View.INVISIBLE
+    override fun setRightCornerImageVisibility(visible: Boolean) {
+        async(UI) {
+            imageIcon.visibility = when (visible) {
+                true -> View.VISIBLE
+                false -> View.INVISIBLE
+            }
         }
     }
 

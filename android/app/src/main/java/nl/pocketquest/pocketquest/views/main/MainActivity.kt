@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import nl.pocketquest.pocketquest.R
 import nl.pocketquest.pocketquest.views.main.inventory.InventoryFragment
 import nl.pocketquest.pocketquest.views.main.map.MapFragment
+import nl.pocketquest.pocketquest.views.main.recipe.RecipeFragment
 import java.lang.IllegalArgumentException
 
 class MainActivity : AppCompatActivity() {
@@ -51,7 +52,7 @@ class MainActivity : AppCompatActivity() {
     // Handle action bar item clicks here. The action bar will
     // automatically handle clicks on the Home/Up button, so long
     // as you specify a parent activity in AndroidManifest.xml.
-    override fun onOptionsItemSelected(item: MenuItem) = when(item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_settings -> true
         else -> super.onOptionsItemSelected(item)
     }
@@ -65,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         override fun getItem(position: Int): Fragment = when (position) {
             0 -> MapFragment()
             1 -> InventoryFragment()
-            2 -> InventoryFragment()
+            2 -> RecipeFragment()
             else -> throw IllegalArgumentException("Illegal index supplied")
         }
 
